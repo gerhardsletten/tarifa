@@ -1,7 +1,8 @@
 var Q = require('q'),
     rimraf = require('rimraf'),
     format = require('util').format,
-    fs = require('q-io/fs');
+    qfs = require('q-io/fs'),
+    fs = require('fs'),
     path = require('path'),
     chalk = require('chalk'),
     argsHelper = require('../../lib/helper/args'),
@@ -17,7 +18,11 @@ var Q = require('q'),
 
 function addAssets(platform, verbose) {
     var root = pathHelper.root(),
-        platformName = platformHelper.getName(platform);
+        platformName = platformHelper.getName(platform),
+        imagesFolderExistsForPlatform = fs.existsSync(path.resolve(root, settings.images, platformName));
+
+    if (imagesFolderExistsForPlatform) return Q();
+
     return Q.all(createDefaultAssetsFolders(root, [platformName], 'default'))
         .then(function () { return copyDefaultIcons(root, [platformName], verbose); })
         .then(function () { return copyDefaultSplash(root, [platformName], verbose); });
@@ -34,19 +39,22 @@ function rmAssets(platform, verbose) {
     return defer.promise;
 }
 
-function add(platform, verbose) {
+function add(platform, prune, verbose) {
     return tarifaFile.addPlatform(pathHelper.root(), platform)
         .then(function () { return platformsLib.add(pathHelper.root(), [platform], verbose); })
         .then(function () { return addAssets(platform, verbose); });
 }
 
-function remove(platform, verbose) {
+function remove(platform, prune, verbose) {
     return tarifaFile.removePlatform(pathHelper.root(), platform)
         .then(function () { return platformsLib.remove(pathHelper.root(), [platform], verbose); })
-        .then(function () { return rmAssets(platform, verbose); });
+        .then(function () {
+            if (prune) return rmAssets(platform, verbose);
+            else return Q();
+        });
 }
 
-function platformAction (action, platform, verbose) {
+function platformAction (action, platform, prune, verbose) {
     var promises = [
         tarifaFile.parse(pathHelper.root()),
         platformsLib.isAvailableOnHost(platformHelper.getName(platform))
@@ -56,9 +64,9 @@ function platformAction (action, platform, verbose) {
         if(!available)
             return Q.reject(format("Can't %s %s!, %s is not available on your host", action, platform, platform));
         if(action === 'add')
-            return add(platformsLib.extendPlatform(platform), verbose);
+            return add(platformsLib.extendPlatform(platform), prune, verbose);
         else
-            return remove(platform, verbose);
+            return remove(platform, prune, verbose);
     });
 }
 
@@ -78,26 +86,32 @@ function info(verbose) {
 
 function action (argv) {
     var verbose = false,
+        prune = false,
         actions = ['add', 'remove'],
         helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+    if(argsHelper.checkValidOptions(argv, ['V', 'verbose', 'prune'])) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
+
+        if(argsHelper.matchOption(argv, null, 'prune')) {
+            prune = true;
+        }
+
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
             return list(true);
         }
         if(argv._[0] === 'info' && argsHelper.matchArgumentsCount(argv, [1])){
             return info(verbose);
         }
-        if(actions.indexOf(argv._[0]) > -1
-            && argsHelper.matchArgumentsCount(argv, [2])) {
-            return platformAction(argv._[0], argv._[1], verbose);
+        if(actions.indexOf(argv._[0]) > -1 &&
+        argsHelper.matchArgumentsCount(argv, [2])) {
+            return platformAction(argv._[0], argv._[1], prune, verbose);
         }
     }
 
-    return fs.read(helpPath).then(print);
+    return qfs.read(helpPath).then(print);
 }
 
 action.platform = platformAction;
