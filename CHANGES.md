@@ -1,3 +1,9 @@
+## 0.6.1 (02/26/2015)
+
+### changes
+
+- Fix configuration objects rewrite over mixins in `tarifa.json` file
+
 ## 0.6.0 (02/23/2015)
 
 ### supported cordova platforms:
