@@ -77,12 +77,6 @@
     "version":"0.2.16",
     "default": false
 },{
-    "name":"media capture",
-    "value":"org.apache.cordova.media-capture",
-    "uri":"https://github.com/apache/cordova-plugin-media-capture.git#r0.3.6",
-    "version":"0.3.6",
-    "default": false
-},{
     "name":"network information",
     "value":"org.apache.cordova.network-information",
     "uri":"https://github.com/apache/cordova-plugin-network-information.git#r0.2.15",
