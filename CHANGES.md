@@ -1,3 +1,16 @@
+## 0.7.0 (03/09/2015)
+
+### supported cordova platforms:
+
+- android: 3.6.4, 3.7.1
+- ios: 3.7.0, 3.8.0
+- wp8: 3.7.0, 3.7.1
+- browser: 3.6.0
+
+### changes
+
+- upgrade cordova-ios to version 3.8.0 and cordova-wp8 to version 3.7.1
+
 ## 0.6.1 (02/26/2015)
 
 ### changes
