@@ -1,3 +1,9 @@
+## 0.7.1 (03/12/2015)
+
+### changes
+
+- remove `.gitignore` file in default template which add missing default template index.html
+
 ## 0.7.0 (03/09/2015)
 
 ### supported cordova platforms:
