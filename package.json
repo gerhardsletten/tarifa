@@ -67,7 +67,8 @@
   },
   "optionalDependencies": {
     "ios-deploy": "1.4.0",
-    "cordova-deploy-windows-phone": "3.5.0-2"
+    "cordova-deploy-windows-phone": "3.5.0-2",
+    "node-firefoxos-cli": "0.1.1"
   },
   "scripts": {
     "test": "mocha test/index",
