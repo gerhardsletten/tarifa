@@ -1,3 +1,9 @@
+## 0.7.2 (03/14/2015)
+
+### changes
+
+- fix building multiple configurations on wp8
+
 ## 0.7.1 (03/12/2015)
 
 ### changes
