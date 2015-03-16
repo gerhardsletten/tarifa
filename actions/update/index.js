@@ -158,9 +158,13 @@ function runUpdatePlatforms(root) {
         var plts = msg.platformsToUpdate.map(cordovaPlatforms.extendPlatform),
             verbose = msg.verbose;
         return cordovaPlatforms.remove(root, plts, verbose).then(function () {
-            return cordovaPlatforms.add(root, plts, verbose).then(function () {
-                return msg;
-            });
+            return tarifaFile.removePlatforms(root, plts);
+        }).then(function () {
+            return cordovaPlatforms.add(root, plts, verbose);
+        }).then(function () {
+            return tarifaFile.addPlatforms(root, plts);
+        }).then(function () {
+            return msg;
         });
     };
 }
