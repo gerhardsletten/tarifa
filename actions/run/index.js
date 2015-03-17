@@ -4,6 +4,7 @@ var Q = require('q'),
     exec = require('child_process').exec,
     path = require('path'),
     fs = require('q-io/fs'),
+    existsSync = require('fs').existsSync,
     intersection = require("interset/intersection"),
     argsHelper = require('../../lib/helper/args'),
     platformHelper = require('../../lib/helper/platform'),
@@ -18,39 +19,61 @@ var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     platformTasks = tasksHelper.load(settings.platforms, 'run', 'tasks');
 
-var runƒ = function (conf) {
-    var tasks = platformTasks[conf.platform].map(require);
-    return buildAction.buildƒ(conf).then(askDevice)
-        .then(tasksHelper.execSequence(tasks));
+var binaryExists = function (conf) {
+    var exists = false;
+    try {
+        productFileName = pathHelper.productFile(
+            conf.platform,
+            conf.localSettings.configurations[conf.platform][conf.configuration].product_file_name
+        );
+    } catch(err) { }
+    if (productFileName && existsSync(productFileName)) exists = true;
+
+    try {
+        productFolder = pathHelper.productFolder(
+            conf.platform,
+            conf.localSettings.configurations[conf.platform][conf.configuration].product_name
+        );
+    } catch(err) { }
+    if (productFolder && existsSync(productFolder)) exists = true;
+    return exists;
 };
 
-var run = function (platform, config, localSettings, cleanResources, verbose) {
+var runƒ = function (conf) {
+    var tasks = platformTasks[conf.platform].map(require),
+        buildPromise = (function (nobuild) {
+            if (nobuild) return Q(conf);
+            else return buildAction.buildƒ(conf);
+        })(conf.nobuild && binaryExists(conf));
+
+    return buildPromise.then(askDevice).then(tasksHelper.execSequence(tasks));
+};
+
+var run = function (platform, config, localSettings, options) {
     print.outline('Launch run for %s platform and configuration %s !', platform, config);
     spinner();
-    return platformsLib.isAvailableOnHost(platform)
-        .then(function () {
-            return runƒ({
-                localSettings: localSettings,
-                platform: platform,
-                configuration: config,
-                cleanResources: cleanResources,
-                verbose: verbose
-            });
+    return runƒ({
+        localSettings: localSettings,
+        platform: platform,
+        configuration: config,
+        cleanResources: options.cleanResources,
+        verbose: options.verbose,
+        nobuild: options.nobuild
     });
 };
 
-var runMultipleConfs = function(platform, configs, localSettings, cleanResources, verbose) {
+var runMultipleConfs = function(platform, configs, localSettings, options) {
     configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
     return tarifaFile.checkConfigurations(configs, platform, localSettings).then(function () {
-        return configs.reduce(function(promise, conf) {
-            return promise.then(function () {
-                return run(platform, conf, localSettings, cleanResources, verbose);
+        return configs.reduce(function(p, conf) {
+            return p.then(function () {
+                return run(platform, conf, localSettings, options);
             });
         }, Q());
     });
 };
 
-var runMultiplePlatforms = function (platforms, config, cleanResources, verbose) {
+var runMultiplePlatforms = function (platforms, config, options) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = platforms || localSettings.platforms.map(platformHelper.getName);
         return tarifaFile.checkPlatforms(platforms, localSettings).then(function (availablePlatforms) {
@@ -61,7 +84,7 @@ var runMultiplePlatforms = function (platforms, config, cleanResources, verbose)
                     } else if (argsHelper.matchWildcard(config)) {
                         config = argsHelper.getFromWildcard(config);
                     }
-                    return runMultipleConfs(platform, config, localSettings, cleanResources, verbose);
+                    return runMultipleConfs(platform, config, localSettings, options);
                 });
             }, Q());
         });
@@ -69,21 +92,32 @@ var runMultiplePlatforms = function (platforms, config, cleanResources, verbose)
 };
 
 var action = function (argv) {
-    var verbose = false,
-    cleanResources = false,
-    helpPath = path.join(__dirname, 'usage.txt');
+    var options = {
+            verbose : false,
+            cleanResources: false,
+            nobuild:false
+        },
+        helpPath = path.join(__dirname, 'usage.txt');
 
     if(argsHelper.matchOption(argv, 'V', 'verbose'))
-        verbose = true;
+        options.verbose = true;
+
+    if (argsHelper.matchOption(argv, null, 'nobuild'))
+            options.nobuild = true;
 
     if (argsHelper.matchOption(argv, null, 'clean-resources'))
-        cleanResources = true;
+        options.cleanResources = true;
 
     if(argsHelper.matchCmd(argv._, ['__all__', '*']))
-        return runMultiplePlatforms(null, argv._[1] || 'default', cleanResources, verbose);
+        return runMultiplePlatforms(null, argv._[1] || 'default', options);
 
-    if (argsHelper.matchCmd(argv._, ['__some__', '*']))
-        return runMultiplePlatforms(argsHelper.getFromWildcard(argv._[0]), argv._[1] || 'default', cleanResources, verbose);
+    if (argsHelper.matchCmd(argv._, ['__some__', '*'])) {
+        return runMultiplePlatforms(
+            argsHelper.getFromWildcard(argv._[0]),
+            argv._[1] || 'default',
+            options
+        );
+    }
 
     return fs.read(helpPath).then(print);
 };

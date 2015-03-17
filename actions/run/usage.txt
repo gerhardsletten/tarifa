@@ -9,6 +9,7 @@ Options:
     --verbose, -V           Be more verbose on everything
     --clean-resources       Clean cached resources (icons and splashscreens) before build,
                             only for android platform
+    --nobuild               Skip build process if build available
 
 Examples:
 
