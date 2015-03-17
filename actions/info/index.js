@@ -156,7 +156,7 @@ function info(verbose) {
         .then(check_cordova_platform_version(verbose))
         .then(check_tools(verbose))
         .then(function (msg) {
-            if(!msg.ok) print.warning("not all needed tools are available!");
+            if(!msg.noerrors) print.warning("not all needed tools are available!");
             return printDevices(msg.platforms, verbose);
         });
 }

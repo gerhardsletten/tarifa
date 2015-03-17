@@ -20,7 +20,7 @@ var Q = require('q'),
     platformTasks = tasksHelper.load(settings.platforms, 'run', 'tasks');
 
 var binaryExists = function (conf) {
-    var exists = false;
+    var exists = false, productFileName, productFolder;
     try {
         productFileName = pathHelper.productFile(
             conf.platform,
