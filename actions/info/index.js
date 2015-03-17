@@ -38,7 +38,7 @@ function getToolVersion(name, tool, verbose) {
 }
 
 function check_tools(verbose) {
-    return function () {
+    return function (platforms) {
         var rslts = [],
             ok = true,
             bins = settings.external;
@@ -69,7 +69,10 @@ function check_tools(verbose) {
                     if (verbose) print('\tReason: %s', chalk.cyan(result.reason));
                 }
             });
-            return Q.resolve(ok);
+            return Q.resolve({
+                noerrors: ok,
+                platforms: platforms
+            });
         });
     };
 }
@@ -102,8 +105,8 @@ function check_cordova(platforms, verbose) {
     });
 }
 
-function check_cordova_platform_version(platforms, verbose) {
-    return function () {
+function check_cordova_platform_version(verbose) {
+    return function (platforms) {
         return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
             return getCordovaPlatformsVersion(
                 path.join(pathHelper.root(), settings.cordovaAppPath),
@@ -116,6 +119,8 @@ function check_cordova_platform_version(platforms, verbose) {
         }, function (err) {
             if(verbose) print.warning(err);
             print.warning("Not in a tarifa project, can't output installed platform versions");
+        }).then(function () {
+            return platforms;
         });
     };
 }
@@ -125,13 +130,18 @@ function check_requirements(verbose) {
         return platformsLib.listAvailableOnHost(verbose).then(function (platforms) {
             if (platforms.length)
                 print("%s %s", chalk.green("installed platforms on host:"), platforms.join(', '));
+            else
+                print("no platform installed!");
+            return platforms;
         });
     };
 }
 
-function printDevices(verbose) {
-    return Object.keys(devices).reduce(function (p, device) {
-        return p.then(function () { return devices[device].print(verbose); });
+function printDevices(platforms, verbose) {
+    return platforms.reduce(function (p, device) {
+        return p.then(function () {
+            return devices[device] ? devices[device].print(verbose) : Q();
+        });
     }, Q());
 }
 
@@ -142,12 +152,12 @@ function info(verbose) {
     var platforms = listAvailablePlatforms();
 
     return check_cordova(platforms, verbose)
-        .then(check_requirements(platforms, verbose))
-        .then(check_cordova_platform_version(platforms, verbose))
+        .then(check_requirements(verbose))
+        .then(check_cordova_platform_version(verbose))
         .then(check_tools(verbose))
-        .then(function (ok) {
-            if(!ok) print.warning("not all needed tools are available!");
-            return printDevices(verbose);
+        .then(function (msg) {
+            if(!msg.ok) print.warning("not all needed tools are available!");
+            return printDevices(msg.platforms, verbose);
         });
 }
 
