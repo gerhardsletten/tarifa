@@ -80,7 +80,7 @@ function testPlugins(projectDefer, pluginDefer) {
             });
         });
 
-        settings.platforms.filter((isAvailableOnHostSync).forEach(function (p) {
+        settings.platforms.filter(isAvailableOnHostSync).forEach(function (p) {
             it(format('tarifa build %s with all plugins', p), function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
@@ -117,7 +117,7 @@ function testPlugins(projectDefer, pluginDefer) {
             });
         });
 
-        settings.platforms.filter((isAvailableOnHostSync).forEach(function (p) {
+        settings.platforms.filter(isAvailableOnHostSync).forEach(function (p) {
             it(format('tarifa build %s with fresh created plugin', p), function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
