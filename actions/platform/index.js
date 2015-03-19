@@ -5,6 +5,7 @@ var Q = require('q'),
     fs = require('fs'),
     path = require('path'),
     chalk = require('chalk'),
+    isObject = require('../../lib/helper/collections').isObject,
     argsHelper = require('../../lib/helper/args'),
     tarifaFile = require('../../lib/tarifa-file'),
     settings = require('../../lib/settings'),
@@ -12,6 +13,7 @@ var Q = require('q'),
     print = require('../../lib/helper/print'),
     platformHelper = require('../../lib/helper/platform'),
     platformsLib = require('../../lib/cordova/platforms'),
+    pluginsLib = require('../../lib/cordova/plugins'),
     copyDefaultIcons = require('../../lib/cordova/icon').copyDefault,
     createDefaultAssetsFolders = require('../../lib/cordova/assets').createFolders,
     copyDefaultSplash = require('../../lib/cordova/splashscreen').copyDefault;
@@ -40,9 +42,44 @@ function rmAssets(platform, verbose) {
 }
 
 function add(platform, prune, verbose) {
+    // cordova has a bug that when you install a platform with a plugin
+    // with variable already installed, the install will crash
+    // so before adding the platform we remove any plugin
+    // with variable and we reinstall them after
+    var pluginsWithVariables;
     return tarifaFile.addPlatform(pathHelper.root(), platform)
-        .then(function () { return platformsLib.add(pathHelper.root(), [platform], verbose); })
-        .then(function () { return addAssets(platform, verbose); });
+        .then(function (settings) {
+            var plugins = settings.plugins;
+            var promises = [];
+            if (plugins) {
+                for (var key in plugins){
+                    if (isObject(plugins[key]) && plugins[key].variables !== undefined) {
+                        if (pluginsWithVariables === undefined) pluginsWithVariables = {};
+                        pluginsWithVariables[key] = plugins[key];
+                        if (verbose) print.info('Removing temporarily plugin: ' + key);
+                        promises.push(pluginsLib.remove(pathHelper.root(), key));
+                    }
+                }
+                if (promises.length) return Q.allSettled(promises);
+            }
+        })
+        .then(function () {
+            return platformsLib.add(pathHelper.root(), [platform], verbose);
+        })
+        .then(function () {
+            var promises = [];
+            if (pluginsWithVariables !== undefined) {
+                for (var key in pluginsWithVariables) {
+                    var p = pluginsWithVariables[key];
+                    if (verbose) print.info('Reinstalling plugin: ' + key);
+                    promises.push(pluginsLib.add(pathHelper.root(), p.uri, { cli_variables: p.variables }));
+                }
+            }
+            if (promises.length) return Q.allSettled(promises);
+        })
+        .then(function () {
+            return addAssets(platform, verbose);
+        });
 }
 
 function remove(platform, prune, verbose) {
