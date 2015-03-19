@@ -10,6 +10,7 @@ Options:
     --clean-resources       Clean cached resources (icons and splashscreens) before build,
                             only for android platform
     --nobuild               Skip build process if build available
+    --debug, -d             Output app debug logs, only for single build
 
 Examples:
 

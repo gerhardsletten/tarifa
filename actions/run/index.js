@@ -51,14 +51,15 @@ var runƒ = function (conf) {
 
 var run = function (platform, config, localSettings, options) {
     print.outline('Launch run for %s platform and configuration %s !', platform, config);
-    spinner();
     return runƒ({
         localSettings: localSettings,
         platform: platform,
         configuration: config,
         cleanResources: options.cleanResources,
         verbose: options.verbose,
-        nobuild: options.nobuild
+        nobuild: options.nobuild,
+        debug: options.debug,
+        spinner: spinner()
     });
 };
 
@@ -95,7 +96,8 @@ var action = function (argv) {
     var options = {
             verbose : false,
             cleanResources: false,
-            nobuild:false
+            nobuild:false,
+            debug:false
         },
         helpPath = path.join(__dirname, 'usage.txt');
 
@@ -103,10 +105,19 @@ var action = function (argv) {
         options.verbose = true;
 
     if (argsHelper.matchOption(argv, null, 'nobuild'))
-            options.nobuild = true;
+        options.nobuild = true;
 
     if (argsHelper.matchOption(argv, null, 'clean-resources'))
         options.cleanResources = true;
+
+    if (argsHelper.matchOption(argv, 'd', 'debug')) {
+        options.debug = true;
+        if(argsHelper.matchCmd(argv._, ['__multi__', '*']) || argsHelper.matchCmd(argv._, ['*', '__multi__'])) {
+            print.error('Oops, not `--debug` option on multiple configurations or multiple platforms!');
+            print();
+            return fs.read(helpPath).then(print);
+        }
+    }
 
     if(argsHelper.matchCmd(argv._, ['__all__', '*']))
         return runMultiplePlatforms(null, argv._[1] || 'default', options);
