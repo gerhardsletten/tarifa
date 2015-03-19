@@ -32,14 +32,14 @@ function log(action, verbose) {
             if(val) print("%s plugin: %s", action, val);
             else print("no plugin added!");
         }
-    }
+    };
 }
 
 var actions = {
     'add': {
         updateTarifaFile: function (root) {
             return function (def) {
-                return tarifaFile.addPlugin(root, def.val, def.uri);
+                return tarifaFile.addPlugin(root, def.val, def.uri, def.variables);
             };
         }
     },
@@ -50,24 +50,24 @@ var actions = {
             };
         }
     }
-}
+};
 
 function list() {
     return plugins.list(pathHelper.root());
 }
 
-function plugin(action, arg, verbose) {
-    return raw_plugin(pathHelper.root(), action, arg, verbose);
+function plugin(action, arg, variables, verbose) {
+    return raw_plugin(pathHelper.root(), action, arg, variables, verbose);
 }
 
-function raw_plugin (root, action, arg, verbose) {
+function raw_plugin (root, action, arg, variables, verbose) {
     return tarifaFile.parse(root)
         .then(function (settings) {
             if(action == 'remove' && (!settings.plugins || Object.keys(settings.plugins).indexOf(arg) < 0))
                 return Q.reject(format("Can't remove uninstalled plugin %s", arg));
             if(action == 'add' && (settings.plugins && Object.keys(settings.plugins).indexOf(arg) > -1))
                 return Q.reject(format("Can't install already installed plugin %s", arg));
-            return plugins[action](root, arg)
+            return plugins[action](root, arg, { cli_variables: variables })
                 .then(function (val) {
                     if (!val || !val.val || !val.uri) {
                         return Q.reject("no plugin changed!");
@@ -79,21 +79,40 @@ function raw_plugin (root, action, arg, verbose) {
         });
 }
 
+function getVariableFromCli(v) {
+    var kv = v.split('=');
+    var res = {};
+    res[kv[0]] = kv[1];
+    return res;
+}
+
 function action (argv) {
     var verbose = false,
-        helpPath = path.join(__dirname, 'usage.txt');
+        helpPath = path.join(__dirname, 'usage.txt'),
+        variables;
 
-    if(argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
+    if(argsHelper.checkValidOptions(argv, ['V', 'verbose', 'variable'])) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
+        }
+        if(argsHelper.matchOptionWithValue(argv, null, 'variable')) {
+            variables = argv.variable;
+            if(variables instanceof Array)
+                variables = variables.reduce(function(acc, val) {
+                    var kv = val.split('=');
+                    acc[kv[0]] = kv[1];
+                    return acc;
+                }, {});
+            else
+                variables = getVariableFromCli(variables);
         }
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
             return list().then(printPlugins);
         }
-        if(Object.keys(actions).indexOf(argv._[0]) > -1
-            && argsHelper.matchArgumentsCount(argv, [2])) {
-            return plugin(argv._[0], argv._[1], verbose);
-        }
+        if(Object.keys(actions).indexOf(argv._[0]) > -1 &&
+            argsHelper.matchArgumentsCount(argv, [2])) {
+                return plugin(argv._[0], argv._[1], variables, verbose);
+            }
     }
 
     return fs.read(helpPath).then(print);
