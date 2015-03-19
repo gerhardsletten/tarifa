@@ -17,7 +17,7 @@ module.exports = function (conf) {
         return ask.question(
             'Which device do you want to use?',
             'list',
-            ['all'].concat(items)
+            conf.debug ? items : ['all'].concat(items)
         ).then(function (resp) {
             if(resp !== 'all')
                 conf.device = { value: resp, index : items.indexOf(resp) };
