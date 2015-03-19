@@ -80,6 +80,15 @@ function testPlugins(projectDefer, pluginDefer) {
             });
         });
 
+        settings.platforms.filter(isAvailableOnHostSync).forEach(function (p) {
+            it(format('tarifa build %s with all plugins', p), function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return buildAction.buildMultiplePlatforms([p], ['default'], false, false);
+                });
+            });
+        });
+
         plugins.filter(function (p) { return p.value !== 'org.apache.cordova.file'; }).forEach(function (plugin) {
             it(format('tarifa plugin remove %s', plugin.value), function () {
                 this.timeout(0);
@@ -108,15 +117,13 @@ function testPlugins(projectDefer, pluginDefer) {
             });
         });
 
-        settings.platforms.forEach(function (p) {
-            if(isAvailableOnHostSync(p)) {
-                it(format('tarifa build %s', p), function () {
-                    this.timeout(0);
-                    return projectDefer.promise.then(function (rslt) {
-                        return buildAction.buildMultiplePlatforms([p], ['default'], false, false);
-                    });
+        settings.platforms.filter(isAvailableOnHostSync).forEach(function (p) {
+            it(format('tarifa build %s with fresh created plugin', p), function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return buildAction.buildMultiplePlatforms([p], ['default'], false, false);
                 });
-            }
+            });
         });
 
         it('tarifa plugin remove', function () {
