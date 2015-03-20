@@ -79,10 +79,11 @@ function raw_plugin (root, action, arg, variables, verbose) {
         });
 }
 
-function getVariableFromCli(v) {
-    var kv = v.split('=');
-    var res = {};
-    res[kv[0]] = kv[1];
+function getVariableFromCli(v, rst) {
+    var kv = v.split('='),
+        res = rst || {};
+    if (kv.length > 1) res[kv[0]] = kv[1];
+    else throw new Error('Wrong variable format');
     return res;
 }
 
@@ -99,9 +100,7 @@ function action (argv) {
             variables = argv.variable;
             if(variables instanceof Array)
                 variables = variables.reduce(function(acc, val) {
-                    var kv = val.split('=');
-                    acc[kv[0]] = kv[1];
-                    return acc;
+                  return getVariableFromCli(val, acc);
                 }, {});
             else
                 variables = getVariableFromCli(variables);
