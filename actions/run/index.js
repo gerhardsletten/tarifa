@@ -59,6 +59,7 @@ var run = function (platform, config, localSettings, options) {
         verbose: options.verbose,
         nobuild: options.nobuild,
         debug: options.debug,
+        all: options.all,
         spinner: spinner()
     });
 };
@@ -97,7 +98,8 @@ var action = function (argv) {
             verbose : false,
             cleanResources: false,
             nobuild:false,
-            debug:false
+            debug:false,
+            all:false
         },
         helpPath = path.join(__dirname, 'usage.txt');
 
@@ -106,6 +108,9 @@ var action = function (argv) {
 
     if (argsHelper.matchOption(argv, null, 'nobuild'))
         options.nobuild = true;
+
+    if (argsHelper.matchOption(argv, null, 'all'))
+        options.all = true;
 
     if (argsHelper.matchOption(argv, null, 'clean-resources'))
         options.cleanResources = true;

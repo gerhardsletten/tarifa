@@ -14,12 +14,17 @@ module.exports = function (conf) {
             return conf;
         }
 
+        if (conf.all) {
+            conf.devices = items;
+            return conf;
+        }
+
         return ask.question(
             'Which device do you want to use?',
             'list',
             conf.debug ? items : ['all'].concat(items)
         ).then(function (resp) {
-            if(resp !== 'all')
+            if (resp !== 'all')
                 conf.device = { value: resp, index : items.indexOf(resp) };
             else
                 conf.devices = items;
