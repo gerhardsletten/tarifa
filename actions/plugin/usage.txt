@@ -6,8 +6,10 @@ Available commands:
 
     add <plugin>
         Add a new plugin identified by <platform>
-    remove <plugin>
-        Remove the plugin with the name <plugin>
+    remove <pluginId>
+        Remove the plugin
+    reload <pluginId>
+        Reinstall the plugin
     list
         List installed plugins
 

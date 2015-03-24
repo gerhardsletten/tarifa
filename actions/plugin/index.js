@@ -6,6 +6,7 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
+    isObject = require('../../lib/helper/collections').isObject,
     settings = require('../../lib/settings'),
     pluginXML = require('../../lib/xml/plugin.xml'),
     plugins = require('../../lib/cordova/plugins');
@@ -32,6 +33,7 @@ function log(action, verbose) {
             if(val) print("%s plugin: %s", action, val);
             else print("no plugin added!");
         }
+        return val;
     };
 }
 
@@ -48,6 +50,11 @@ var actions = {
             return function (def) {
                 return tarifaFile.removePlugin(root, def.val);
             };
+        }
+    },
+    'reload': {
+        updateTarifaFile: function (root) {
+            return function (def) { return true; };
         }
     }
 };
@@ -67,15 +74,25 @@ function raw_plugin (root, action, arg, variables, verbose) {
                 return Q.reject(format("Can't remove uninstalled plugin %s", arg));
             if(action == 'add' && (settings.plugins && Object.keys(settings.plugins).indexOf(arg) > -1))
                 return Q.reject(format("Can't install already installed plugin %s", arg));
-            return plugins[action](root, arg, { cli_variables: variables })
-                .then(function (val) {
-                    if (!val || !val.val || !val.uri) {
-                        return Q.reject("no plugin changed!");
-                    }
-                    return val;
-                })
-                .then(actions[action].updateTarifaFile(root))
-                .then(log(action, verbose));
+            if(action == 'reload' && (settings.plugins && Object.keys(settings.plugins).indexOf(arg) < 0))
+                return Q.reject(format("Can't reload not installed plugin %s", arg));
+            if(action == 'reload') {
+                var p = settings.plugins[arg],
+                    uri= isObject(p) ? p.uri: p,
+                    vars = isObject(p) ? p.variables: {};
+                return plugins.reload(root, arg, uri, { cli_variables: vars })
+                    .then(function () { return log('reload', verbose)(arg) });
+            } else {
+                return plugins[action](root, arg, { cli_variables: variables })
+                    .then(function (val) {
+                        if (!val || !val.val || !val.uri) {
+                            return Q.reject("no plugin changed!");
+                        }
+                        return val;
+                    })
+                    .then(actions[action].updateTarifaFile(root))
+                    .then(log(action, verbose));
+            }
         });
 }
 
