@@ -1,3 +1,18 @@
+## 0.8.0 (xx/xx/2015)
+
+### changes
+
+- update dependencies
+- update `tarifa.json` platforms versions if needed when updating projet
+- print unmet requirements when `tarifa info` fails
+- add `--nobuild` option on `tarifa run` to skip build if already available
+- add `--debug` option on `tarifa run` to output app debug logs
+- add `tarifa plugin add --variable` which allows to use cordova plugin with
+variables. tarifa keeps them in the `tarifa.json` file so, that `tarifa check --force`
+still works
+-- add `--all` option in `tarifa run` to run to all devices without prompting
+-- add platform `firefoxos` (experimental)
+
 ## 0.7.2 (03/14/2015)
 
 ### changes
