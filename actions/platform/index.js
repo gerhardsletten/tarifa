@@ -142,8 +142,7 @@ function action (argv) {
         if(argv._[0] === 'info' && argsHelper.matchArgumentsCount(argv, [1])){
             return info(verbose);
         }
-        if(actions.indexOf(argv._[0]) > -1 &&
-        argsHelper.matchArgumentsCount(argv, [2])) {
+        if(actions.indexOf(argv._[0]) > -1 && argsHelper.matchArgumentsCount(argv, [2])) {
             return platformAction(argv._[0], argv._[1], prune, verbose);
         }
     }

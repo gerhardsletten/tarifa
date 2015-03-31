@@ -11,7 +11,8 @@
   "author_href": "http://42loops.com",
   "platforms": [
     "android",
-    "browser"
+    "browser",
+    "firefoxos"
   ],
   "plugins": [],
   "www": "template/project",

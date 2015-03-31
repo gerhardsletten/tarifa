@@ -16,6 +16,7 @@ var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
     builder = require('../../lib/builder'),
+    feature = require('../../lib/feature'),
     print = require('../../lib/helper/print'),
     isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
     runAction = require('../run'),
@@ -197,6 +198,9 @@ function httpPortAvailable(port) {
 }
 
 function watch(platform, config, port, norun, verbose) {
+    if(!feature.isAvailable('watch', platform)) {
+        return Q.reject(format('feature not available on %s!', platform));
+    }
     return Q.all([
         tarifaFile.parse(pathHelper.root(), platform, config),
         isAvailableOnHost(platform),

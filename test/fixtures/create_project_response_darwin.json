@@ -12,7 +12,8 @@
   "platforms": [
     "ios",
     "android",
-    "browser"
+    "browser",
+    "firefoxos"
   ],
   "plugins": [],
   "www": "template/project",
