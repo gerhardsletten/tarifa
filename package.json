@@ -64,7 +64,7 @@
     "valid-java-identifier": "0.0.1",
     "xcode": "0.6.7",
     "xml2js": "0.4.6",
-    "node-firefoxos-cli": "peutetre/node-firefoxos-cli.git#0.1.5"
+    "node-firefoxos-cli": "peutetre/node-firefoxos-cli.git#0.1.6"
   },
   "optionalDependencies": {
     "ios-deploy": "1.4.0",
