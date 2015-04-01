@@ -11,7 +11,7 @@
 variables. tarifa keeps them in the `tarifa.json` file so, that `tarifa check --force`
 still works
 - add `--all` option in `tarifa run` to run to all devices without prompting
-- add platform `firefoxos` (experimental)
+- add platform `firefoxos` (experimental, support only on darwin, no watch)
 
 ## 0.7.2 (03/14/2015)
 

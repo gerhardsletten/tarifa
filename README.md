@@ -23,6 +23,7 @@ with adequate questions and save the answers in the project files.
 | [ios](http://developer.apple.com/)         | ✔      | ✗     | ✗     |
 | [android](http://developer.android.com/)   | ✔      | ✔     | ✔     |
 | [windows phone](http://msdn.microsoft.com/en-us/library/windows/apps/ff630878) | ✗      | ✗     | ✔     |
+| firefoxos (experimental) |  ✔      | ✗     | ✗     |
 
 * [nomad cli: cupertino](https://github.com/nomad/cupertino) (only for ios)
 * [ImageMagick](http://www.imagemagick.org/)
