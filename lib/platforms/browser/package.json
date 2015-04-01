@@ -1,5 +1,6 @@
 {
   "name": "browser",
+  "uri": "browser",
   "version": "3.6.0",
   "versions": [
     "3.6.0"
