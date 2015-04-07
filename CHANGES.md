@@ -1,4 +1,4 @@
-## 0.8.0 (xx/xx/2015)
+## 0.8.0 (04/07/2015)
 
 ### changes
 
@@ -12,6 +12,7 @@ variables. tarifa keeps them in the `tarifa.json` file so, that `tarifa check --
 still works
 - add `--all` option in `tarifa run` to run to all devices without prompting
 - add platform `firefoxos` (experimental, support only on darwin, no watch)
+- upgrade ios-deploy to 1.5.0
 
 ## 0.7.2 (03/14/2015)
 
