@@ -2,6 +2,7 @@ var Q = require('q'),
     path = require('path'),
     fs = require('q-io/fs'),
     cordova = require('cordova-lib/src/cordova/cordova'),
+    intersection = require("interset/intersection"),
     argsHelper = require('../../lib/helper/args'),
     print = require('../../lib/helper/print'),
     pathHelper = require('../../lib/helper/path'),
@@ -123,8 +124,8 @@ var buildMultipleConfs = function(platform, configs, localSettings, keepFileChan
 var buildMultiplePlatforms = function (platforms, config, keepFileChanges, cleanResources, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = platforms || localSettings.platforms.map(platformHelper.getName);
-        return tarifaFile.checkPlatforms(platforms, localSettings).then(function () {
-            return platforms.filter(platformsLib.isAvailableOnHostSync).reduce(function(promise, platform) {
+        return tarifaFile.checkPlatforms(platforms, localSettings).then(function (availablePlatforms) {
+            return intersection(platforms, availablePlatforms).reduce(function(promise, platform) {
                 return promise.then(function () {
                     if (config === 'all') {
                         config = null;
