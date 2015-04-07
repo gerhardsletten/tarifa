@@ -67,7 +67,7 @@
     "node-firefoxos-cli-fork": "0.1.7"
   },
   "optionalDependencies": {
-    "ios-deploy": "1.4.0",
+    "ios-deploy": "1.5.0",
     "cordova-deploy-windows-phone": "3.5.0-2"
   },
   "scripts": {
