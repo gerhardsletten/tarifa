@@ -5,7 +5,6 @@ var Q = require('q'),
     path = require('path'),
     fs = require('q-io/fs'),
     existsSync = require('fs').existsSync,
-    intersection = require("interset/intersection"),
     argsHelper = require('../../lib/helper/args'),
     platformHelper = require('../../lib/helper/platform'),
     print = require('../../lib/helper/print'),
@@ -77,9 +76,9 @@ var runMultipleConfs = function(platform, configs, localSettings, options) {
 
 var runMultiplePlatforms = function (platforms, config, options) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        platforms = platforms || localSettings.platforms.map(platformHelper.getName);
+        platforms = (platforms || localSettings.platforms.map(platformHelper.getName)).filter(platformsLib.isAvailableOnHostSync);
         return tarifaFile.checkPlatforms(platforms, localSettings).then(function (availablePlatforms) {
-            return intersection(platforms, availablePlatforms).reduce(function(promise, platform) {
+            return availablePlatforms.reduce(function(promise, platform) {
                 return promise.then(function () {
                     if (config === 'all') {
                         config = null;
