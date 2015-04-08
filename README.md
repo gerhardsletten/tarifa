@@ -30,7 +30,7 @@ with adequate questions and save the answers in the project files.
 
 ### Documentation
 
-Documentation can be read on [tarifa-book](https://www.gitbook.io/content/book/42loops/tarifa/index.html).
+Documentation can be read on [tarifa-book](http://42loops.gitbooks.io/tarifa/content/index.html).
 
 ### Install
 
