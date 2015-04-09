@@ -11,7 +11,8 @@ module.exports = function (options) {
     describe(format('testing tarifa cli on %s', os.platform()), function() {
 
         var projectDefer = Q.defer(),
-            pluginDefer = Q.defer();
+            pluginDefer = Q.defer(),
+            pluginWithVariablesDefer = Q.defer();
         before('create project', setupHelper.createProject(tmp, projectDefer, format('create_project_response_%s.json', os.platform())));
         it('create project', function () {
             this.timeout(0);
@@ -22,9 +23,14 @@ module.exports = function (options) {
             this.timeout(0);
             return pluginDefer.promise;
         });
+        before('create plugin with variables', setupHelper.createPlugin(tmp, pluginWithVariablesDefer, 'create_plugin_with_variables_response.json'));
+        it('create plugin with variables', function () {
+            this.timeout(0);
+            return pluginWithVariablesDefer.promise;
+        });
 
         require('./actions/config')(projectDefer, options);
-        require('./actions/plugins')(projectDefer, pluginDefer, options);
+        require('./actions/plugins')(projectDefer, pluginDefer, pluginWithVariablesDefer, options);
         require('./actions/info')(projectDefer, options);
         require('./actions/prepare')(projectDefer, options);
         require('./actions/build')(projectDefer, options);

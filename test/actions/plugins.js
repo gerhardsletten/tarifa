@@ -13,7 +13,7 @@ var should = require('should'),
 
 var emptyPluginPath = path.join(__dirname, '../fixtures/emptyplugin');
 
-function testPlugins(projectDefer, pluginDefer) {
+function testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer) {
 
     describe('tarifa plugin', function() {
         it('tarifa plugin add ../fixtures/emptyplugin', function () {
@@ -103,50 +103,59 @@ function testPlugins(projectDefer, pluginDefer) {
         });
     });
 
-    describe('be able to add and remove a plugin created with tarifa', function () {
-        it('tarifa plugin add', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (projectRslt) {
-                return pluginDefer.promise.then(function (pluginRslt) {
-                    return pluginAction.plugin('add', pluginRslt.response.path, false).then(function () {
-                        return pluginAction.list(false).then(function (rslt) {
-                            rslt.indexOf(pluginRslt.response.id).should.be.above(-1);
-                        });
-                    });
-                });
-            });
-        });
-
-        settings.platforms.filter(isAvailableOnHostSync).forEach(function (p) {
-            it(format('tarifa build %s with fresh created plugin', p), function () {
+    var testTarifaCreatedPlugin = function (pluginDefer, variables) {
+        describe('be able to add and remove a plugin created with tarifa', function () {
+            it('tarifa plugin add', function () {
                 this.timeout(0);
-                return projectDefer.promise.then(function (rslt) {
-                    return buildAction.buildMultiplePlatforms([p], ['default'], false, false);
+                return projectDefer.promise.then(function (projectRslt) {
+                    return pluginDefer.promise.then(function (pluginRslt) {
+                        return pluginAction.plugin('add', pluginRslt.response.path, variables, false).then(function () {
+                            return pluginAction.list(false).then(function (rslt) {
+                                rslt.indexOf(pluginRslt.response.id).should.be.above(-1);
+                            });
+                        });
+                    });
                 });
             });
-        });
 
-        it('tarifa plugin remove', function () {
-            this.timeout(0);
-            return projectDefer.promise.then(function (projectRslt) {
-                return pluginDefer.promise.then(function (pluginRslt) {
-                    return pluginAction.plugin('remove', pluginRslt.response.id, false).then(function () {
-                        return pluginAction.list(false).then(function (rslt) {
-                            rslt.indexOf(pluginRslt.response.id).should.be.below(0);
+            settings.platforms.filter(isAvailableOnHostSync).forEach(function (p) {
+                it(format('tarifa build %s with freshly created plugin', p), function () {
+                    this.timeout(0);
+                    return projectDefer.promise.then(function (rslt) {
+                        return buildAction.buildMultiplePlatforms([p], ['default'], false, false);
+                    });
+                });
+            });
+
+            it('tarifa plugin remove', function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (projectRslt) {
+                    return pluginDefer.promise.then(function (pluginRslt) {
+                        return pluginAction.plugin('remove', pluginRslt.response.id, false).then(function () {
+                            return pluginAction.list(false).then(function (rslt) {
+                                rslt.indexOf(pluginRslt.response.id).should.be.below(0);
+                            });
                         });
                     });
                 });
             });
         });
+    };
+    testTarifaCreatedPlugin(pluginDefer, {});
+    testTarifaCreatedPlugin(pluginWithVariablesDefer, {
+        'REQUIRED_VARIABLE': 'val1',
+        'OPTIONAL_VARIABLE': 'val2'
     });
 }
 
 if(module.parent.id.indexOf("mocha.js") > 0) {
     var projectDefer = Q.defer(),
-        pluginDefer = Q.defer();
+        pluginDefer = Q.defer(),
+        pluginWithVariablesDefer = Q.defer();
     before('create an empty project', setupHelper.createProject(tmp, projectDefer, format('create_project_response_%s.json', os.platform())));
-    before('create an empty plugin', setupHelper.createPlugin(tmp, pluginDefer, 'create_plugin_response.json'));
-    testPlugins(projectDefer, pluginDefer);
+    before('create plugin', setupHelper.createPlugin(tmp, pluginDefer, 'create_plugin_response.json'));
+    before('create plugin with variables', setupHelper.createPlugin(tmp, pluginWithVariablesDefer, 'create_plugin_with_variables_response.json'));
+    testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer);
 }
 
 module.exports = testPlugins;

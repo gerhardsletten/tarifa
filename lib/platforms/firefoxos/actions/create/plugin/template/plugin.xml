@@ -1,11 +1,10 @@
     <platform name="firefoxos">
         <config-file target="config.xml" parent="/*">
-            <feature name="$NAME">
-                <param name="firefoxos-package" value="$NAME" />
+            <feature name="%NAME">
+                <param name="firefoxos-package" value="%NAME" />
             </feature>
         </config-file>
-
-        <js-module src="src/firefoxos/$NAME.js" name="$NAMEProxy">
+        <js-module src="firefoxos/src/%NAME.js" name="%NAMEProxy">
             <runs />
         </js-module>
     </platform>

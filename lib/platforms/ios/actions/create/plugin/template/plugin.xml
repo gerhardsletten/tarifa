@@ -1,10 +1,10 @@
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
-            <feature name="$NAME">
-                <param name="ios-package" value="$NAME" />
+            <feature name="%NAME">
+                <param name="ios-package" value="%NAME" />
             </feature>
         </config-file>
-
-        <header-file src="src/ios/$NAME.h" />
-        <source-file src="src/ios/$NAME.m" />
+        <header-file src="ios/src/%NAME.h" />
+        <source-file src="ios/src/%NAME.m" />
+%PLUGIN_USE_VARIABLES
     </platform>

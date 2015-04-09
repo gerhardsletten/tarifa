@@ -1,0 +1,8 @@
+        <config-file target="*-Info.plist" parent="CDVInstallVariables">
+            <dict>
+                <key>REQUIRED_VARIABLE</key>
+                <string>$REQUIRED_VARIABLE</string>
+                <key>OPTIONAL_VARIABLE</key>
+                <string>$OPTIONAL_VARIABLE</string>
+            </dict>
+        </config-file>

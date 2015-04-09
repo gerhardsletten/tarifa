@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="$ID"
-        version="$VERSION">
-    <name>$NAME</name>
-    <description>$DESCRIPTION</description>
-    <author>$AUTHOR_NAME</author>
-    <keywords>$KEYWORDS</keywords>
-    <license>$LICENSE</license>
-
-    <js-module src="www/$NAME.js" name="$NAME">
-        <clobbers target="$NAME" />
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="%ID" version="%VERSION">
+    <name>%NAME</name>
+    <description>%DESCRIPTION</description>
+    <author>%AUTHOR_NAME</author>
+    <keywords>%KEYWORDS</keywords>
+    <license>%LICENSE</license>
+%PLUGIN_USE_VARIABLES
+    <js-module src="www/%NAME.js" name="%NAME">
+        <clobbers target="%NAME" />
     </js-module>
-    $PLATFORMS
+%PLATFORMS
 </plugin>

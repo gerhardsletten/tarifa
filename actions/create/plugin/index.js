@@ -5,7 +5,6 @@ var Q = require('q'),
     intersection = require('interset/intersection'),
     spinner = require('char-spinner'),
     ask = require('../../../lib/questions/ask'),
-    PluginBuilder = require('../../../lib/xml/plugin.xml'),
     pathHelper = require('../../../lib/helper/path'),
     print = require('../../../lib/helper/print'),
     settings = require('../../../lib/settings'),
@@ -14,7 +13,7 @@ var Q = require('q'),
     templates = {
         www: {
             root: path.resolve(__dirname, 'template'),
-            files: [ 'www/$NAME.js' ]
+            files: [ 'www/%NAME.js' ]
         }
     },
 
@@ -56,54 +55,81 @@ function makeRootDirectory(resp) {
 function copyPluginXml(resp) {
     var tmplPath = path.join(__dirname, 'template', 'plugin.xml'),
         destPath = path.join(resp.path, 'plugin.xml');
-
     return fs.read(tmplPath).then(function (tmplContent) {
-        return settings.platforms.reduce(function (xmlP, platform) {
+        var platformsToRemove = difference(Object.keys(templates), resp.platforms.concat('www'));
+        return settings.platforms.filter(function (platform) {
+            return platformsToRemove.indexOf(platform) < 0;
+        }).reduce(function (xmlP, platform) {
             return Q.when(xmlP, function (xml) {
                 var pluginXMLPath = templates[platform].pluginXMLPath;
                 return fs.read(pluginXMLPath).then(function (content) {
-                    xml += content; return xml;
+                    xml += content;
+                    return resp.use_variables ? inject(path.dirname(pluginXMLPath), /use_variables.xml/, xml) : xml;
                 });
             });
         }, '').then(function (platformsContent) {
-            return tmplContent.replace(/\$PLATFORMS/g, platformsContent);
+            return tmplContent.replace(/\%PLATFORMS/g, platformsContent);
         });
-
     }).then(function (tmplContent) {
-        var destContent = tmplContent.replace(/\$ID/g, resp.id)
-                                     .replace(/\$TARGET_DIR/g, resp.id.replace('.', '/'))
-                                     .replace(/\$NAME/g, resp.name)
-                                     .replace(/\$VERSION/g, resp.version)
-                                     .replace(/\$DESCRIPTION/g, resp.description)
-                                     .replace(/\$AUTHOR_NAME/g, resp.author_name)
-                                     .replace(/\$KEYWORDS/g, resp.keywords)
-                                     .replace(/\$LICENSE/g, resp.license);
+        var destContent = tmplContent.replace(/\%ID/g, resp.id)
+                                     .replace(/\%TARGET_DIR/g, resp.id.replace('.', '/'))
+                                     .replace(/\%NAME/g, resp.name)
+                                     .replace(/\%VERSION/g, resp.version)
+                                     .replace(/\%DESCRIPTION/g, resp.description)
+                                     .replace(/\%AUTHOR_NAME/g, resp.author_name)
+                                     .replace(/\%KEYWORDS/g, resp.keywords)
+                                     .replace(/\%LICENSE/g, resp.license);
+        return resp.use_variables ? inject(path.dirname(tmplPath), /use_variables.xml/, destContent) : destContent.replace(/\%PLUGIN_USE_VARIABLES/g, '');
+    }).then(function (destContent) {
         return fs.write(destPath, destContent);
-    }).then(function () {
-        var platformsToRemove = difference(Object.keys(templates), resp.platforms.concat('www'));
-        return PluginBuilder.removePlatforms(destPath, platformsToRemove);
     }).then(function () { return resp; });
 }
 
 function copyPlatformsFiles(resp) {
     var platforms = intersection(Object.keys(templates), resp.platforms.concat('www')),
         filesToCopy = Array.prototype.concat.apply([], platforms.map(function (platform) {
-            return templates[platform].files.map(function (f) {
+            var files = templates[platform].files;
+            return (typeof files === 'function' ? files(resp) : files).map(function (f) {
                 return { src: path.resolve(templates[platform].root, f), dest: f };
             });
         }));
     return filesToCopy.reduce(function (promise, file) {
         return promise.then(function () {
             return fs.read(file.src).then(function (tmplContent) {
-                var destPath = path.resolve(resp.path, file.dest.replace(/\$NAME/g, resp.name)),
-                    destContent = tmplContent.replace(/\$ID/g, resp.id)
-                                             .replace(/\$NAME/g, resp.name);
+                var mixinFolder = path.dirname(file.src),
+                    mixinExtname = path.extname(file.src),
+                    mixinSearchPattern = new RegExp(path.basename(file.src, mixinExtname) + '_use_variables.*\\' + mixinExtname);
+                return resp.use_variables ? inject(mixinFolder, mixinSearchPattern, tmplContent) : tmplContent.replace(/\%NAME_USE_VARIABLES(_\d)?/g, '');
+            }).then(function (tmplContent) {
+                var destPath = path.resolve(resp.path, file.dest.replace(/\%NAME/g, resp.name)),
+                    destContent = tmplContent.replace(/\%ID/g, resp.id)
+                                             .replace(/\%NAME/g, resp.name);
                 return fs.makeTree(path.dirname(destPath)).then(function () {
                     return fs.write(destPath, destContent);
                 });
             });
         });
     }, Q()).then(function () { return resp; });
+}
+
+function inject(mixinFolder, mixinSearchPattern, dstStr) {
+    return fs.list(mixinFolder).then(function (filenames) {
+        return filenames.filter(function (filename) {
+            return mixinSearchPattern.test(filename);
+        }).sort().map(function (filename) {
+            return path.resolve(mixinFolder, filename);
+        });
+    }).then(function (mixinPaths) {
+        return mixinPaths.reduce(function (P, mixinPath) {
+            return Q.when(P, function (dstStr) {
+                return fs.read(mixinPath).then(function (mixinContent) {
+                    var basename = path.basename(mixinPath, path.extname(mixinPath)),
+                        mixinReplacePattern = (basename.indexOf('%') >= 0 ? '' : '%') + basename.toUpperCase();
+                    return dstStr.replace(mixinReplacePattern, mixinContent);
+                });
+            });
+        }, dstStr);
+    });
 }
 
 create.launchTasks = launchTasks;

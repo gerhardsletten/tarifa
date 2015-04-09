@@ -2,11 +2,11 @@
     "options": {
         "verbose": false
     },
-    "path": "plugin",
+    "path": "plugin-with-variables",
     "id": "tools.tarifa",
-    "name": "Plugin",
+    "name": "PluginWithVariables",
     "platforms": [ "ios", "android", "wp8", "browser" ],
-    "use_variables": false,
+    "use_variables": true,
     "version": "1.0.0",
     "description": "",
     "author_name": "",

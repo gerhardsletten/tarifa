@@ -1,0 +1,5 @@
+        <source-file src="android/res/values/cdv_install_variables.xml" target-dir="res/values" />
+        <config-file target="res/values/cdv_install_variables.xml" parent="/*">
+            <string name="cdv_required_variable">$REQUIRED_VARIABLE</string>
+            <string name="cdv_optional_variable">$OPTIONAL_VARIABLE</string>
+        </config-file>

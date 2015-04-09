@@ -1,11 +1,10 @@
     <platform name="browser">
         <config-file target="config.xml" parent="/*">
-            <feature name="$NAME">
-                <param name="browser-package" value="$NAME" />
+            <feature name="%NAME">
+                <param name="browser-package" value="%NAME" />
             </feature>
         </config-file>
-
-        <js-module src="src/browser/$NAME.js" name="$NAMEProxy">
+        <js-module src="browser/src/%NAME.js" name="%NAMEProxy">
             <runs />
         </js-module>
     </platform>

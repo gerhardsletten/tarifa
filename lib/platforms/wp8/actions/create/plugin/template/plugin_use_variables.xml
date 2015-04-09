@@ -1,0 +1,5 @@
+        <source-file src="wp8/Properties/CDVInstallVariables.xml" target-dir="../../Properties" />
+        <config-file target="Properties/CDVInstallVariables.xml" parent="/*">
+            <CDVInstallVariable name="REQUIRED_VARIABLE" value="$REQUIRED_VARIABLE" />
+            <CDVInstallVariable name="OPTIONAL_VARIABLE" value="$OPTIONAL_VARIABLE" />
+        </config-file>

@@ -1,0 +1,1 @@
+- (void)getCordovaInstallVariables:(CDVInvokedUrlCommand*)command;
