@@ -8,6 +8,7 @@ var browserify = require('browserify'),
     path = require('path'),
     fs = require('fs'),
     chokidar = require('chokidar'),
+    File = require('vinyl'),
 
     w, // watchify instance
     watcher, // chokidar watcher instance
@@ -23,18 +24,19 @@ function rejectOnError(d) {
 }
 
 function bundle(conf) {
-    var defer = Q.defer(),
-        settings = path.join(__dirname, 'settings.json'),
-        b = browserify({ cache: {}, packageCache: {}, fullPaths: true });
-
-    if(fs.existsSync(settings)) fs.unlinkSync(settings);
     if(fs.existsSync(out)) fs.unlinkSync(out);
 
-    fs.writeFileSync(settings, JSON.stringify(conf), null, 2);
-
-    var ws = fs.createWriteStream(out);
+    var defer = Q.defer(),
+        b = browserify({ cache: {}, packageCache: {}, fullPaths: true }),
+        settings = new File({
+            base: __dirname,
+            path: path.join(__dirname, 'settings.json'),
+            contents: new Buffer('module.exports = ' + JSON.stringify(conf) + ';')
+        }),
+        ws = fs.createWriteStream(out);
 
     b.add(src)
+        .exclude('settings')
         .require(settings, { expose : 'settings' })
         .bundle(rejectOnError(defer))
         .pipe(ws);
