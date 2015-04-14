@@ -30,7 +30,7 @@ function bundle(conf) {
         b = browserify({ cache: {}, packageCache: {}, fullPaths: true }),
         settings = new File({
             base: __dirname,
-            path: path.join(__dirname, 'settings.json'),
+            path: path.join(__dirname, 'settings.js'),
             contents: new Buffer('module.exports = ' + JSON.stringify(conf) + ';')
         }),
         ws = fs.createWriteStream(out);
