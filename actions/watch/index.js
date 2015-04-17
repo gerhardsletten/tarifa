@@ -9,10 +9,13 @@ var Q = require('q'),
     findPort = require('find-port'),
     rimraf = require('rimraf'),
     lr = require('connect-livereload'),
+    chokidar = require('chokidar'),
+    EventEmitter = require('events').EventEmitter,
     format = require('util').format,
     chalk = require('chalk'),
     cool = require('cool-ascii-faces'),
     argsHelper = require('../../lib/helper/args'),
+    collectionsHelper = require('../../lib/helper/collections'),
     pathHelper = require('../../lib/helper/path'),
     builder = require('../../lib/builder'),
     feature = require('../../lib/feature'),
@@ -63,37 +66,60 @@ function run(platform, config, httpPort, norun, verbose) {
 }
 
 function wait(localSettings, platform, config, ip, lrPort, httpPort, verbose) {
-    var closeBuilderWatch = builder.watch(pathHelper.root(), function (file) {
-        var t0 = (new Date()).getTime();
-        if(verbose) print.success('www project triggering tarifa');
-
-        var www = pathHelper.cordova_www(),
-            out = localSettings.project_output,
-            copy_method = settings.www_link_method[os.platform()],
-            copyPromise = (copy_method === 'copy') ? copyOutput(www, out) : Q.resolve();
-
-        return copyPromise.then(function () {
-            return buildAction.prepare({
-                localSettings: localSettings,
-                platform : platform,
-                configuration: config,
-                verbose: verbose
-            });
-        }).then(function () {
-            return onchange(ip, httpPort, lrPort, out, file, verbose);
-        }).then(function () {
-            if(verbose) {
-                var t = (new Date()).getTime();
-                print('\n\t%s', chalk.green(cool()));
-                print(chalk.magenta('\ndone in ~ %ds\n'), Math.floor((t-t0)/1000));
-            }
+    var root = pathHelper.root();
+    return watchFile(path.join(root, settings.publicTarifaFileName), verbose).then(function (tarifaFileWatch) {
+        tarifaFileWatch.on('error', function (error) {
+            if (verbose) { print(error); }
+            print.error('error watching %s', filePath);
         });
-    }, localSettings, platform, config);
 
-    return sigint(function () {
-        print();
-        if(verbose) print.success('closing www builder');
-        closeBuilderWatch();
+        var confEmitter = new EventEmitter();
+        var closeBuilderWatch = builder.watch(pathHelper.root(), function (file) {
+            var t0 = (new Date()).getTime();
+            if(verbose) print.success('www project triggering tarifa');
+
+            var www = pathHelper.cordova_www(),
+                out = localSettings.project_output,
+                copy_method = settings.www_link_method[os.platform()],
+                copyPromise = (copy_method === 'copy') ? copyOutput(www, out) : Q.resolve();
+
+            return copyPromise.then(function () {
+                return buildAction.prepare({
+                    localSettings: localSettings,
+                    platform : platform,
+                    configuration: config,
+                    verbose: verbose
+                });
+            }).then(function () {
+                return onchange(ip, httpPort, lrPort, out, file, verbose);
+            }).then(function () {
+                if(verbose) {
+                    var t = (new Date()).getTime();
+                    print('\n\t%s', chalk.green(cool()));
+                    print(chalk.magenta('\ndone in ~ %ds\n'), Math.floor((t-t0)/1000));
+                }
+            });
+        }, localSettings, platform, config, confEmitter);
+
+        setTimeout(function () {
+            var currentConf = localSettings.configurations[platform][config];
+            tarifaFileWatch.on('change', function () {
+                tarifaFile.parse(root, platform, config).then(function (changedSettings) {
+                    var changedConf = changedSettings.configurations[platform][config];
+                    if (!collectionsHelper.objectEqual(currentConf, changedConf)) {
+                        currentConf = changedConf;
+                        confEmitter.emit('change', changedConf);
+                    }
+                });
+            });
+        }, 1000);
+        
+        return sigint(function () {
+            print();
+            if(verbose) print.success('closing www builder');
+            tarifaFileWatch.close();
+            closeBuilderWatch();
+        });
     });
 }
 
@@ -150,6 +176,22 @@ function startHttpServer(lrPort, httpPort, platform, verbose) {
         if (verbose) { print(err); }
         d.reject(format('Cannot serve %s on port %s for platform %s', index, httpPort, platform));
     });
+    return d.promise;
+}
+
+function watchFile(filePath, verbose) {
+    var d = Q.defer(),
+        w = chokidar.watch(filePath),
+        onError = function (error) {
+            if (verbose) { print(error); }
+            return d.reject(format('cannot watch %s', filePath));
+        };
+    w.once('ready', function () {
+        w.removeListener('error', onError);
+        if (verbose) { print.success('watching %s', filePath); }
+        d.resolve(w);
+    });
+    w.once('error', onError);
     return d.promise;
 }
 

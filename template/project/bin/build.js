@@ -8,12 +8,12 @@ var browserify = require('browserify'),
     path = require('path'),
     fs = require('fs'),
     chokidar = require('chokidar'),
-    File = require('vinyl'),
 
     w, // watchify instance
     watcher, // chokidar watcher instance
 
     src = path.join(__dirname, '../src/app.js'),
+    settings = path.join(__dirname, 'settings.json'),
     out = path.join(__dirname, '../www/main.js'),
     www = path.join(__dirname, '../www');
 
@@ -24,16 +24,15 @@ function rejectOnError(d) {
 }
 
 function bundle(conf) {
+    var defer = Q.defer(),
+        b = browserify({ cache: {}, packageCache: {}, fullPaths: true });
+
+    if(fs.existsSync(settings)) fs.unlinkSync(settings);
     if(fs.existsSync(out)) fs.unlinkSync(out);
 
-    var defer = Q.defer(),
-        b = browserify({ cache: {}, packageCache: {}, fullPaths: true }),
-        settings = new File({
-            base: __dirname,
-            path: path.join(__dirname, 'settings.js'),
-            contents: new Buffer('module.exports = ' + JSON.stringify(conf) + ';')
-        }),
-        ws = fs.createWriteStream(out);
+    fs.writeFileSync(settings, JSON.stringify(conf), null, 2);
+
+    var ws = fs.createWriteStream(out);
 
     b.add(src)
         .exclude('settings')
@@ -63,19 +62,21 @@ function run(conf, f){
     });
 }
 
-module.exports.build = function build(platform, settings, config) {
-    return bundle(settings.configurations[platform][config]);
+module.exports.build = function build(platform, localSettings, config) {
+    return bundle(localSettings.configurations[platform][config]);
 };
 
-module.exports.watch = function watch(f, settings, platform, config) {
-
-    run(settings.configurations[platform][config], f).then(function (bw) {
-        w = bw;
+module.exports.watch = function watch(f, localSettings, platform, config, confEmitter) {
+    run(localSettings.configurations[platform][config], f).then(function (bw) {
         watcher = chokidar.watch(www, { ignored: /main\.js/, persistent: true });
 
         setTimeout(function () {
             watcher.on('all', function (evt, p) { f(p); });
         }, 4000);
+
+        confEmitter.on('change', function (conf) {
+            fs.writeFileSync(settings, JSON.stringify(conf), null, 2);
+        });
     });
 };
 
