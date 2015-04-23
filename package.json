@@ -69,6 +69,8 @@
   "optionalDependencies": {
     "ios-deploy": "1.5.0",
     "cordova-deploy-windows-phone": "3.5.0-2"
+    "cordova-deploy-windows-phone": "3.5.0-2",
+    "node-ios-device": "0.3.2"
   },
   "scripts": {
     "test": "mocha test/index",
