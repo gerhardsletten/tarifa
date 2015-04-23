@@ -27,6 +27,7 @@ with adequate questions and save the answers in the project files.
 
 * [nomad cli: cupertino](https://github.com/nomad/cupertino) (only for ios)
 * [ImageMagick](http://www.imagemagick.org/)
+* [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy)
 
 ### Documentation
 
@@ -61,6 +62,7 @@ Commands:
     hockeyapp      Interface with hockeyapp beta testing platform
     update         Update current project cordova platforms and core plugins
     watch          Watch current project
+    test           Test current project on your device with appium
 
 Options:
 
