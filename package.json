@@ -1,6 +1,6 @@
 {
   "name": "tarifa",
-  "version": "0.8.1-dev",
+  "version": "0.9.0-test",
   "author": "Paul Panserrieu <paul@42loops.com>",
   "description": "Your friendly toolchain for mobile app development on top of Apache Cordova",
   "repository": {
@@ -35,6 +35,7 @@
   ],
   "homepage": "http://tarifa.tools",
   "dependencies": {
+    "appium": "^1.3.7",
     "chalk": "1.0.0",
     "char-spinner": "1.0.1",
     "color": "0.8.0",
@@ -51,6 +52,7 @@
     "minimist": "1.1.1",
     "mkdirp": "0.5.0",
     "ncp": "2.0.0",
+    "node-firefoxos-cli-fork": "0.1.7",
     "plist": "1.1.0",
     "q": "1.2.0",
     "q-io": "1.12.0",
@@ -63,8 +65,7 @@
     "uuid": "2.0.1",
     "valid-java-identifier": "0.0.1",
     "xcode": "0.6.7",
-    "xml2js": "0.4.6",
-    "node-firefoxos-cli-fork": "0.1.7"
+    "xml2js": "0.4.6"
   },
   "optionalDependencies": {
     "ios-deploy": "1.5.0",

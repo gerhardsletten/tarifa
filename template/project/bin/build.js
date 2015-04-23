@@ -81,3 +81,32 @@ module.exports.close = function () {
     if(w) w.close();
     if(watcher) watcher.close();
 };
+
+module.exports.test = function (platform, settings, config, caps, appium, verbose) {
+    var Mocha = require('mocha'),
+        mocha = new Mocha(),
+        defer = Q.defer(),
+        settingsPath = path.resolve(__dirname, '../test/settings.json'),
+        settings = {
+            caps: caps,
+            appium: appium,
+            verbose: verbose,
+            platform: platform,
+            localSettings: settings,
+            configuration: config
+        };
+
+    fs.writeFileSync(settingsPath, JSON.stringify(settings), null, 2);
+
+    fs.readdirSync(path.resolve(__dirname, '../test')).filter(function(file){
+        return file.substr(-3) === '.js';
+    }).forEach(function(file){
+        mocha.addFile(path.join(__dirname, '../test', file));
+    });
+
+    mocha.run(function(failures) {
+        return failures ? defer.reject(failures + ' failures!') : defer.resolve();
+    });
+
+    return defer.promise;
+};

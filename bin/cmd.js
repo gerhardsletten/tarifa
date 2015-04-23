@@ -26,7 +26,8 @@ var availableActions = [
         { name : 'check', action : '../actions/check' },
         { name : 'hockeyapp', action: '../actions/hockeyapp' },
         { name : 'update', action: '../actions/update' },
-        { name : 'watch', action: '../actions/watch' }
+        { name : 'watch', action: '../actions/watch' },
+        { name : 'test', action: '../actions/test'}
     ],
     singleOptions = [
         { small: 'v', name : 'version', action : printVersion },
