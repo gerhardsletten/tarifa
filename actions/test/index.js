@@ -8,16 +8,19 @@ var Q = require('q'),
     pathHelper = require('../../lib/helper/path'),
     print = require('../../lib/helper/print'),
     builder = require('../../lib/builder'),
+    feature = require('../../lib/feature'),
     buildAction = require('../build'),
     askDevice = require('../run/ask_device'),
     devices = require('../../lib/devices'),
     tarifaFile = require('../../lib/tarifa-file');
 
+var log = function (o) { print(o.toString().replace(/\n/g, '')); };
+
 var launchAppiumServer = function (conf) {
     var args = "--command-timeout 7200 --automation-name Appium --log-level debug".split(' ');
     conf.appiumChild = spawn(path.resolve(__dirname, '../../node_modules/appium/bin/appium.js'), args);
-    if(conf.verbose) conf.appiumChild.stdout.on('data', function (d) { print(d.toString().replace(/\n/g, '')); });
-    if(conf.verbose) conf.appiumChild.stderr.on('data', function (d) { print(d.toString().replace(/\n/g, '')); });
+    if(conf.verbose) conf.appiumChild.stdout.on('data', log);
+    if(conf.verbose) conf.appiumChild.stderr.on('data', log);
     return Q.delay(conf, 2000);
 };
 
@@ -25,8 +28,8 @@ var launchIosWebkitDebugProxy = function (conf) {
     if (conf.platform === 'ios') {
         var args = format("-c %s:27753", conf.device.value).split(' ');
         conf.IosWebkitDebugProxy = spawn('ios_webkit_debug_proxy', args);
-        if(conf.verbose) conf.IosWebkitDebugProxy.stdout.on('data', function (d) { print(d.toString().replace(/\n/g, '')); });
-        if(conf.verbose) conf.IosWebkitDebugProxy.stderr.on('data', function (d) { print(d.toString().replace(/\n/g, '')); });
+        if(conf.verbose) conf.IosWebkitDebugProxy.stdout.on('data', log);
+        if(conf.verbose) conf.IosWebkitDebugProxy.stderr.on('data', log);
         return Q.delay(conf, 1000);
     } else {
         return conf;
@@ -106,6 +109,8 @@ var runTest = function (conf) {
 
 var test = function (platform, config, verbose) {
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
+        if(!feature.isAvailable('test', platform))
+            return Q.reject(format('feature not available on %s!', platform));
         return {
             localSettings: localSettings,
             platform: platform,
