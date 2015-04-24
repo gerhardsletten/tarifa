@@ -5,7 +5,8 @@
   <author email="paul@42loops.com" href="http://42loops.com">paul</author>
   <content src="index.html"/>
   <access origin="*"/>
-  <access origin="tel:" launch-external="yes" />
+  <allow-navigation href="*"/>
+  <allow-intent href="tel:*"/>
   <preference name="DisallowOverscroll" value="true"/>
   <preference name="EnableViewportScale" value="false"/>
   <preference name="KeyboardDisplayRequiresUserAction" value="false"/>
