@@ -4,7 +4,6 @@ var should = require('should'),
     format = require('util').format,
     tmp = require('tmp'),
     setupHelper = require('../helper/setup'),
-    isAvailableOnHostSync = require('../../lib/cordova/platforms').isAvailableOnHostSync,
     runAction = require('../../actions/run');
 
 function testRun(projectDefer) {

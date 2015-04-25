@@ -41,5 +41,6 @@ module.exports = function (options) {
         require('./actions/update')(projectDefer, options);
 
         if(options.run) require('./actions/run')(projectDefer, options);
+        if(options.run) require('./actions/test')(projectDefer, options);
     });
 };

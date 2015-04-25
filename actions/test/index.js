@@ -142,4 +142,5 @@ var action = function (argv) {
     return fs.read(helpPath).then(print);
 };
 
+action.test = test;
 module.exports = action;
