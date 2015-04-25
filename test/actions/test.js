@@ -10,7 +10,7 @@ function testTest(projectDefer) {
 
     describe('tarifa test', function() {
         if(os.platform() === 'darwin') {
-            it(format("tarifa run ios"), function () {
+            it(format("tarifa test ios"), function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
                     return testAction.test('ios', 'default', false);
@@ -18,7 +18,7 @@ function testTest(projectDefer) {
             });
         }
 
-        it(format("tarifa run android"), function () {
+        it(format("tarifa test android"), function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
                 return testAction.test('android', 'default', false);
@@ -31,7 +31,7 @@ function testTest(projectDefer) {
 if(module.parent.id.indexOf("mocha.js") > 0) {
     var projectDefer = Q.defer();
     before('create a empty project', setupHelper.createProject(tmp, projectDefer, format('create_project_response_%s.json', os.platform())));
-    testRun(projectDefer);
+    testTest(projectDefer);
 }
 
 module.exports = testTest;
