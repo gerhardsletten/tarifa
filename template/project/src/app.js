@@ -13,7 +13,7 @@ qstart.then(function () {
         return Q.delay(logo, 500).then(Zanimo.f('transform', 'rotateZ(0deg)', 300, 'ease-in-out'));
     }).then(function () {
         p.innerHTML = format(
-            '<dl><dt>name</dt><dd>%s</dd><dt>id</dt><dd>%s</dd></dl>',
+            '<dl><dt>name</dt><dd id="name">%s</dd><dt>id</dt><dd id="id">%s</dd></dl>',
             settings.product_name,
             settings.id
         );

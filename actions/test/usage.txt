@@ -1,0 +1,9 @@
+Usage: tarifa test <platform> [configuration]
+
+Start current project's appium tests on the given platform, with no
+configuration 'default' will be used.
+
+Options:
+
+    --help, -h            Show this message
+    --verbose, -V         Be more verbose on everything

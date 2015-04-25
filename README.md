@@ -27,10 +27,11 @@ with adequate questions and save the answers in the project files.
 
 * [nomad cli: cupertino](https://github.com/nomad/cupertino) (only for ios)
 * [ImageMagick](http://www.imagemagick.org/)
+* [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy)
 
 ### Documentation
 
-Documentation can be read on [tarifa-book](http://42loops.gitbooks.io/tarifa/content/index.html).
+Documentation can be read on [doc.tarifa.tools](http://doc.tarifa.tools) ([pdf](https://www.gitbook.com/download/pdf/book/42loops/tarifa), [epub](https://www.gitbook.com/download/epub/book/42loops/tarifa), [mobi](https://www.gitbook.com/download/mobi/book/42loops/tarifa)).
 
 ### Install
 
@@ -61,6 +62,7 @@ Commands:
     hockeyapp      Interface with hockeyapp beta testing platform
     update         Update current project cordova platforms and core plugins
     watch          Watch current project
+    test           Test current project on your device with appium
 
 Options:
 
