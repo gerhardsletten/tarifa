@@ -87,6 +87,16 @@ describe('[shared] read/write cordova\'s config.xml', function() {
                         {
                             type: 'allow-intent',
                             origin: ['tel:*']
+                        },
+                        {
+                            type: 'allow-navigation',
+                            origin: ['github.com']
+                        }
+                    ],
+                    android: [
+                        {
+                            type: 'allow-navigation',
+                            origin: ['google.com']
                         }
                     ]
                 }
@@ -107,6 +117,12 @@ describe('[shared] read/write cordova\'s config.xml', function() {
                     result.whitelist.shared.filter(function (w) {
                         return w.type === 'allow-intent';
                     })[0].origin[0].should.equal('tel:*');
+                    result.whitelist.shared.filter(function (w) {
+                        return w.type === 'allow-navigation';
+                    }).should.have.length(0);
+                    result.whitelist.android.filter(function (w) {
+                        return w.type === 'allow-navigation';
+                    })[0].origin[0].should.equal('google.com');
                     result.whitelist.shared.should.have.length(2);
                     result.preference.DisallowOverscroll.should.equal('false');
                     result.preference.KeyboardDisplayRequiresUserAction.should.equal('false');
