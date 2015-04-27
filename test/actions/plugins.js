@@ -19,14 +19,14 @@ function testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer) {
         it('tarifa plugin add ../fixtures/emptyplugin', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return pluginAction.plugin('add', emptyPluginPath, false);
+                return pluginAction.plugin('add', emptyPluginPath, {});
             });
         });
 
         it('tarifa plugin list', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return pluginAction.list(false).then(function (rslt) {
+                return pluginAction.list().then(function (rslt) {
                     rslt.indexOf("test.test.test").should.equal(1);
                 });
             });
@@ -35,7 +35,7 @@ function testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer) {
         it('re tarifa plugin add ./fixtures/emptyplugin', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return pluginAction.plugin('add', emptyPluginPath, false).should.be.rejected;
+                return pluginAction.plugin('add', emptyPluginPath, {}).should.be.rejected;
             });
         });
 
@@ -49,8 +49,8 @@ function testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer) {
         it('tarifa plugin add https://github.com/apache/cordova-plugin-vibration.git#r0.3.11', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return pluginAction.plugin('add', 'https://github.com/apache/cordova-plugin-vibration.git#r0.3.11', false).then(function () {
-                    return pluginAction.list(false).then(function (rslt) {
+                return pluginAction.plugin('add', 'https://github.com/apache/cordova-plugin-vibration.git#r0.3.11', {}).then(function () {
+                    return pluginAction.list().then(function (rslt) {
                         rslt.indexOf("org.apache.cordova.vibration").should.equal(1);
                     });
                 });
@@ -71,8 +71,8 @@ function testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer) {
             it(format('tarifa plugin add %s', plugin.uri), function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
-                    return pluginAction.plugin('add', plugin.uri, false).then(function () {
-                        return pluginAction.list(false).then(function (rslt) {
+                    return pluginAction.plugin('add', plugin.uri, {}).then(function () {
+                        return pluginAction.list().then(function (rslt) {
                             rslt.indexOf(plugin.value).should.be.above(-1);
                         });
                     });
@@ -93,8 +93,8 @@ function testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer) {
             it(format('tarifa plugin remove %s', plugin.value), function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
-                    return pluginAction.plugin('remove', plugin.value, false).then(function () {
-                        return pluginAction.list(false).then(function (rslt) {
+                    return pluginAction.plugin('remove', plugin.value, {}).then(function () {
+                        return pluginAction.list().then(function (rslt) {
                             rslt.indexOf(plugin.value).should.be.below(0);
                         });
                     });
@@ -109,8 +109,8 @@ function testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer) {
                 this.timeout(0);
                 return projectDefer.promise.then(function (projectRslt) {
                     return pluginDefer.promise.then(function (pluginRslt) {
-                        return pluginAction.plugin('add', pluginRslt.response.path, variables, false).then(function () {
-                            return pluginAction.list(false).then(function (rslt) {
+                        return pluginAction.plugin('add', pluginRslt.response.path, variables, false, false).then(function () {
+                            return pluginAction.list().then(function (rslt) {
                                 rslt.indexOf(pluginRslt.response.id).should.be.above(-1);
                             });
                         });
@@ -131,8 +131,8 @@ function testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer) {
                 this.timeout(0);
                 return projectDefer.promise.then(function (projectRslt) {
                     return pluginDefer.promise.then(function (pluginRslt) {
-                        return pluginAction.plugin('remove', pluginRslt.response.id, false).then(function () {
-                            return pluginAction.list(false).then(function (rslt) {
+                        return pluginAction.plugin('remove', pluginRslt.response.id, {}).then(function () {
+                            return pluginAction.list().then(function (rslt) {
                                 rslt.indexOf(pluginRslt.response.id).should.be.below(0);
                             });
                         });

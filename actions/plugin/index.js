@@ -63,11 +63,11 @@ function list() {
     return plugins.list(pathHelper.root());
 }
 
-function plugin(action, arg, variables, verbose) {
-    return raw_plugin(pathHelper.root(), action, arg, variables, verbose);
+function plugin(action, arg, variables, link, verbose) {
+    return raw_plugin(pathHelper.root(), action, arg, variables, link, verbose);
 }
 
-function raw_plugin (root, action, arg, variables, verbose) {
+function raw_plugin (root, action, arg, variables, link, verbose) {
     return tarifaFile.parse(root)
         .then(function (settings) {
             if(action == 'remove' && (!settings.plugins || Object.keys(settings.plugins).indexOf(arg) < 0))
@@ -80,10 +80,12 @@ function raw_plugin (root, action, arg, variables, verbose) {
                 var p = settings.plugins[arg],
                     uri= isObject(p) ? p.uri: p,
                     vars = isObject(p) ? p.variables: {};
-                return plugins.reload(root, arg, uri, { cli_variables: vars })
-                    .then(function () { return log('reload', verbose)(arg) });
+                return plugins.reload(root, arg, uri, { cli_variables: vars, link: link })
+                    .then(function () { return log('reload', verbose)(arg); });
             } else {
-                return plugins[action](root, arg, { cli_variables: variables })
+                var opts = { cli_variables: variables };
+                if (action === 'add') { opts.link = link; }
+                return plugins[action](root, arg, opts)
                     .then(function (val) {
                         if (!val || !val.val || !val.uri) {
                             return Q.reject("no plugin changed!");
@@ -107,9 +109,10 @@ function getVariableFromCli(v, rst) {
 function action (argv) {
     var verbose = false,
         helpPath = path.join(__dirname, 'usage.txt'),
-        variables;
+        link = false,
+        variables = null;
 
-    if(argsHelper.checkValidOptions(argv, ['V', 'verbose', 'variable'])) {
+    if(argsHelper.checkValidOptions(argv, ['V', 'verbose', 'variable', 'link'])) {
         if(argsHelper.matchOption(argv, 'V', 'verbose')) {
             verbose = true;
         }
@@ -122,12 +125,19 @@ function action (argv) {
             else
                 variables = getVariableFromCli(variables);
         }
+        if (argsHelper.matchOption(argv, null, 'link')) {
+            if (argv._[0] === 'add' || argv._[0] === 'reload') {
+                link = true;
+            } else {
+                return fs.read(helpPath).then(print);
+            }
+        }
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
             return list().then(printPlugins);
         }
         if(Object.keys(actions).indexOf(argv._[0]) > -1 &&
             argsHelper.matchArgumentsCount(argv, [2])) {
-                return plugin(argv._[0], argv._[1], variables, verbose);
+                return plugin(argv._[0], argv._[1], variables, link, verbose);
             }
     }
 
