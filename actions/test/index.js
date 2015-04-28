@@ -120,8 +120,8 @@ var test = function (platform, config, verbose) {
         };
     })
     .then(askDevice)
-    .then(buildAction.buildƒ)
     .then(launchAppiumServer)
+    .then(buildAction.buildƒ)
     .then(launchIosWebkitDebugProxy)
     .then(genDefaultCaps)
     .then(runTest);
