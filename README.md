@@ -55,7 +55,8 @@ Commands:
     plugin         Add, remove or list cordova plugins in your project
     build          Build the project for a given platform and configuration
     run            Run the project for a given platform and configuration on your device
-    info           Get some information about your environment and your devices
+    info           Get some information about your environment
+    device         Get informations about your connected devices
     config         Configure the current project
     check          Check the current project after cloning
     clean          Clean the given platform

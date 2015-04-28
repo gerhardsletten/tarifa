@@ -27,7 +27,10 @@ var availableActions = [
         { name : 'hockeyapp', action: '../actions/hockeyapp' },
         { name : 'update', action: '../actions/update' },
         { name : 'watch', action: '../actions/watch' },
-        { name : 'test', action: '../actions/test'}
+        { name : 'test', action: '../actions/test'},
+        { name : 'device', action: '../actions/device'},
+        // alias
+        { name : 'devices', action: '../actions/device'}
     ],
     singleOptions = [
         { small: 'v', name : 'version', action : printVersion },

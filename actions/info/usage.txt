@@ -1,6 +1,6 @@
 Usage: tarifa info
 
-Get some information about your environment and your devices.
+Get some information about your environment.
 
 Options:
 

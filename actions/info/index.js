@@ -11,7 +11,6 @@ var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
     platformHelper = require('../../lib/helper/platform'),
-    devices = require('../../lib/devices'),
     settings = require('../../lib/settings'),
     print = require('../../lib/helper/print'),
     tarifaFile = require('../../lib/tarifa-file'),
@@ -137,14 +136,6 @@ function check_requirements(verbose) {
     };
 }
 
-function printDevices(platforms, verbose) {
-    return platforms.reduce(function (p, device) {
-        return p.then(function () {
-            return devices[device] ? devices[device].print(verbose) : Q();
-        });
-    }, Q());
-}
-
 function info(verbose) {
     print("%s %s", chalk.green('node version:'), process.versions.node);
     print("%s %s", chalk.green('cordova-lib version:'), pkg.dependencies['cordova-lib']);
@@ -157,7 +148,7 @@ function info(verbose) {
         .then(check_tools(verbose))
         .then(function (msg) {
             if(!msg.noerrors) print.warning("not all needed tools are available!");
-            return printDevices(msg.platforms, verbose);
+            return msg;
         });
 }
 
