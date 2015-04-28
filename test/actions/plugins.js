@@ -27,7 +27,7 @@ function testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer) {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
                 return pluginAction.list().then(function (rslt) {
-                    rslt.indexOf("test.test.test").should.equal(1);
+                    rslt.indexOf("test.test.test").should.equal(2);
                 });
             });
         });
@@ -51,7 +51,7 @@ function testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer) {
             return projectDefer.promise.then(function (rslt) {
                 return pluginAction.plugin('add', 'https://github.com/apache/cordova-plugin-vibration.git#r0.3.11', {}).then(function () {
                     return pluginAction.list().then(function (rslt) {
-                        rslt.indexOf("org.apache.cordova.vibration").should.equal(1);
+                        rslt.indexOf("org.apache.cordova.vibration").should.equal(2);
                     });
                 });
             });
