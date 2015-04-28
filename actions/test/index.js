@@ -68,15 +68,15 @@ var genDefaultCaps = function (conf) {
         autoWebview: true
     };
 
-    return devices[conf.platform].info(true).then(function (items) {
+    return devices.list(conf.platform).then(function (items) {
         var rslt = items.filter(function (item) {
-            return item.udid && item.udid === conf.device.value;
+            return item.description.udid && item.description.udid === conf.device.value;
         });
 
         if(rslt.length > 0) { // ios
             conf.caps.udid = conf.device.value;
-            conf.caps.deviceName = rslt[0].name;
-            conf.caps.platformVersion = rslt[0].productVersion;
+            conf.caps.deviceName = rslt[0].description.name;
+            conf.caps.platformVersion = rslt[0].description.productVersion;
             return conf;
         } else { // android
             return findAndroidPlatformVersion(conf).then(function (v) {

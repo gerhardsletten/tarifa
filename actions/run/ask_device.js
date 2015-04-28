@@ -4,30 +4,34 @@ var Q = require('q'),
     ask = require('../../lib/questions/ask');
 
 module.exports = function (conf) {
-    if(!devices[conf.platform]) return conf;
+    if(!devices.isSupported(conf.platform)) return conf;
 
-    return devices[conf.platform].info().then(function (items) {
+    return devices.list(conf.platform).then(function (items) {
         if (items.length === 0) return Q.reject("No device available!");
 
-        if (items.length === 1) {
-            conf.device = { value: items[0], index : 0 };
+        var ids = items.map(function (item, idx) { return { value: item.id, index: idx }; });
+        if (ids.length === 1) {
+            conf.device = ids[0];
             return conf;
         }
 
         if (conf.all) {
-            conf.devices = items;
+            conf.devices = ids;
             return conf;
         }
 
         return ask.question(
             'Which device do you want to use?',
             'list',
-            conf.debug ? items : ['all'].concat(items)
+            conf.debug ? ids : ['all'].concat(ids)
         ).then(function (resp) {
             if (resp !== 'all')
-                conf.device = { value: resp, index : items.indexOf(resp) };
+                conf.device = {
+                    value: resp,
+                    index : ids.indexOf(resp)
+                };
             else
-                conf.devices = items;
+                conf.devices = ids;
             return conf;
         });
     });

@@ -16,9 +16,9 @@ function listAvailablePlatforms() {
 }
 
 function printDevices(platforms, verbose) {
-    return platforms.reduce(function (p, device) {
+    return platforms.reduce(function (p, platform) {
         return p.then(function () {
-            return devices[device] ? devices[device].print(verbose) : Q();
+            return devices.prettyPrint(platform, verbose);
         });
     }, Q());
 }
@@ -31,9 +31,9 @@ module.exports = function (argv) {
     var verbose = false,
         helpPath = path.join(__dirname, 'usage.txt'),
         hasNoArgs = argsHelper.matchArgumentsCount(argv, [0]),
-        hasValidDumpOpt = argsHelper.checkValidOptions(argv, ['V', 'verbose']);
+        hasValidOpt = argsHelper.checkValidOptions(argv, ['V', 'verbose']);
 
-    if(hasNoArgs && hasValidDumpOpt) {
+    if(hasNoArgs && hasValidOpt) {
         return device(argsHelper.matchOption(argv, 'V', 'verbose'));
     }
     return fs.read(helpPath).then(print);
