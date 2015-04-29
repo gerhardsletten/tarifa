@@ -29,6 +29,7 @@ with adequate questions and save the answers in the project files.
 * [nomad cli: cupertino](https://github.com/nomad/cupertino) (only ios)
 * [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy)  (only ios)
 * [libimobiledevice](http://www.libimobiledevice.org/)  (only ios)
+* [ideviceinstaller](http://www.libimobiledevice.org/)  (only ios)
 
 ### Documentation
 
