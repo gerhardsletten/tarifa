@@ -54,7 +54,6 @@ var run = function (platform, config, localSettings, options) {
         localSettings: localSettings,
         platform: platform,
         configuration: config,
-        cleanResources: options.cleanResources,
         verbose: options.verbose,
         nobuild: options.nobuild,
         debug: options.debug,
@@ -95,7 +94,6 @@ var runMultiplePlatforms = function (platforms, config, options) {
 var action = function (argv) {
     var options = {
             verbose : false,
-            cleanResources: false,
             nobuild:false,
             debug:false,
             all:false
@@ -110,9 +108,6 @@ var action = function (argv) {
 
     if (argsHelper.matchOption(argv, null, 'all'))
         options.all = true;
-
-    if (argsHelper.matchOption(argv, null, 'clean-resources'))
-        options.cleanResources = true;
 
     if (argsHelper.matchOption(argv, 'd', 'debug')) {
         options.debug = true;

@@ -8,8 +8,6 @@ Options:
     --help, -h              Show this message
     --verbose, -V           Be more verbose on everything
     --keep-file-changes     Keep all modifications made by tarifa in your files
-    --clean-resources       Clean cached resources (icons and splashscreens) before build,
-                            only for android platform
 
 Examples:
 
