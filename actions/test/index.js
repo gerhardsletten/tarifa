@@ -75,6 +75,8 @@ var genDefaultCaps = function (conf) {
 
         if(rslt.length > 0) { // ios
             conf.caps.udid = conf.device.value;
+            if (!rslt[0].description.name)
+                return Q.reject('Not able to find device name!');
             conf.caps.deviceName = rslt[0].description.name;
             conf.caps.platformVersion = rslt[0].description.productVersion;
             return conf;
@@ -120,10 +122,10 @@ var test = function (platform, config, verbose) {
         };
     })
     .then(askDevice)
+    .then(genDefaultCaps)
     .then(launchAppiumServer)
     .then(buildAction.buildƒ)
     .then(launchIosWebkitDebugProxy)
-    .then(genDefaultCaps)
     .then(runTest);
 };
 
