@@ -1,5 +1,6 @@
 var Q = require('q'),
     fs = require('q-io/fs'),
+    os = require('os'),
     path = require('path'),
     format = require('util').format,
     spawn = require('child_process').spawn,
@@ -17,8 +18,14 @@ var Q = require('q'),
 var log = function (o) { print(o.toString().replace(/\n/g, '')); };
 
 var launchAppiumServer = function (conf) {
-    var args = "--command-timeout 7200 --automation-name Appium --log-level debug".split(' ');
-    conf.appiumChild = spawn(path.resolve(__dirname, '../../node_modules/appium/bin/appium.js'), args);
+     var appiumPath = path.resolve(__dirname, '../../node_modules/appium/bin/appium.js'),
+         cmd = appiumPath,
+         args = "--command-timeout 7200 --automation-name Appium --log-level debug";
+    if (os.platform() === 'win32') {
+        cmd = 'node';
+        args = appiumPath + ' ' + args;
+    }
+    conf.appiumChild = spawn(cmd, args.split(' '));
     if(conf.verbose) conf.appiumChild.stdout.on('data', log);
     if(conf.verbose) conf.appiumChild.stderr.on('data', log);
     return Q.delay(conf, 2000);

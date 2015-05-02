@@ -1,6 +1,6 @@
 {
   "name": "tarifa",
-  "version": "0.9.0-dev",
+  "version": "0.9.0",
   "author": "Paul Panserrieu <paul@42loops.com>",
   "description": "Your friendly toolchain for mobile app development on top of Apache Cordova",
   "repository": {
@@ -15,7 +15,8 @@
     "ios",
     "android",
     "browser",
-    "app",
+    "wp8",
+    "firefoxos",
     "cli",
     "worflow"
   ],
