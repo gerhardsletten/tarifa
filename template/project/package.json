@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "browserify": "6.3.2",
-    "chokidar": "0.10.5",
+    "chokidar": "1.0.1",
     "watchify": "2.1.1",
     "chai": "2.2.0",
     "chai-as-promised": "4.3.0",
