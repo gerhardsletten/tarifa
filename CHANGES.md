@@ -2,14 +2,14 @@
 
 ### changes
 
-- add `tarifa test` wrapping `appium` for android and ios [#202](https://github.com/TarifaTools/tarifa/issues/202)
+- add `tarifa test` wrapping appium for android and ios [#202](https://github.com/TarifaTools/tarifa/issues/202)
 - add `tarifa device` to output informations from connected devices [#195](https://github.com/TarifaTools/tarifa/issues/195)
 - remove devices output from `tarifa info` [#195](https://github.com/TarifaTools/tarifa/issues/195)
 - change ios build number via `tarifa.json` [#197](https://github.com/TarifaTools/tarifa/issues/197)
 - be able to overwrite android:minSdkVersion via `tarifa.json` [#206](https://github.com/TarifaTools/tarifa/issues/206)
 - watching `tarifa.json` in tarifa watch [#203](https://github.com/TarifaTools/tarifa/issues/203)
 - create plugins relying on install time variables [#199](https://github.com/TarifaTools/tarifa/issues/199)
-- refactor lib/devices api with the use of `node-ios-device` for ios [#208](https://github.com/TarifaTools/tarifa/issues/208)
+- refactor lib/devices api with the use of node-ios-device (v0.3.2) [#208](https://github.com/TarifaTools/tarifa/issues/208); node-ios-device does not work for iojs, which impacts `tarifa test` on ios: not able find names of connected devices.
 
 ## 0.8.0 (04/07/2015)
 
