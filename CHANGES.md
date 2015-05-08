@@ -1,3 +1,9 @@
+## 0.9.1 (05/08/2015)
+
+### changes
+
+- [ios] fix regression on build tasks order from 0.9.0
+
 ## 0.9.0 (05/02/2015)
 
 ### changes
