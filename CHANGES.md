@@ -1,3 +1,10 @@
+## 0.9.2 (05/11/2015)
+
+### changes
+
+- [android] add `keystore_password` and `alias_password` signing attributes in `private.json` to allow
+apk signing without  prompting for passwords.
+
 ## 0.9.1 (05/08/2015)
 
 ### changes
