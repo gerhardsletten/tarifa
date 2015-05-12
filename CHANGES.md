@@ -1,9 +1,16 @@
+## 0.9.3 (05/12/2015)
+
+### changes
+
+- [wp8] add `certificate_password` signing attributes in `private.json` to allow
+xap signing without prompting for passwords.
+
 ## 0.9.2 (05/11/2015)
 
 ### changes
 
 - [android] add `keystore_password` and `alias_password` signing attributes in `private.json` to allow
-apk signing without  prompting for passwords.
+apk signing without prompting for passwords.
 
 ## 0.9.1 (05/08/2015)
 
