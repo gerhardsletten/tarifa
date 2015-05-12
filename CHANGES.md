@@ -1,3 +1,9 @@
+## 0.9.4 (05/12/2015)
+
+### changes
+
+- [wp8] fix `XapSignTool` path.
+
 ## 0.9.3 (05/12/2015)
 
 ### changes
