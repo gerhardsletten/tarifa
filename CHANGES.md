@@ -1,3 +1,9 @@
+## 0.9.5 (05/13/2015)
+
+### changes
+
+- [wp8] fix multiples configurations builds: add missing xap copy task.
+
 ## 0.9.4 (05/12/2015)
 
 ### changes
