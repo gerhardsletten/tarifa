@@ -1,3 +1,9 @@
+## 0.9.6 (05/15/2015)
+
+### changes
+
+- [browser] re-enable watch on browser platform.
+
 ## 0.9.5 (05/13/2015)
 
 ### changes
