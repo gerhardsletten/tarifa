@@ -67,7 +67,7 @@ function testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer) {
 
     describe('be able to add and remove any default plugins', function () {
 
-        plugins.filter(function (p) { return !p["default"] && p.value !== 'org.apache.cordova.file'; }).forEach(function (plugin) {
+        plugins.filter(function (p) { return !p["default"] && p.value !== 'cordova-plugin-file'; }).forEach(function (plugin) {
             it(format('tarifa plugin add %s', plugin.uri), function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
@@ -89,7 +89,7 @@ function testPlugins(projectDefer, pluginDefer, pluginWithVariablesDefer) {
             });
         });
 
-        plugins.filter(function (p) { return p.value !== 'org.apache.cordova.file'; }).forEach(function (plugin) {
+        plugins.filter(function (p) { return p.value !== 'cordova-plugin-file'; }).forEach(function (plugin) {
             it(format('tarifa plugin remove %s', plugin.value), function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
