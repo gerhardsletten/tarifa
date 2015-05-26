@@ -79,7 +79,6 @@ var buildƒ = function (conf){
             return conf;
         })
         .then(prepareAction.prepareƒ)
-        .then(conf.cleanResources ? runTasks('clean-resources'): Q.resolve)
         .then(runTasks('pre-cordova-prepare'))
         .then(prepare)
         .then(runTasks('pre-cordova-compile'))
@@ -98,12 +97,11 @@ var buildƒ = function (conf){
         });
 };
 
-var buildMultipleConfs = function(platform, configs, localSettings, keepFileChanges, cleanResources, verbose) {
+var buildMultipleConfs = function(platform, configs, localSettings, keepFileChanges, verbose) {
     var message = {
         platform: platform,
         localSettings: localSettings,
         keepFileChanges: keepFileChanges,
-        cleanResources: cleanResources,
         verbose: verbose
     };
 
@@ -120,7 +118,7 @@ var buildMultipleConfs = function(platform, configs, localSettings, keepFileChan
     });
 };
 
-var buildMultiplePlatforms = function (platforms, config, keepFileChanges, cleanResources, verbose) {
+var buildMultiplePlatforms = function (platforms, config, keepFileChanges, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = (platforms || localSettings.platforms.map(platformHelper.getName)).filter(platformsLib.isAvailableOnHostSync);
         return tarifaFile.checkPlatforms(platforms, localSettings).then(function (availablePlatforms) {
@@ -131,7 +129,7 @@ var buildMultiplePlatforms = function (platforms, config, keepFileChanges, clean
                     } else if (argsHelper.matchWildcard(config)) {
                         config = argsHelper.getFromWildcard(config);
                     }
-                    return buildMultipleConfs(platform, config, localSettings, keepFileChanges, cleanResources, verbose);
+                    return buildMultipleConfs(platform, config, localSettings, keepFileChanges, verbose);
                 });
             }, Q());
         });
@@ -141,7 +139,6 @@ var buildMultiplePlatforms = function (platforms, config, keepFileChanges, clean
 var action = function (argv) {
     var verbose = false,
         keepFileChanges = false,
-        cleanResources = false,
         helpPath = path.join(__dirname, 'usage.txt');
 
     // match options
@@ -151,18 +148,14 @@ var action = function (argv) {
     if (argsHelper.matchOption(argv, null, 'keep-file-changes'))
         keepFileChanges = true;
 
-    if (argsHelper.matchOption(argv, null, 'clean-resources'))
-        cleanResources = true;
-
     if (argsHelper.matchCmd(argv._, ['__all__', '*']))
-        return buildMultiplePlatforms(null, argv._[1] || 'default', keepFileChanges, cleanResources, verbose);
+        return buildMultiplePlatforms(null, argv._[1] || 'default', keepFileChanges, verbose);
 
     if (argsHelper.matchCmd(argv._, ['__some__', '*'])) {
         return buildMultiplePlatforms(
             argsHelper.getFromWildcard(argv._[0]),
             argv._[1] || 'default',
             keepFileChanges,
-            cleanResources,
             verbose
         );
     }
