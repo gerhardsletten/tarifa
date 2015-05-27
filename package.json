@@ -72,7 +72,7 @@
   "optionalDependencies": {
     "ios-deploy": "1.5.0",
     "cordova-deploy-windows-phone": "3.5.0-2",
-    "node-ios-device": "peutetre/node-ios-device#0.4.1"
+    "node-ios-device-fork": "0.4.1"
   },
   "scripts": {
     "test": "mocha test/index && mocha test/actions/platform_version && mocha test/actions/update",
