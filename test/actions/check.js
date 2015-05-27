@@ -22,13 +22,13 @@ function testCheck(projectDefer) {
             return projectDefer.promise.then(function (rslt) {
                 rimraf.sync(path.resolve(rslt.dirPath, settings.cordovaAppPath));
                 rimraf.sync(path.resolve(rslt.dirPath, settings.images));
-                return checkAction.check(false);
+                return checkAction.check(false, true);
             });
         });
         it('should not fail when used with --force', function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return checkAction.check(true);
+                return checkAction.check(true, true);
             });
         });
     });

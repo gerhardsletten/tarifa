@@ -9,6 +9,7 @@ var should = require('should'),
     platformVersion = require('../../lib/cordova/version'),
     settings = require('../../lib/settings'),
     platformAction = require('../../actions/platform'),
+    pluginAction = require('../../actions/plugin'),
     buildAction = require('../../actions/build');
 
 function testPlatformVersion(projectDefer) {
@@ -16,6 +17,23 @@ function testPlatformVersion(projectDefer) {
     describe('tarifa platform version', function() {
 
         var availablePlatforms = settings.platforms.filter(cordovaPlatforms.isAvailableOnHostSync);
+
+        it('tarifa plugin remove all plugin', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function () {
+                return pluginAction.list().then(function (plgs) {
+                    return plgs.reduce(function (pr, pl) {
+                        return pr.then(function () {
+                            return pluginAction.plugin('remove', pl, {}).then(function () {
+                                return pluginAction.list().then(function (r) {
+                                    r.indexOf(pl).should.be.below(0);
+                                });
+                            });
+                        });
+                    }, Q());
+                });
+            });
+        });
 
         it('remove all platforms', function () {
             this.timeout(0);

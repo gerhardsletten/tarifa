@@ -12,17 +12,13 @@ function testClean(projectDefer) {
 
     describe('tarifa clean', function() {
 
-        settings.platforms.forEach(function (p) {
-
-            if(isAvailableOnHostSync(p)) {
-                it(format('tarifa clean %s', p), function () {
-                    this.timeout(0);
-                    return projectDefer.promise.then(function (rslt) {
-                        return cleanAction.clean(p, false);
-                    });
+        settings.platforms.filter(isAvailableOnHostSync).forEach(function (p) {
+            it(format('tarifa clean %s', p), function () {
+                this.timeout(0);
+                return projectDefer.promise.then(function (rslt) {
+                    return cleanAction.clean(p, false);
                 });
-            }
-
+            });
         });
 
         it('tarifa clean', function () {
