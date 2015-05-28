@@ -75,9 +75,10 @@
     "node-ios-device-fork": "0.4.1"
   },
   "scripts": {
-    "test": "mocha test/index && mocha test/actions/platform_version && mocha test/actions/update",
+    "test": "mocha test/index && npm run test:singles",
+    "test:singles": "mocha test/actions/platform_version && mocha test/actions/update",
     "mocha": "mocha",
-    "test-with-devices": "mocha test/with-devices"
+    "test-with-devices": "mocha test/with-devices && npm run test:singles"
   },
   "devDependencies": {
     "mocha": "2.2.1",
