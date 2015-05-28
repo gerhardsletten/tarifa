@@ -18,7 +18,12 @@ function testTest(projectDefer) {
             });
         }
 
-        it('wait 5s', function () { return Q.delay(5000); });
+        it('wait 5s', function () {
+            this.timeout(0);
+            return projectDefer.promise.then(function (rslt) {
+                return Q.delay(5000);
+            });
+        });
 
         it(format("tarifa test android"), function () {
             this.timeout(0);
