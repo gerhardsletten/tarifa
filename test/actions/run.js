@@ -10,7 +10,7 @@ function testRun(projectDefer) {
 
     describe('tarifa run', function() {
 
-        it(format("tarifa run all dev,stage"), function () {
+        it(format("tarifa run all dev,default"), function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
                 return runAction.runMultiplePlatforms(null, 'dev,default', false, false);
