@@ -81,6 +81,7 @@
     "test-with-devices": "mocha test/with-devices && npm run test:singles"
   },
   "devDependencies": {
+    "cat-names": "1.0.2",
     "mocha": "2.2.1",
     "should": "5.2.0"
   }

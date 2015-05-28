@@ -1,5 +1,6 @@
 var path = require('path'),
     fs = require('fs'),
+    catNames = require('cat-names'),
     createProject = require('../../lib/create'),
     createPluginAction = require('../../actions/create/plugin');
 
@@ -17,6 +18,7 @@ module.exports.createProject = function (tmp, projectDefer, responseMockPath) {
             if(err) return projectDefer.reject(err);
             response.path = path.join(dirPath, response.path);
             response.www = path.resolve(__dirname, '..', '..', 'template', 'project');
+            response.name = catNames.random().replace(/ /g, '_');
 
             process.chdir(dirPath);
             createProject.createFromResponse(response).then(function (rslt) {
