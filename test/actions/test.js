@@ -13,7 +13,7 @@ function testTest(projectDefer) {
             it(format("tarifa test ios"), function () {
                 this.timeout(0);
                 return projectDefer.promise.then(function (rslt) {
-                    return testAction.test('ios', 'default', false);
+                    return testAction.test('ios', 'default', true);
                 });
             });
         }
@@ -21,7 +21,7 @@ function testTest(projectDefer) {
         it(format("tarifa test android"), function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return testAction.test('android', 'default', false);
+                return testAction.test('android', 'default', true);
             });
         });
 
