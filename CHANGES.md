@@ -1,3 +1,10 @@
+## 0.9.7 (05/28/2015)
+
+### changes
+
+- [android] add cordova-android@3.7.2 fixing [CVE-2015-1835](http://blog.trendmicro.com/trendlabs-security-intelligence/trend-micro-discovers-apache-vulnerability-that-allows-one-click-modification-of-android-apps/)
+see http://cordova.apache.org/announcements/2015/05/26/android-402.html
+
 ## 0.9.6 (05/15/2015)
 
 ### changes
