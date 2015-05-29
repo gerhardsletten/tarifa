@@ -47,17 +47,17 @@ describe(format('testing tarifa cli on %s', os.platform()), function() {
         return pluginWithVariablesDefer.promise;
     });
 
-    require('./actions/config')(projectDefer, options);
+    require('./actions/config')(projectDefer);
     wait();
-    require('./actions/info')(projectDefer, options);
+    require('./actions/info')(projectDefer);
     wait();
-    require('./actions/prepare')(projectDefer, options);
+    require('./actions/prepare')(projectDefer);
     wait();
-    require('./actions/build')(projectDefer, options);
+    require('./actions/build')(projectDefer);
     wait(5);
-    require('./actions/clean')(projectDefer, options);
+    require('./actions/clean')(projectDefer);
     wait();
-    require('./actions/check')(projectDefer, options);
+    require('./actions/check')(projectDefer);
     wait();
-    require('./actions/platform')(projectDefer, options);
+    require('./actions/platform')(projectDefer);
 });
