@@ -5,7 +5,7 @@ var path = require('path'),
     createProject = require('../../lib/create'),
     createPluginAction = require('../../actions/create/plugin');
 
-function cat() { return catNames.random().replace(/ /g, '_'); }
+function cat() { return catNames.random().replace(/ /g, '_').toLowerCase(); }
 
 module.exports.createProject = function (tmp, projectDefer, responseMockPath, options) {
     options = options || {};
