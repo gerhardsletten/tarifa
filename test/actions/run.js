@@ -13,7 +13,7 @@ function testRun(projectDefer) {
         it(format("tarifa run all dev,default"), function () {
             this.timeout(0);
             return projectDefer.promise.then(function (rslt) {
-                return runAction.runMultiplePlatforms(null, 'dev,default', false, false);
+                return runAction.runMultiplePlatforms(null, 'dev,default', { verbose: true });
             });
         });
 
