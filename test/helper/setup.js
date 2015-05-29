@@ -1,11 +1,14 @@
 var path = require('path'),
     fs = require('fs'),
+    format = require('util').format,
     catNames = require('cat-names'),
     createProject = require('../../lib/create'),
     createPluginAction = require('../../actions/create/plugin');
 
-module.exports.createProject = function (tmp, projectDefer, responseMockPath) {
+function cat() { return catNames.random().replace(/ /g, '_'); }
 
+module.exports.createProject = function (tmp, projectDefer, responseMockPath, options) {
+    options = options || {};
     var mock = path.join(__dirname, '..', 'fixtures', responseMockPath),
         response = JSON.parse(fs.readFileSync(mock, 'utf-8'));
 
@@ -18,7 +21,8 @@ module.exports.createProject = function (tmp, projectDefer, responseMockPath) {
             if(err) return projectDefer.reject(err);
             response.path = path.join(dirPath, response.path);
             response.www = path.resolve(__dirname, '..', '..', 'template', 'project');
-            response.name = catNames.random().replace(/ /g, '_');
+            response.name = options.name || cat();
+            response.id = options.id || format('%s.%s.%s', cat(), cat(), cat());
 
             process.chdir(dirPath);
             createProject.createFromResponse(response).then(function (rslt) {

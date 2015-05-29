@@ -58,5 +58,14 @@ function testSign(projectDefer, identity, profile_path, id, distType) {
 }
 
 var projectDefer = Q.defer();
-before('create tarifa project', setupHelper.createProject(tmp, projectDefer, 'create_project_response_darwin.json'));
+
+before(
+    'create tarifa project',
+    setupHelper.createProject(tmp, projectDefer, 'create_project_response_darwin.json'),
+    {
+        name : 're',
+        id: 're.re.re'
+    }
+);
+
 testSign(projectDefer, process.argv[3].split('=')[1], process.argv[4].split('=')[1], process.argv[5].split('=')[1], process.argv[6].split('=')[1]);
