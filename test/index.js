@@ -1,2 +1,2 @@
 require('./common-tests');
-require('./test')({ run: false });
+require('./test');

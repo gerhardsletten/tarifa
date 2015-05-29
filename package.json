@@ -77,8 +77,10 @@
   "scripts": {
     "test": "mocha test/index && npm run test:singles",
     "test:singles": "mocha test/actions/platform_version && mocha test/actions/update",
+    "test:test": "mocha test/actions/test",
+    "test:run": "mocha test/actions/run",
     "mocha": "mocha",
-    "test-with-devices": "mocha test/with-devices && npm run test:singles"
+    "test-with-devices": "npm run test:run && npm run test:test"
   },
   "devDependencies": {
     "cat-names": "1.0.2",
