@@ -66,7 +66,7 @@
     "untildify": "2.0.0",
     "uuid": "2.0.1",
     "valid-java-identifier": "0.0.1",
-    "xcode-fork": "0.6.8",
+    "xcode": "0.7.0",
     "xml2js": "0.4.6"
   },
   "optionalDependencies": {
