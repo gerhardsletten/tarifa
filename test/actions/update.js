@@ -7,6 +7,7 @@ var should = require('should'),
     setupHelper = require('../helper/setup'),
     pluginAction = require('../../actions/plugin'),
     cordovaPlatforms = require('../../lib/cordova/platforms'),
+    cordovaPlugins = require('../../lib/cordova/plugins'),
     platformVersion = require('../../lib/cordova/version'),
     settings = require('../../lib/settings'),
     platformAction = require('../../actions/platform'),
@@ -18,13 +19,13 @@ function testUpdate(projectDefer) {
 
         var availablePlatforms = settings.platforms.filter(cordovaPlatforms.isAvailableOnHostSync);
 
-        it('tarifa plugin remove all plugin', function () {
+        it('tarifa plugin remove all plugins', function () {
             this.timeout(0);
             return projectDefer.promise.then(function () {
                 return pluginAction.list().then(function (plgs) {
                     return plgs.reduce(function (pr, pl) {
                         return pr.then(function () {
-                            return pluginAction.plugin('remove', pl, {}).then(function () {
+                            return pluginAction.plugin('remove', cordovaPlugins.getName(pl), {}).then(function () {
                                 return pluginAction.list().then(function (r) {
                                     r.indexOf(pl).should.be.below(0);
                                 });
