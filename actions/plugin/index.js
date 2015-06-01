@@ -21,7 +21,7 @@ function printPlugins(items) {
         return Q.when(msg, function () {
             var pluginPath = path.join(pathHelper.app(), 'plugins', p, 'plugin.xml');
             return pluginXML.getVersion(pluginPath).then(function (v) {
-                print('%s@%s', p, v);
+                print('%s@%s', plugins.getName(pathHelper.root(), p), v);
             });
         });
     }, {});
