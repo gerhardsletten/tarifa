@@ -9,6 +9,7 @@ var should = require('should'),
     platformVersion = require('../../lib/cordova/version'),
     settings = require('../../lib/settings'),
     platformAction = require('../../actions/platform'),
+    cordovaPlugins = require('../../lib/cordova/plugins'),
     pluginAction = require('../../actions/plugin'),
     buildAction = require('../../actions/build');
 
@@ -24,7 +25,7 @@ function testPlatformVersion(projectDefer) {
                 return pluginAction.list().then(function (plgs) {
                     return plgs.reduce(function (pr, pl) {
                         return pr.then(function () {
-                            return pluginAction.plugin('remove', pl, {}).then(function () {
+                            return pluginAction.plugin('remove', cordovaPlugins.getName(pl), {}).then(function () {
                                 return pluginAction.list().then(function (r) {
                                     r.indexOf(pl).should.be.below(0);
                                 });
