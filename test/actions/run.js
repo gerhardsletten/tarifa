@@ -4,7 +4,11 @@ var should = require('should'),
     format = require('util').format,
     tmp = require('tmp'),
     setupHelper = require('../helper/setup'),
-    runAction = require('../../actions/run');
+    runAction = require('../../actions/run'),
+    settings = require('../../lib/settings'),
+    platformsLib = require('../../lib/cordova/platforms'),
+    platformHelper = require('../../lib/helper/platform');
+
 
 function testRun(projectDefer) {
 
@@ -12,8 +16,15 @@ function testRun(projectDefer) {
 
         it(format("tarifa run all dev,default"), function () {
             this.timeout(0);
+
+            var platforms = settings.platforms
+                    .map(platformHelper.getName)
+                    .filter(platformsLib.isAvailableOnHostSync).filter(function (p) {
+                        return p !== 'firefoxos';
+                    });
+
             return projectDefer.promise.then(function (rslt) {
-                return runAction.runMultiplePlatforms(null, 'dev,default', { verbose: true });
+                return runAction.runMultiplePlatforms(platforms, 'dev,default', { verbose: true });
             });
         });
 
