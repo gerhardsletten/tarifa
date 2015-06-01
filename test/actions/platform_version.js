@@ -21,31 +21,26 @@ function testPlatformVersion(projectDefer) {
 
         it('tarifa plugin remove all plugin', function () {
             this.timeout(0);
-            return projectDefer.promise.then(function () {
-                return pluginAction.list().then(function (plgs) {
-                    return plgs.reduce(function (pr, pl) {
-                        return pr.then(function () {
-                            return pluginAction.plugin('remove', cordovaPlugins.getName(pl), {}).then(function () {
-                                return pluginAction.list().then(function (r) {
-                                    r.indexOf(pl).should.be.below(0);
-                                });
-                            });
-                        });
-                    }, Q());
-                });
+            return projectDefer.promise.then(function (proj) {
+                var root = proj.response.path;
+                return [ pluginAction.list(), Q(root) ];
+            }).spread(function (plgs, root) {
+                return plgs.reduce(function (pr, pl) {
+                    return pr.then(function () {
+                        return pluginAction.plugin('remove', cordovaPlugins.getName(root, pl), {});
+                    });
+                }, Q());
             });
         });
 
         it('remove all platforms', function () {
             this.timeout(0);
-            return projectDefer.promise.then(function () {
-                return platformAction.list().then(function (rslt) {
-                    return rslt.reduce(function (promise, p) {
-                        return promise.then(function () {
-                            return platformAction.platform('remove', p, false);
-                        });
-                    }, Q.resolve());
-                });
+            return projectDefer.promise.then(platformAction.list).then(function (rslt) {
+                return rslt.reduce(function (promise, p) {
+                    return promise.then(function () {
+                        return platformAction.platform('remove', p, false);
+                    });
+                }, Q.resolve());
             });
         });
 
@@ -62,10 +57,8 @@ function testPlatformVersion(projectDefer) {
 
                 it('tarifa platform list', function () {
                     this.timeout(0);
-                    return projectDefer.promise.then(function () {
-                        return platformAction.list().then(function (rslt) {
-                            rslt.indexOf(platform).should.be.above(-1);
-                        });
+                    return projectDefer.promise.then(platformAction.list).then(function (rslt) {
+                        rslt.indexOf(platform).should.be.above(-1);
                     });
                 });
 
@@ -90,7 +83,7 @@ function testPlatformVersion(projectDefer) {
 
                 it(format('tarifa platform remove %s', platform), function () {
                     this.timeout(0);
-                    return projectDefer.promise.then(function (rslt) {
+                    return projectDefer.promise.then(function () {
                         return platformAction.platform('remove', platform, false);
                     });
                 });
