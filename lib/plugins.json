@@ -85,7 +85,7 @@
 },{
     "name":"splashscreen",
     "value":"cordova-plugin-splashscreen",
-    "uri":"cordova-plugin-splashscreen@2.0.0",
+    "uri":"cordova-plugin-splashscreen@1.0.0",
     "version":"2.0.0",
     "default": true
 },{
