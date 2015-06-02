@@ -56,7 +56,7 @@ function run(platform, config, httpPort, norun, verbose) {
                     watch: format('http://%s:%s/index.html', ip, httpPorts[0]),
                     verbose: verbose
                 };
-                return norun ? buildAction.buildƒ(msg) : runAction.runƒ(msg);
+                return norun ? Q(msg) : runAction.runƒ(msg);
             }).then(function (msg) {
                 if (verbose) print.success('watch %s at %s', platform, chalk.green.underline(msg.watch));
                 return [localSettings, platform, config, ip, lrPorts[0], httpPorts[0], verbose];
