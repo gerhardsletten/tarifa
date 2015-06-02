@@ -32,10 +32,22 @@ function watch(platform, config, httpPort, norun, verbose) {
     if (!feature.isAvailable('watch', platform)) {
         return Q.reject(format('feature not available on %s!', platform));
     }
+
     return Q.all([
         tarifaFile.parse(pathHelper.root(), platform, config),
         isAvailableOnHost(platform)
-    ]).spread(run(platform, config, httpPort, norun, verbose)).spread(wait);
+    ]).spread(run(platform, config, httpPort, norun, verbose))
+      .spread(wait)
+      .spread(closeWatchers);
+}
+
+function closeWatchers(tarifaFileWatch, closeBuilderWatch, verbose) {
+    return sigint(function () {
+        print();
+        if(verbose) print.success('closing www builder');
+        tarifaFileWatch.close();
+        closeBuilderWatch();
+    });
 }
 
 function run(platform, config, httpPort, norun, verbose) {
@@ -113,13 +125,8 @@ function wait(localSettings, platform, config, ip, lrPort, httpPort, verbose) {
                 });
             });
         }, 1000);
-        
-        return sigint(function () {
-            print();
-            if(verbose) print.success('closing www builder');
-            tarifaFileWatch.close();
-            closeBuilderWatch();
-        });
+
+        return [tarifaFileWatch, closeBuilderWatch, verbose];
     });
 }
 
