@@ -2,14 +2,6 @@ var Q = require('q'),
     path = require('path'),
     os = require('os'),
     fs = require('q-io/fs'),
-    restler = require('restler'),
-    connect = require("connect"),
-    serveStatic = require('serve-static'),
-    tinylr = require('tiny-lr-fork'),
-    findPort = require('find-port'),
-    rimraf = require('rimraf'),
-    lr = require('connect-livereload'),
-    chokidar = require('chokidar'),
     EventEmitter = require('events').EventEmitter,
     format = require('util').format,
     chalk = require('chalk'),
@@ -22,11 +14,35 @@ var Q = require('q'),
     print = require('../../lib/helper/print'),
     isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
     runAction = require('../run'),
-    buildAction = require('../build'),
-    prepareAction = require('../prepare'),
     tarifaFile = require('../../lib/tarifa-file'),
     settings = require('../../lib/settings'),
-    ask = require('../../lib/questions/ask');
+    askHostIp = require('./helper/askip'),
+    watchFile = require('./helper/watchFile'),
+    startLiveReloadServer = require('./helper/reloadServer'),
+    startHttpServer = require('./helper/httpServer'),
+    prepare = require('./helper/prepare'),
+    onchange = require('./helper/onchange'),
+    findPorts = require('./helper/findPorts');
+
+function sigint(ƒ) {
+    var d = Q.defer();
+    process.openStdin().on("keypress", function(chunk, key) {
+        if(key && key.name === "c" && key.ctrl) {
+            Q.delay(2000).then(function () {
+                ƒ();
+                d.resolve();
+            });
+        }
+    });
+    process.stdin.setRawMode();
+    process.on('SIGINT', function() {
+        Q.delay(200).then(function () {
+            ƒ();
+            d.resolve();
+        });
+    });
+    return d.promise;
+}
 
 function watch(platform, config, httpPort, norun, verbose) {
     if (!feature.isAvailable('watch', platform)) {
@@ -91,18 +107,9 @@ function wait(localSettings, platform, config, ip, lrPort, httpPort, verbose) {
             if(verbose) print.success('www project triggering tarifa');
 
             var www = pathHelper.cordova_www(),
-                out = localSettings.project_output,
-                copy_method = settings.www_link_method[os.platform()],
-                copyPromise = (copy_method === 'copy') ? copyOutput(www, out) : Q.resolve();
+                out = localSettings.project_output;
 
-            return copyPromise.then(function () {
-                return buildAction.prepare({
-                    localSettings: localSettings,
-                    platform : platform,
-                    configuration: config,
-                    verbose: verbose
-                });
-            }).then(function () {
+            return prepare(www, out, localSettings, platform, config, verbose).then(function () {
                 return onchange(ip, httpPort, lrPort, out, file, verbose);
             }).then(function () {
                 if(verbose) {
@@ -128,135 +135,6 @@ function wait(localSettings, platform, config, ip, lrPort, httpPort, verbose) {
 
         return [tarifaFileWatch, closeBuilderWatch, verbose];
     });
-}
-
-function askHostIp() {
-    var interfaces = os.networkInterfaces(),
-        ipv4Filter = function (addr) { return addr.family === 'IPv4'; },
-        addrFilter = function (i) { return i.address; },
-        concat = function (acc, i) { return acc.concat(i); },
-        ips = Object.keys(interfaces).map(function (i) {
-            return interfaces[i].filter(ipv4Filter).map(addrFilter);
-        }).reduce(concat, []);
-    return ask.question('Which ip should be used to serve the configuration?', 'list', ips);
-}
-
-function findPorts(from, searchRange, returnCount) {
-    var d = Q.defer(),
-        to = from + searchRange - 1;
-    findPort(from, to, function (ports) {
-        if (ports.length >= returnCount) {
-            d.resolve(ports.slice(0, returnCount));
-        } else {
-            d.reject(format('could not find %s in range [%s, %s]', returnCount, from, to));
-        }
-    });
-    return d.promise;
-}
-
-function startLiveReloadServer(port, verbose) {
-    var d = Q.defer();
-    tinylr().listen(port, function (err) {
-        if (err) {
-            print.error('error while starting live reload server %s', err);
-            d.reject();
-        } else {
-            if (verbose) { print.success('started live reload server on port %s', port); }
-            d.resolve();
-        }
-    });
-    return d.promise;
-}
-
-function startHttpServer(lrPort, httpPort, platform, verbose) {
-    var d = Q.defer(),
-        app = connect(),
-        index = pathHelper.wwwFinalLocation(pathHelper.root(), platform),
-        serve = serveStatic(index, {index: false});
-    app.use(lr({port: lrPort}));
-    app.use(serve);
-    var server = app.listen(httpPort, function () {
-        print.success('started web server on port %s for platform %s', httpPort, platform);
-        d.resolve();
-    });
-    server.on('error', function (err) {
-        if (verbose) { print(err); }
-        d.reject(format('Cannot serve %s on port %s for platform %s', index, httpPort, platform));
-    });
-    return d.promise;
-}
-
-function watchFile(filePath, verbose) {
-    var d = Q.defer(),
-        w = chokidar.watch(filePath),
-        onError = function (error) {
-            if (verbose) { print(error); }
-            return d.reject(format('cannot watch %s', filePath));
-        };
-    w.once('ready', function () {
-        w.removeListener('error', onError);
-        if (verbose) { print.success('watching %s', filePath); }
-        d.resolve(w);
-    });
-    w.once('error', onError);
-    return d.promise;
-}
-
-function copyOutput(cordova_www, project_output, verbose){
-    var defer = Q.defer();
-    rimraf(cordova_www, function (err) {
-        if(err) return defer.reject(err);
-        if(verbose) print.success('rm cordova www folder');
-        defer.resolve();
-    }, function (err) {
-        defer.reject(err);
-    });
-    return defer.promise.then(function () {
-        return prepareAction.copy_method(cordova_www, project_output);
-    });
-}
-
-function onchange(ip, httpPort, lrPort, project_output, file, verbose) {
-    var defer = Q.defer(),
-        rewritePath = rewritePathƒ(project_output, ip);
-    restler.post(format('http://%s:%s/changed', ip, lrPort), {
-        data: JSON.stringify({ files: rewritePath(file, httpPort) })
-    }).on('complete', function(data, response) {
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-            if(verbose) print.success('live reload updated: %s', rewritePath(file, httpPort));
-        } else {
-            print.error('can not update live reload %s', response.statusCode);
-        }
-        defer.resolve();
-    });
-    return defer.promise;
-}
-
-function rewritePathƒ(projectOutput, ip) {
-    return function (filePath, httpPort) {
-        var srcPath = pathHelper.resolve(projectOutput);
-        return filePath.replace(srcPath, format('http://%s:%s', ip, httpPort)).replace(path.sep, '/');
-    };
-}
-
-function sigint(ƒ) {
-    var d = Q.defer();
-    process.openStdin().on("keypress", function(chunk, key) {
-        if(key && key.name === "c" && key.ctrl) {
-            Q.delay(2000).then(function () {
-                ƒ();
-                d.resolve();
-            });
-        }
-    });
-    process.stdin.setRawMode();
-    process.on('SIGINT', function() {
-        Q.delay(200).then(function () {
-            ƒ();
-            d.resolve();
-        });
-    });
-    return d.promise;
 }
 
 var action = function (argv) {
