@@ -57,11 +57,12 @@ function watch(platform, config, httpPort, norun, verbose) {
       .spread(closeWatchers);
 }
 
-function closeWatchers(tarifaFileWatch, closeBuilderWatch, verbose) {
+function closeWatchers(tarifaFileWatch, tarifaPrivateWatch, closeBuilderWatch, verbose) {
     return sigint(function () {
         print();
         if(verbose) print.success('closing www builder');
         tarifaFileWatch.close();
+        tarifaPrivateWatch.close();
         closeBuilderWatch();
     });
 }
@@ -93,47 +94,78 @@ function run(platform, config, httpPort, norun, verbose) {
     };
 }
 
-function wait(localSettings, platform, config, ip, lrPort, httpPort, verbose) {
-    var root = pathHelper.root();
-    return watchFile(path.join(root, settings.publicTarifaFileName), verbose).then(function (tarifaFileWatch) {
-        tarifaFileWatch.on('error', function (error) {
-            if (verbose) { print(error); }
-            print.error('error watching %s', filePath);
+function onWatcherError(filePath, verbose) {
+    return function (err) {
+        if (verbose) { print(err); }
+        print.error('error watching %s', filePath);
+    };
+};
+
+function onChange(root, platform, config, currentConf, confEmitter) {
+    return function (evt) {
+        tarifaFile.parse(root, platform, config).then(function (changedSettings) {
+            var changedConf = changedSettings.configurations[platform][config];
+            if (!collectionsHelper.objectEqual(currentConf, changedConf)) {
+                currentConf = changedConf;
+                confEmitter.emit('change', changedConf);
+            }
         });
+    };
+}
+
+function logTime(t0) {
+    return function () {
+        if(verbose) {
+            var t = (new Date()).getTime();
+            print('\n\t%s', chalk.green(cool()));
+            print(chalk.magenta('\ndone in ~ %ds\n'), Math.floor((t-t0)/1000));
+        }
+    };
+}
+
+function trigger(localSettings, platform, config, ip, httpPort, lrPort, verbose) {
+    return function (filePath) {
+        var t0 = (new Date()).getTime();
+        if(verbose) print.success('www project triggering tarifa');
+
+        var www = pathHelper.cordova_www(),
+            out = localSettings.project_output;
+
+        return prepare(www, out, localSettings, platform, config, verbose).then(function () {
+            return onchange(ip, httpPort, lrPort, out, filePath, verbose).then(logTime(t0));
+        });
+    };
+}
+
+function wait(localSettings, platform, config, ip, lrPort, httpPort, verbose) {
+    var root = pathHelper.root(),
+        tarifaFilePath = path.join(root, settings.publicTarifaFileName),
+        tarifaPrivatePath = path.join(root, settings.privateTarifaFileName);
+
+    return Q.all([
+        watchFile(tarifaFilePath, verbose), watchFile(tarifaPrivatePath, verbose)
+    ]).spread(function (tarifaFileWatch, tarifaPrivateWatch) {
+
+        tarifaFileWatch.on('error', onWatcherError(tarifaFilePath, verbose));
+        tarifaPrivateWatch.on('error', onWatcherError(tarifaPrivatePath, verbose));
 
         var confEmitter = new EventEmitter();
-        var closeBuilderWatch = builder.watch(pathHelper.root(), function (file) {
-            var t0 = (new Date()).getTime();
-            if(verbose) print.success('www project triggering tarifa');
-
-            var www = pathHelper.cordova_www(),
-                out = localSettings.project_output;
-
-            return prepare(www, out, localSettings, platform, config, verbose).then(function () {
-                return onchange(ip, httpPort, lrPort, out, file, verbose);
-            }).then(function () {
-                if(verbose) {
-                    var t = (new Date()).getTime();
-                    print('\n\t%s', chalk.green(cool()));
-                    print(chalk.magenta('\ndone in ~ %ds\n'), Math.floor((t-t0)/1000));
-                }
-            });
-        }, localSettings, platform, config, confEmitter);
+        var closeBuilderWatch = builder.watch(
+                pathHelper.root(),
+                trigger(localSettings, platform, config, ip, httpPort, lrPort, verbose),
+                localSettings,
+                platform,
+                config,
+                confEmitter
+            );
 
         setTimeout(function () {
             var currentConf = localSettings.configurations[platform][config];
-            tarifaFileWatch.on('change', function () {
-                tarifaFile.parse(root, platform, config).then(function (changedSettings) {
-                    var changedConf = changedSettings.configurations[platform][config];
-                    if (!collectionsHelper.objectEqual(currentConf, changedConf)) {
-                        currentConf = changedConf;
-                        confEmitter.emit('change', changedConf);
-                    }
-                });
-            });
+            tarifaFileWatch.on('change', onChange(root, platform, config, currentConf, confEmitter));
+            tarifaPrivateWatch.on('change', onChange(root, platform, config, currentConf, confEmitter));
         }, 1000);
 
-        return [tarifaFileWatch, closeBuilderWatch, verbose];
+        return [ tarifaFileWatch, tarifaPrivateWatch, closeBuilderWatch, verbose ];
     });
 }
 
