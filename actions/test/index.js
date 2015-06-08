@@ -125,7 +125,7 @@ var test = function (platform, config, verbose) {
             platform: platform,
             configuration: config,
             verbose: verbose,
-            debug:true // to allow only 1 device on `askDevice`
+            log: true // to allow only 1 device on `askDevice`
         };
     })
     .then(askDevice)

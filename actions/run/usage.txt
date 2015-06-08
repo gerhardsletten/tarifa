@@ -9,7 +9,7 @@ Options:
     --verbose, -V           Be more verbose on everything
     --all                   Run on all available devices
     --nobuild               Skip build process if build available
-    --debug, -d             Output app debug logs, only for single build
+    --log, -l               Output app debug logs, only for single build
 
 Examples:
 

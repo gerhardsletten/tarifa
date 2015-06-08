@@ -56,7 +56,7 @@ var run = function (platform, config, localSettings, options) {
         configuration: config,
         verbose: options.verbose,
         nobuild: options.nobuild,
-        debug: options.debug,
+        log: options.log,
         all: options.all,
         spinner: spinner()
     });
@@ -95,7 +95,7 @@ var action = function (argv) {
     var options = {
             verbose : false,
             nobuild:false,
-            debug:false,
+            log:false,
             all:false
         },
         helpPath = path.join(__dirname, 'usage.txt');
@@ -109,10 +109,10 @@ var action = function (argv) {
     if (argsHelper.matchOption(argv, null, 'all'))
         options.all = true;
 
-    if (argsHelper.matchOption(argv, 'd', 'debug')) {
-        options.debug = true;
+    if (argsHelper.matchOption(argv, 'l', 'log')) {
+        options.log = true;
         if(argsHelper.matchCmd(argv._, ['__multi__', '*']) || argsHelper.matchCmd(argv._, ['*', '__multi__'])) {
-            print.error('Oops, not `--debug` option on multiple configurations or multiple platforms!');
+            print.error('Oops, not `--log` option on multiple configurations or multiple platforms!');
             print();
             return fs.read(helpPath).then(print);
         }
