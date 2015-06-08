@@ -121,7 +121,7 @@ var runMultiplePlatforms = function (platforms, config, options) {
 
         var defer = Q.defer(),
             plts = localSettings.platforms.map(platformHelper.getName);
-        platforms = (platforms || plts.filter(platformsLib.isAvailableOnHostSync));
+        platforms = platforms || plts.filter(platformsLib.isAvailableOnHostSync);
 
         return tarifaFile.checkPlatforms(platforms, localSettings)
             .then(startVorlon(defer, options))
