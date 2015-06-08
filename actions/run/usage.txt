@@ -10,6 +10,7 @@ Options:
     --all                   Run on all available devices
     --nobuild               Skip build process if build available
     --log, -l               Output app debug logs, only for single build
+    --debug, -d             Debug app with vorlon.js
 
 Examples:
 

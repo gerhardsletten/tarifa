@@ -1,8 +1,9 @@
 var Q = require('q'),
     spinner = require("char-spinner"),
     cordova = require('cordova-lib/src/cordova/cordova'),
-    exec = require('child_process').exec,
+    child_process = require('child_process'),
     path = require('path'),
+    format = require('util').format,
     fs = require('q-io/fs'),
     existsSync = require('fs').existsSync,
     argsHelper = require('../../lib/helper/args'),
@@ -16,6 +17,7 @@ var Q = require('q'),
     buildAction = require('../build'),
     askDevice = require('./ask_device'),
     argsHelper = require('../../lib/helper/args'),
+    askIp = require('../watch/helper/askip'),
     platformTasks = tasksHelper.load(settings.platforms, 'run', 'tasks');
 
 var binaryExists = function (conf) {
@@ -73,21 +75,69 @@ var runMultipleConfs = function(platform, configs, localSettings, options) {
     });
 };
 
+var startVorlon = function (defer, options) {
+    return function (msg) {
+        if (!options.debug) return msg;
+        return askIp().then(function (ip) {
+            var child = child_process.exec(path.resolve(__dirname, '../../node_modules/vorlon/bin', 'vorlon'));
+            options.ip = ip;
+
+            child.on('close', function(code) {
+                print();
+                if (options.verbose) print.success('killed `vorlon`');
+                if (code > 0) defer.reject('vorlon failed with code ' + code);
+                else defer.resolve(msg);
+            });
+
+            function killVorlon() { Q.delay(500).then(child.kill); }
+
+            process.openStdin().on("keypress", function(chunk, key) {
+                if(key && key.name === "c" && key.ctrl) { killVorlon(); }
+            });
+
+            process.on('SIGINT', killVorlon);
+            return msg;
+        });
+    };
+};
+
+var wait = function (defer, options) {
+    return function (msg) {
+        if (!options.debug) { return msg; }
+        else {
+            var clientScript = "<script src=\"http://%s:1337/vorlon.js\"></script>",
+                script = format(clientScript, options.ip);
+            print.warning();
+            print.warning("/!\\ You need to add \"%s\" to your index.html", script);
+            print.warning();
+            print.success("vorlon dashbord: http://%s:1337", options.ip);
+            return defer.promise;
+        }
+    };
+};
+
 var runMultiplePlatforms = function (platforms, config, options) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        platforms = (platforms || localSettings.platforms.map(platformHelper.getName)).filter(platformsLib.isAvailableOnHostSync);
-        return tarifaFile.checkPlatforms(platforms, localSettings).then(function (availablePlatforms) {
-            return availablePlatforms.reduce(function(promise, platform) {
-                return promise.then(function () {
-                    if (config === 'all') {
-                        config = null;
-                    } else if (argsHelper.matchWildcard(config)) {
-                        config = argsHelper.getFromWildcard(config);
-                    }
-                    return runMultipleConfs(platform, config, localSettings, options);
-                });
-            }, Q());
-        });
+
+        var defer = Q.defer(),
+            plts = localSettings.platforms.map(platformHelper.getName);
+        platforms = (platforms || plts.filter(platformsLib.isAvailableOnHostSync));
+
+        return tarifaFile.checkPlatforms(platforms, localSettings)
+            .then(startVorlon(defer, options))
+            .then(function (availablePlatforms) {
+                return availablePlatforms.reduce(function(promise, platform) {
+                    return promise.then(function () {
+                        if (config === 'all') {
+                            config = null;
+                        } else if (argsHelper.matchWildcard(config)) {
+                            config = argsHelper.getFromWildcard(config);
+                        }
+                        return runMultipleConfs(platform, config, localSettings, options);
+                    });
+                }, Q());
+            })
+            .then(wait(defer, options));
     });
 };
 
@@ -96,7 +146,8 @@ var action = function (argv) {
             verbose : false,
             nobuild:false,
             log:false,
-            all:false
+            all:false,
+            debug:false
         },
         helpPath = path.join(__dirname, 'usage.txt');
 
@@ -108,6 +159,9 @@ var action = function (argv) {
 
     if (argsHelper.matchOption(argv, null, 'all'))
         options.all = true;
+
+    if (argsHelper.matchOption(argv, 'd', 'debug'))
+        options.debug = true;
 
     if (argsHelper.matchOption(argv, 'l', 'log')) {
         options.log = true;
