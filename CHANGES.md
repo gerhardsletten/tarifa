@@ -1,3 +1,23 @@
+## 0.10.0 (06/XX/2015)
+
+### supported cordova platforms:
+
+- android: 3.6.4, 3.7.1, 3.7.2, 4.0.2 (default)
+- ios: 3.7.0, 3.8.0 (default)
+- wp8: 3.7.0, 3.7.1 (default)
+- browser: 3.6.0
+- firefoxos: 3.6.3
+
+### changes
+
+- integrate vorlonjs for `tarifa run` [#227](https://github.com/TarifaTools/tarifa/issues/227)
+- works on iojs [#220](https://github.com/TarifaTools/tarifa/issues/220)
+- switch to npm as default plugin source [#219](https://github.com/TarifaTools/tarifa/issues/219)
+- extend and overwrite specific ios, android and wp8 properties [#214](https://github.com/TarifaTools/tarifa/issues/214)
+- remove unneeded undo `tarifa build` tasks [#209](https://github.com/TarifaTools/tarifa/issues/209)
+- upgrade cordova-lib to 5.0.0 [#207](https://github.com/TarifaTools/tarifa/issues/207)
+- upgrade cordova-android to 4.0.2 [#204](https://github.com/TarifaTools/tarifa/issues/204) and [#222](https://github.com/TarifaTools/tarifa/issues/222)
+
 ## 0.9.7 (05/28/2015)
 
 ### changes
