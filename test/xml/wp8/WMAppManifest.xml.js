@@ -22,10 +22,11 @@ describe('[wp8] read/write WMAppManifest.xml', function() {
         tmp.file(function (err, p, fd) {
             if (err) throw err;
             fs.writeFileSync(p, xml);
-            return BuildWMAppManifest.set(p, 'zanimo.js prod', 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx').then(function () {
+            return BuildWMAppManifest.set(p, 'zanimo.js prod', 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', '2.0.0.0').then(function () {
                 return BuildWMAppManifest.get(p).then(function (result) {
                     result.title.should.equal('zanimo.js prod');
                     result.guid.should.equal('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx');
+                    result.version.should.equal('2.0.0.0');
                     tmp.setGracefulCleanup();
                     defer.resolve();
                 }).done();
