@@ -120,9 +120,9 @@ var buildMultipleConfs = function(platform, configs, localSettings, keepFileChan
 
 var buildMultiplePlatforms = function (platforms, config, keepFileChanges, verbose) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        platforms = (platforms || localSettings.platforms.map(platformHelper.getName)).filter(platformsLib.isAvailableOnHostSync);
+        platforms = (platforms || localSettings.platforms.map(platformHelper.getName));
         return tarifaFile.checkPlatforms(platforms, localSettings).then(function (availablePlatforms) {
-            return availablePlatforms.reduce(function(promise, platform) {
+            return availablePlatforms.filter(platformsLib.isAvailableOnHostSync).reduce(function(promise, platform) {
                 return promise.then(function () {
                     if (config === 'all') {
                         config = null;
