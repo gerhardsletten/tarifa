@@ -19,6 +19,8 @@
 - upgrade cordova-android to 4.0.2 [#204](https://github.com/TarifaTools/tarifa/issues/204) and [#222](https://github.com/TarifaTools/tarifa/issues/222)
 - now, we can launch ios app with ios-deploy@1.7.0
 - display `tarifa.json` and `private.json` parsing errors [#233](https://github.com/TarifaTools/tarifa/issues/233)
+- fix setting ios build number [#231](https://github.com/TarifaTools/tarifa/issues/231)
+- fix setting wp8 version [#232](https://github.com/TarifaTools/tarifa/issues/232)
 
 ## 0.9.7 (05/28/2015)
 
