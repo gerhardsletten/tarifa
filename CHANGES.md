@@ -13,11 +13,12 @@
 - integrate vorlonjs for `tarifa run` [#227](https://github.com/TarifaTools/tarifa/issues/227)
 - works on iojs [#220](https://github.com/TarifaTools/tarifa/issues/220)
 - switch to npm as default plugin source [#219](https://github.com/TarifaTools/tarifa/issues/219)
-- extend and overwrite specific ios, android and wp8 properties [#214](https://github.com/TarifaTools/tarifa/issues/214)
+- extend and overwrite specific ios, android and wp8 properties [#214](https://github.com/TarifaTools/tarifa/issues/214) [#230](https://github.com/TarifaTools/tarifa/issues/230)
 - remove unneeded undo `tarifa build` tasks [#209](https://github.com/TarifaTools/tarifa/issues/209)
 - upgrade cordova-lib to 5.1.1 [#207](https://github.com/TarifaTools/tarifa/issues/207) and [#229](https://github.com/TarifaTools/tarifa/issues/229)
 - upgrade cordova-android to 4.0.2 [#204](https://github.com/TarifaTools/tarifa/issues/204) and [#222](https://github.com/TarifaTools/tarifa/issues/222)
 - now, we can launch ios app with ios-deploy@1.7.0
+- display `tarifa.json` and `private.json` parsing errors [#233](https://github.com/TarifaTools/tarifa/issues/233)
 
 ## 0.9.7 (05/28/2015)
 
