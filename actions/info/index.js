@@ -85,16 +85,19 @@ function listAvailablePlatforms() {
 }
 
 function check_cordova(platforms, verbose) {
-    var cordovaLibPaths = platforms.map(function (platform) {
-            return cordova_lazy_load.cordova(platform).then(function (libPath) {
-                return {
-                    name: platform,
-                    path: libPath
-                };
+    var cordovaLibPaths = platforms.reduce(function (promise, platform) {
+            return promise.then(function (rslt) {
+                return cordova_lazy_load.cordova(platform).then(function (libPath) {
+                    rslt.push({
+                        name: platform,
+                        path: libPath
+                    });
+                    return rslt;
+                });
             });
-        });
+        }, Q([]));
 
-    return Q.all(cordovaLibPaths).then(function (libs) {
+    return cordovaLibPaths.then(function (libs) {
         libs.forEach(function (lib) {
             print("%s %s", chalk.green(format("cordova %s lib path:", lib.name)), lib.path);
         });
