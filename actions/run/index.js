@@ -60,6 +60,7 @@ var run = function (platform, config, localSettings, options) {
         nobuild: options.nobuild,
         log: options.log,
         all: options.all,
+        arch: options.arch,
         spinner: spinner()
     });
 };
@@ -147,7 +148,8 @@ var action = function (argv) {
             nobuild:false,
             log:false,
             all:false,
-            debug:false
+            debug:false,
+            arch: null
         },
         helpPath = path.join(__dirname, 'usage.txt');
 
@@ -156,6 +158,9 @@ var action = function (argv) {
 
     if (argsHelper.matchOption(argv, null, 'nobuild'))
         options.nobuild = true;
+
+    if (argsHelper.matchOptionWithValue(argv, null, 'arch'))
+        options.arch = argv.arch;
 
     if (argsHelper.matchOption(argv, null, 'all'))
         options.all = true;
