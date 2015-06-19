@@ -1,6 +1,5 @@
 var Q = require('q'),
     spinner = require("char-spinner"),
-    cordova = require('cordova-lib/src/cordova/cordova'),
     child_process = require('child_process'),
     path = require('path'),
     format = require('util').format,
@@ -119,6 +118,8 @@ var wait = function (defer, options) {
 
 var runMultiplePlatforms = function (platforms, config, options) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
+        if (options.arch && !localSettings.plugins['cordova-plugin-crosswalk-webview'])
+          return Q.reject("You are running a specified architecture but you don't have 'cordova-plugin-crosswalk-webview' installed.\nYou should run 'tarifa plugin add cordova-plugin-crosswalk-webview' if you which to use crosswalk.");
 
         var defer = Q.defer(),
             plts = localSettings.platforms.map(platformHelper.getName);
