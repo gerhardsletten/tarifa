@@ -121,6 +121,9 @@ var runMultiplePlatforms = function (platforms, config, options) {
         if (options.arch && !localSettings.plugins['cordova-plugin-crosswalk-webview'])
           return Q.reject("You are running a specified architecture but you don't have 'cordova-plugin-crosswalk-webview' installed.\nYou should run 'tarifa plugin add cordova-plugin-crosswalk-webview' if you which to use crosswalk.");
 
+        if (!options.arch && localSettings.plugins['cordova-plugin-crosswalk-webview'])
+          return Q.reject("You are using crosswalk in this projet. You must choose the architecture to run with the '--arch' option.\nRun 'tarifa run --help' for details.\nRun 'tarifa devices -V' to know your device CPU architecture.");
+
         var defer = Q.defer(),
             plts = localSettings.platforms.map(platformHelper.getName);
         platforms = platforms || plts.filter(platformsLib.isAvailableOnHostSync);
