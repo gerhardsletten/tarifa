@@ -1,3 +1,9 @@
+## 0.11.0
+
+### changes
+
+- [android] integrate crosswalk webview plugin [#236](https://github.com/TarifaTools/tarifa/issues/236)
+
 ## 0.10.0 (06/16/2015)
 
 ### supported cordova platforms:
