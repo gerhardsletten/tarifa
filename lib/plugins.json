@@ -106,4 +106,10 @@
     "uri":"cordova-plugin-whitelist@1.0.0",
     "version":"1.0.0",
     "default": true
+},{
+    "name":"crosswalk-webview",
+    "value":"cordova-plugin-crosswalk-webview",
+    "uri":"cordova-plugin-crosswalk-webview@1.2.0",
+    "version":"1.2.0",
+    "default": false
 }]
