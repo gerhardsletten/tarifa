@@ -1,6 +1,6 @@
 {
   "name": "tarifa",
-  "version": "0.10.0",
+  "version": "0.11.0-dev",
   "author": "Paul Panserrieu <paul@42loops.com>",
   "description": "Your friendly toolchain for mobile app development on top of Apache Cordova",
   "repository": {
@@ -67,7 +67,7 @@
     "untildify": "2.0.0",
     "uuid": "2.0.1",
     "valid-java-identifier": "0.0.1",
-    "vorlon": "0.0.15-alpha5",
+    "vorlon": "0.0.15-beta",
     "xcode": "0.7.0",
     "xml2js": "0.4.6"
   },
