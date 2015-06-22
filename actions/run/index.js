@@ -119,10 +119,11 @@ var wait = function (defer, options) {
 var runMultiplePlatforms = function (platforms, config, options) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         if (options.arch && !localSettings.plugins['cordova-plugin-crosswalk-webview'])
-          return Q.reject("You are running a specified architecture but you don't have 'cordova-plugin-crosswalk-webview' installed.\nYou should run 'tarifa plugin add cordova-plugin-crosswalk-webview' if you which to use crosswalk.");
+            return Q.reject("You are running a specified architecture but you don't have 'cordova-plugin-crosswalk-webview' installed.\nYou should run 'tarifa plugin add cordova-plugin-crosswalk-webview' if you which to use crosswalk.");
 
+        // let's assume the arch is armv7 since it is overwhelmingly majority
         if (!options.arch && localSettings.plugins['cordova-plugin-crosswalk-webview'])
-          return Q.reject("You are using crosswalk in this projet. You must choose the architecture to run with the '--arch' option.\nRun 'tarifa run --help' for details.\nRun 'tarifa devices -V' to know your device CPU architecture.");
+            options.arch = 'armv7';
 
         var defer = Q.defer(),
             plts = localSettings.platforms.map(platformHelper.getName);

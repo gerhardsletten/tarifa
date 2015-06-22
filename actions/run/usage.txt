@@ -14,6 +14,8 @@ Options:
     --arch <ARCH>           Android only: choose your device architecture. Can 
                             be either 'armv7' or 'x86'. It is mainly useful when
                             developing with the crosswalk-webview-plugin.
+                            If you're using crosswalk, tarifa will assume 'armv7'
+                            as default arch, so this flag is optional.
 
 Examples:
 
