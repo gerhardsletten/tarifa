@@ -165,22 +165,16 @@ function dump_configuration() {
 }
 
 module.exports = function (argv) {
-    var verbose = false,
-        helpPath = path.join(__dirname, 'usage.txt'),
-        hasNoArgs = argsHelper.matchArgumentsCount(argv, [0]),
+    var hasNoArgs = argsHelper.matchArgumentsCount(argv, [0]),
         hasValidDumpOpt = argsHelper.checkValidOptions(argv, ['V', 'verbose', 'dump-configuration']);
 
-    if(hasNoArgs && hasValidDumpOpt) {
-        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
-            verbose = true;
-        }
-        if (argsHelper.matchOption(argv, null, 'dump-configuration')) {
-            return dump_configuration();
-        } else {
-            return info(verbose);
-        }
-    }
-    return fs.read(helpPath).then(print);
+    if(!hasNoArgs || !hasValidDumpOpt)
+        return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
+
+    var verbose = argsHelper.matchOption(argv, 'V', 'verbose'),
+        isDump = argsHelper.matchOption(argv, null, 'dump-configuration');
+
+    return isDump ? dump_configuration(): info(verbose);
 };
 
 module.exports.info = info;

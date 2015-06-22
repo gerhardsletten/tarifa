@@ -8,7 +8,7 @@ var Q = require('q'),
     pathHelper = require('../../lib/helper/path'),
     platformHelper = require('../../lib/helper/platform'),
     tasksHelper = require('../../lib/helper/tasks'),
-    print = require('../../lib/helper/print'),
+    log = require('../../lib/helper/log'),
     tarifaFile = require('../../lib/tarifa-file'),
     listAvailableOnHost = require('../../lib/cordova/platforms').listAvailableOnHost,
     cordovaClean = require('../../lib/cordova/clean'),
@@ -21,8 +21,8 @@ var tryRemoveWWW = function (verbose) {
 
     rimraf(www, function (err) {
         if(err) {
-            print.warning(err);
-            print.warning("not able to remove www folder in cordova app!");
+            log.send('warning', err);
+            log.send('warning', 'not able to remove www folder in cordova app!');
         }
         fs.makeDirectory(www).then(function() { defer.resolve(); });
     });
@@ -73,17 +73,12 @@ var clean = function (platform, verbose) {
 };
 
 var action = function (argv) {
-    var verbose = false,
-        helpPath = path.join(__dirname, 'usage.txt');
 
     if(argsHelper.matchArgumentsCount(argv, [0, 1])
             && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
-        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
-            verbose = true;
-        }
-        return clean(argv._[0], verbose);
+        return clean(argv._[0], argsHelper.matchOption(argv, 'V', 'verbose'));
     }
-    return fs.read(helpPath).then(print);
+    return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };
 
 action.clean = clean;

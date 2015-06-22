@@ -4,9 +4,10 @@ var chalk = require('chalk'),
     fs = require('q-io/fs'),
     path = require('path'),
     util = require('util'),
+    chalk = require('chalk'),
     argv = require('minimist')(process.argv.slice(2)),
     pkg = require('../package.json'),
-    print = require('../lib/helper/print'),
+    log = require('../lib/helper/log'),
     argsHelper = require('../lib/helper/args');
 
 var t0 = (new Date()).getTime();
@@ -38,16 +39,16 @@ var availableActions = [
     ];
 
 function printHelp(errMessage) {
-    if(errMessage) print(errMessage);
+    if(errMessage) log.send('error', errMessage);
     fs.read(path.join(__dirname, 'usage.txt'))
         .then(function (help) {
-            print(help);
+            log.send('msg', help)
             process.exit(0);
         });
 }
 
 function printVersion() {
-    print(pkg.version);
+    log.send('msg', pkg.version);
     process.exit(0);
 }
 
@@ -58,18 +59,19 @@ function matchAction(args) {
 
 function actionSuccess(val) {
     var t = (new Date()).getTime();
-    print(chalk.magenta('done in ~ %ds'), Math.floor((t-t0)/1000));
+    log.send('info', chalk.magenta('done in ~ %ds'), Math.floor((t-t0)/1000));
     process.exit();
 }
 
 function actionError(name) {
     return function (err) {
-        print.trace(err);
+        log.send('error', chalk.red(err.stack || err));
         process.exit(1);
     };
 }
 
 function main(args) {
+    log.init(argsHelper.matchOption(argv, 'V', 'verbose'));
     for(var i=0, l=singleOptions.length; i<l; i++) {
         if(argsHelper.matchSingleOptionWithArguments(args, singleOptions[i].small, singleOptions[i].name, [0])) {
             return singleOptions[i].action();

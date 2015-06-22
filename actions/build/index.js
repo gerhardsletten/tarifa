@@ -3,7 +3,7 @@ var Q = require('q'),
     fs = require('q-io/fs'),
     cordova = require('cordova-lib/src/cordova/cordova'),
     argsHelper = require('../../lib/helper/args'),
-    print = require('../../lib/helper/print'),
+    log = require('../../lib/helper/log'),
     pathHelper = require('../../lib/helper/path'),
     platformHelper = require('../../lib/helper/platform'),
     settings = require('../../lib/settings'),
@@ -22,7 +22,7 @@ settings.platforms.forEach(function (p) {
 var prepare = function (conf) {
     var cwd = process.cwd();
     process.chdir(pathHelper.app());
-    if(conf.verbose) print.success('start cordova prepare');
+    log.send('success', 'start cordova prepare');
 
     return cordova.raw.prepare({
         verbose: conf.verbose,
@@ -42,7 +42,7 @@ var compile = function (conf) {
         options = conf.localSettings.mode ? [ conf.localSettings.mode ] : [],
         beforeCompile = tasks[conf.platform].beforeCompile;
 
-    if(conf.verbose) print.success('start cordova build');
+    log.send('success', 'start cordova build');
     process.chdir(pathHelper.app());
 
     options = beforeCompile ? beforeCompile(conf, options) : options;
@@ -70,7 +70,7 @@ var buildƒ = function (conf){
 
     conf.localSettings.mode = confObj.release ? '--release' : null;
 
-    if(conf.verbose) print.success('start to build the www project');
+    log.send('success', 'start to build the www project');
 
     process.chdir(pathHelper.root());
     return getPlatformVersion(pathHelper.app())(conf.platform)
@@ -90,7 +90,7 @@ var buildƒ = function (conf){
             else return runTasks('undo')(conf);
         }, function (err) {
             process.chdir(cwd);
-            if(conf.verbose) print.error('build action chain failed, start undo tasks...');
+            log.send('error', 'build action chain failed, start undo tasks...');
             return runTasks('undo')(conf).then(function () {
                 return Q.reject(err);
             });
@@ -110,7 +110,7 @@ var buildMultipleConfs = function(platform, configs, localSettings, keepFileChan
     return tarifaFile.checkConfigurations(configs, platform, localSettings).then(function () {
         return configs.reduce(function(msg, conf) {
             return Q.when(msg, function (m) {
-                print.outline('Launch build for %s platform and configuration %s !', platform, conf);
+                log.send('outline', 'Launch build for %s platform and configuration %s !', platform, conf);
                 m.configuration = conf;
                 return m;
             }).then(buildƒ);
@@ -137,16 +137,8 @@ var buildMultiplePlatforms = function (platforms, config, keepFileChanges, verbo
 };
 
 var action = function (argv) {
-    var verbose = false,
-        keepFileChanges = false,
-        helpPath = path.join(__dirname, 'usage.txt');
-
-    // match options
-    if (argsHelper.matchOption(argv, 'V', 'verbose'))
-        verbose = true;
-
-    if (argsHelper.matchOption(argv, null, 'keep-file-changes'))
-        keepFileChanges = true;
+    var verbose = argsHelper.matchOption(argv, 'V', 'verbose'),
+        keepFileChanges = argsHelper.matchOption(argv, null, 'keep-file-changes');
 
     if (argsHelper.matchCmd(argv._, ['__all__', '*']))
         return buildMultiplePlatforms(null, argv._[1] || 'default', keepFileChanges, verbose);
@@ -160,7 +152,7 @@ var action = function (argv) {
         );
     }
 
-    return fs.read(helpPath).then(print);
+    return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };
 
 action.buildMultiplePlatforms = buildMultiplePlatforms;

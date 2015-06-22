@@ -1,7 +1,6 @@
 var fs = require('q-io/fs'),
     path = require('path'),
-    argsHelper = require('../../lib/helper/args'),
-    print = require('../../lib/helper/print');
+    argsHelper = require('../../lib/helper/args');
 
 module.exports = function (argv) {
     if (argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
@@ -13,5 +12,5 @@ module.exports = function (argv) {
             return require('./plugin')(verbose);
         }
     }
-    return fs.read(path.join(__dirname, 'usage.txt')).then(print);
+    return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };

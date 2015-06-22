@@ -15,7 +15,7 @@ function create(verbose) {
     };
 
     return ask(questions.project)(initResponse).then(function (response) {
-        print(); spinner();
+        console.log(); spinner();
         return response;
     }).then(createProject.createFromResponse);
 }
