@@ -58,7 +58,7 @@ function testUpdate(projectDefer) {
                 it('tarifa update', function () {
                     this.timeout(0);
                     return projectDefer.promise.then(function () {
-                        return updateAction.update(false, true);
+                        return updateAction.update(true);
                     });
                 });
 
