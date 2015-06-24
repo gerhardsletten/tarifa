@@ -194,7 +194,7 @@ function getUsablePlatforms(localSettings) {
     }), localSettings.platforms.map(platformHelper.getName));
 }
 
-function update() {
+function update(force) {
     var root = pathHelper.root();
 
     return tarifaFile.parse(root)
@@ -208,7 +208,7 @@ function update() {
             };
         })
         .then(info(root))
-        .then(askUserForUpdate(root))
+        .then(force ? function(i) { return i; } : askUserForUpdate(root))
         .then(runUpdatePlatforms(root))
         .then(runUpdatePlugins(root))
         .then(function (msg) {
@@ -223,7 +223,7 @@ function update() {
 
 var action = function (argv) {
 
-    if(argsHelper.matchArgumentsCount(argv, [ 0 ])) return update();
+    if(argsHelper.matchArgumentsCount(argv, [ 0 ])) return update(false);
 
     return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };
