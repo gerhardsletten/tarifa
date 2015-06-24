@@ -1,6 +1,5 @@
 var Q = require('q'),
     spinner = require("char-spinner"),
-    cordova = require('cordova-lib/src/cordova/cordova'),
     child_process = require('child_process'),
     path = require('path'),
     format = require('util').format,
@@ -59,6 +58,7 @@ var run = function (platform, config, localSettings, options) {
         nobuild: options.nobuild,
         log: options.log,
         all: options.all,
+        arch: options.arch,
         spinner: spinner()
     });
 };
@@ -116,6 +116,12 @@ var wait = function (defer, options) {
 
 var runMultiplePlatforms = function (platforms, config, options) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
+        if (options.arch && !localSettings.plugins['cordova-plugin-crosswalk-webview'])
+            return Q.reject("You are running a specified architecture but you don't have 'cordova-plugin-crosswalk-webview' installed.\nYou should run 'tarifa plugin add cordova-plugin-crosswalk-webview' if you which to use crosswalk.");
+
+        // let's assume the arch is armv7 since it is overwhelmingly majority
+        if (!options.arch && localSettings.plugins['cordova-plugin-crosswalk-webview'])
+            options.arch = 'armv7';
 
         var defer = Q.defer(),
             plts = localSettings.platforms.map(platformHelper.getName);
@@ -144,7 +150,8 @@ var action = function (argv) {
             nobuild: argsHelper.matchOption(argv, null, 'nobuild'),
             log: argsHelper.matchOption(argv, 'l', 'log'),
             all: argsHelper.matchOption(argv, null, 'all'),
-            debug: argsHelper.matchOption(argv, 'd', 'debug')
+            debug: argsHelper.matchOption(argv, 'd', 'debug'),
+            arch: argsHelper.matchOptionWithValue(argv, null, 'arch')
         };
 
     if (options.log) {

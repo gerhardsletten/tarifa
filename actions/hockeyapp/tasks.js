@@ -1,11 +1,9 @@
 var Q = require('q'),
-    fs = require('q-io/fs'),
     path = require('path'),
     format = require('util').format,
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
     collsHelper = require('../../lib/helper/collections'),
-    argsHelper = require('../../lib/helper/args'),
     hockeyapp = require('../../lib/hockeyapp/hockeyapp'),
     log = require('../../lib/helper/log');
 
@@ -52,7 +50,8 @@ var upload = function (msg) {
         productFileName = pathHelper.productFile(
             platform,
             envSettings.product_file_name,
-            envSettings.release
+            localSettings.plugins['cordova-plugin-crosswalk-webview'] ?
+              envSettings.arch || 'armv7' : null
         );
 
     return hockeyapp.uploadVersion(productFileName, conf, hockeyapp_id).then(function (data) {
