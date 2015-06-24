@@ -12,7 +12,7 @@ var Q = require('q'),
     pkg = require('../../package'),
     settings = require('../../lib/settings'),
     intersection = require('interset/intersection'),
-    print = require('../../lib/helper/print'),
+    log = require('../../lib/helper/log'),
     plugins = require('../../lib/cordova/plugins'),
     pluginXML = require('../../lib/xml/plugin.xml'),
     pluginAction = require('../plugin').plugin,
@@ -54,7 +54,7 @@ function _addAvailablePlatforms(msg) {
         Object.keys(msg.installedPlatforms)
     );
 
-    print(chalk.underline('platforms to update'));
+    log.send('msg', chalk.underline('platforms to update'));
     msg.platformsToUpdate = [];
 
     inter.filter(function (p) {
@@ -62,7 +62,8 @@ function _addAvailablePlatforms(msg) {
     }).forEach(function (name) {
         if(versionGreater(latestPlatforms[name], msg.installedPlatforms[name])) {
             msg.platformsToUpdate.push(name);
-            print(
+            log.send(
+                'msg',
                 '  %s: %s -> %s',
                 name,
                 msg.installedPlatforms[name],
@@ -71,9 +72,8 @@ function _addAvailablePlatforms(msg) {
         }
     });
 
-    if(!msg.platformsToUpdate.length) print('  none');
+    if(!msg.platformsToUpdate.length) log.send('msg', '  none');
 
-    print();
     return msg;
 }
 
@@ -102,21 +102,20 @@ function _addAvailablePlugins(root) {
             }),
             toUpdate = intersection(availablePlugins, msg.installedPlugins);
 
-        print(chalk.underline('default plugins to update'));
+        log.send('msg', chalk.underline('default plugins to update'));
         msg.pluginToUpdate = [];
         return toUpdate.reduce(function (promise, p) {
             return promise.then(function () {
                 return  _pluginVersion(root, p).then(function (installedVersion) {
                     if(versionGreater(availablePluginsVersions[p], installedVersion)) {
                         msg.pluginToUpdate.push(p);
-                        print('  %s %s -> %s', p, installedVersion, availablePluginsVersions[p]);
+                        log.send('msg', '  %s %s -> %s', p, installedVersion, availablePluginsVersions[p]);
                     }
                     return Q.resolve();
                 });
             });
         }, Q.resolve()).then(function () {
-            if(!msg.pluginToUpdate.length) print('  none');
-            print();
+            if(!msg.pluginToUpdate.length) log.send('msg', '  none');
             return msg;
         });
     };
@@ -126,10 +125,9 @@ function info(root) {
     return function (msg) {
         var appPath = path.join(root, settings.cordovaAppPath);
 
-        if(msg.verbose) print();
-        if(msg.verbose) print('tarifa version: %s', pkg.version);
-        if(msg.verbose) print('current project tarifa version: %s', msg.versionObj.current);
-        if(msg.verbose) print('project created with tarifa version: %s\n', msg.versionObj.created);
+        log.send('info', 'tarifa version: %s', pkg.version);
+        log.send('info', 'current project tarifa version: %s', msg.versionObj.current);
+        log.send('info', 'project created with tarifa version: %s\n', msg.versionObj.created);
 
         return _addInstalledPlatforms(appPath, msg)
             .then(_addAvailablePlatforms)
@@ -141,7 +139,7 @@ function info(root) {
 function askUserForUpdate(root) {
     return function (msg) {
         if(!msg.platformsToUpdate.length && !msg.pluginToUpdate.length) {
-            print.success('nothing to update');
+            log.send('success', 'nothing to update');
             process.exit(0);
         }
 
@@ -155,12 +153,11 @@ function askUserForUpdate(root) {
 function runUpdatePlatforms(root) {
     return function (msg) {
         if(!msg.platformsToUpdate.length) return msg;
-        var plts = msg.platformsToUpdate.map(cordovaPlatforms.extendPlatform),
-            verbose = msg.verbose;
-        return cordovaPlatforms.remove(root, plts, verbose).then(function () {
+        var plts = msg.platformsToUpdate.map(cordovaPlatforms.extendPlatform);
+        return cordovaPlatforms.remove(root, plts).then(function () {
             return tarifaFile.removePlatforms(root, plts);
         }).then(function () {
-            return cordovaPlatforms.add(root, plts, verbose);
+            return cordovaPlatforms.add(root, plts);
         }).then(function () {
             return tarifaFile.addPlatforms(root, plts);
         }).then(function () {
@@ -174,18 +171,18 @@ function runUpdatePlugins(root) {
         var plgs = plugins.listAll();
         return msg.pluginToUpdate.reduce(function (promise, plugin) {
             return promise.then(function () {
-                return pluginAction('remove', plugin, msg.verbose);
+                return pluginAction('remove', plugin);
             }).then(function () {
                 var idx = plgs.map(function (p) {
                     return p.value;
                 }).indexOf(plugin);
 
-                return pluginAction('add', plgs[idx].uri, msg.verbose);
+                return pluginAction('add', plgs[idx].uri);
             });
         }, Q.resolve())
         .then(function () {
             if(msg.pluginToUpdate.length === 0) return msg;
-            if(msg.verbose) print.success('updated plugins');
+            log.send('success', 'updated plugins');
             return msg;
         });
     };
@@ -197,7 +194,7 @@ function getUsablePlatforms(localSettings) {
     }), localSettings.platforms.map(platformHelper.getName));
 }
 
-function update(verbose, force) {
+function update() {
     var root = pathHelper.root();
 
     return tarifaFile.parse(root)
@@ -207,12 +204,11 @@ function update(verbose, force) {
                 versionObj: JSON.parse(fs.readFileSync(path.join(root, '.tarifa.json'), 'utf-8')),
                 platforms: getUsablePlatforms(localSettings),
                 pluginToUpdate: [],
-                platformsToUpdate : [],
-                verbose: verbose
+                platformsToUpdate : []
             };
         })
         .then(info(root))
-        .then(force ? function(i) { return i; } : askUserForUpdate(root))
+        .then(askUserForUpdate(root))
         .then(runUpdatePlatforms(root))
         .then(runUpdatePlugins(root))
         .then(function (msg) {
@@ -221,23 +217,15 @@ function update(verbose, force) {
                 created: msg.versionObj.created
             }));
             if(msg.pluginToUpdate.length || msg.platformsToUpdate.length)
-                print.success('update current project');
+                log.send('success', 'update current project');
         });
 }
 
 var action = function (argv) {
-    var verbose = false,
-        helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.matchArgumentsCount(argv, [ 0 ])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
-        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
-            verbose = true;
-        }
-        return update(verbose);
-    }
+    if(argsHelper.matchArgumentsCount(argv, [ 0 ])) return update();
 
-    return fs.read(helpPath).then(print);
+    return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };
 
 action.update = update;

@@ -6,7 +6,8 @@ var Q = require('q'),
     spinner = require('char-spinner'),
     ask = require('../../../lib/questions/ask'),
     pathHelper = require('../../../lib/helper/path'),
-    print = require('../../../lib/helper/print'),
+    banner = require('../../../lib/helper/banner'),
+    log = require('../../../lib/helper/log'),
     settings = require('../../../lib/settings'),
     questions = require('../../../lib/questions/list').plugin,
 
@@ -28,11 +29,10 @@ settings.platforms.forEach(function (platform) {
     ));
 });
 
-function create(verbose) {
-    if (verbose) print.banner();
-    var opts = { options: { verbose: verbose } };
+function create() {
+    banner();
+    var opts = { options: { } };
     return ask(questions)(opts).then(function (resp) {
-        print();
         spinner();
         return launchTasks(resp);
     });
@@ -64,7 +64,9 @@ function copyPluginXml(resp) {
                 var pluginXMLPath = templates[platform].pluginXMLPath;
                 return fs.read(pluginXMLPath).then(function (content) {
                     xml += content;
-                    return resp.use_variables ? inject(path.dirname(pluginXMLPath), /use_variables.xml/, xml) : xml;
+                    return resp.use_variables
+                        ? inject(path.dirname(pluginXMLPath), /use_variables.xml/, xml)
+                        : xml;
                 });
             });
         }, '').then(function (platformsContent) {
@@ -72,14 +74,16 @@ function copyPluginXml(resp) {
         });
     }).then(function (tmplContent) {
         var destContent = tmplContent.replace(/\%ID/g, resp.id)
-                                     .replace(/\%TARGET_DIR/g, resp.id.replace('.', '/'))
-                                     .replace(/\%NAME/g, resp.name)
-                                     .replace(/\%VERSION/g, resp.version)
-                                     .replace(/\%DESCRIPTION/g, resp.description)
-                                     .replace(/\%AUTHOR_NAME/g, resp.author_name)
-                                     .replace(/\%KEYWORDS/g, resp.keywords)
-                                     .replace(/\%LICENSE/g, resp.license);
-        return resp.use_variables ? inject(path.dirname(tmplPath), /use_variables.xml/, destContent) : destContent.replace(/\%PLUGIN_USE_VARIABLES/g, '');
+            .replace(/\%TARGET_DIR/g, resp.id.replace('.', '/'))
+            .replace(/\%NAME/g, resp.name)
+            .replace(/\%VERSION/g, resp.version)
+            .replace(/\%DESCRIPTION/g, resp.description)
+            .replace(/\%AUTHOR_NAME/g, resp.author_name)
+            .replace(/\%KEYWORDS/g, resp.keywords)
+            .replace(/\%LICENSE/g, resp.license);
+        return resp.use_variables
+            ? inject(path.dirname(tmplPath), /use_variables.xml/, destContent)
+            : destContent.replace(/\%PLUGIN_USE_VARIABLES/g, '');
     }).then(function (destContent) {
         return fs.write(destPath, destContent);
     }).then(function () { return resp; });

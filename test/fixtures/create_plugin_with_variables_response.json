@@ -1,7 +1,4 @@
 {
-    "options": {
-        "verbose": false
-    },
     "path": "plugin-with-variables",
     "id": "tools.tarifa",
     "name": "PluginWithVariables",

@@ -5,38 +5,26 @@ var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     devices = require('../../lib/devices'),
     settings = require('../../lib/settings'),
-    print = require('../../lib/helper/print');
+    platforms = require('../../lib/cordova/platforms'),
+    log = require('../../lib/helper/log');
 
-function listAvailablePlatforms() {
-    var host = os.platform(), r = [];
-    for(var p in settings.os_platforms) {
-        if(settings.os_platforms[p].indexOf(host) > -1) r.push(p);
-    }
-    return r;
-}
-
-function printDevices(platforms, verbose) {
-    return platforms.reduce(function (p, platform) {
-        return p.then(function () {
-            return devices.prettyPrint(platform, verbose);
-        });
+function device(withDescription) {
+    var meth = withDescription ? 'prettifyWithDescription' : 'prettify',
+        currentPlatforms = platforms.listShouldBeAvailableOnHost();
+    return currentPlatforms.reduce(function (p, platform) {
+        return Q.when(p, function () {
+            return devices[meth](platform);
+        }).then(function (msg) { if(msg) log.send('msg', msg); });
     }, Q());
 }
 
-function device(verbose) {
-    return printDevices(listAvailablePlatforms(), verbose);
-}
-
 module.exports = function (argv) {
-    var verbose = false,
-        helpPath = path.join(__dirname, 'usage.txt'),
-        hasNoArgs = argsHelper.matchArgumentsCount(argv, [0]),
-        hasValidOpt = argsHelper.checkValidOptions(argv, ['V', 'verbose']);
+    var hasNoArgs = argsHelper.matchArgumentsCount(argv, [0]);
 
-    if(hasNoArgs && hasValidOpt) {
-        return device(argsHelper.matchOption(argv, 'V', 'verbose'));
-    }
-    return fs.read(helpPath).then(print);
+    if(hasNoArgs)
+        return device();
+
+    return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };
 
 module.exports.device = device;

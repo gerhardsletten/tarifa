@@ -5,7 +5,7 @@ var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
-    print = require('../../lib/helper/print'),
+    log = require('../../lib/helper/log'),
     isObject = require('../../lib/helper/collections').isObject,
     settings = require('../../lib/settings'),
     pluginXML = require('../../lib/xml/plugin.xml'),
@@ -13,7 +13,7 @@ var Q = require('q'),
 
 function printPlugins(items) {
     if(items.length === 0) {
-        print("no plugin installed!");
+        log.send('msg', "no plugin installed!");
         return Q.resolve();
     }
 
@@ -21,18 +21,16 @@ function printPlugins(items) {
         return Q.when(msg, function () {
             var pluginPath = path.join(pathHelper.app(), 'plugins', p, 'plugin.xml');
             return pluginXML.getVersion(pluginPath).then(function (v) {
-                print('%s@%s', plugins.getName(pathHelper.root(), p), v);
+                log.send('msg', '%s@%s', plugins.getName(pathHelper.root(), p), v);
             });
         });
     }, {});
 }
 
-function log(action, verbose) {
+function logging(action) {
     return function (val) {
-        if(verbose) {
-            if(val) print("%s plugin: %s", action, val);
-            else print("no plugin added!");
-        }
+        if(val) log.send('info', "%s plugin: %s", action, val);
+        else log.send('info', "no plugin added!");
         return val;
     };
 }
@@ -63,11 +61,11 @@ function list() {
     return plugins.list(pathHelper.root());
 }
 
-function plugin(action, arg, variables, link, verbose) {
-    return raw_plugin(pathHelper.root(), action, arg, variables, link, verbose);
+function plugin(action, arg, variables, link) {
+    return raw_plugin(pathHelper.root(), action, arg, variables, link);
 }
 
-function raw_plugin (root, action, arg, variables, link, verbose) {
+function raw_plugin (root, action, arg, variables, link) {
     return tarifaFile.parse(root)
         .then(function (settings) {
             if(action == 'remove' && (!settings.plugins || Object.keys(settings.plugins).indexOf(arg) < 0))
@@ -81,7 +79,7 @@ function raw_plugin (root, action, arg, variables, link, verbose) {
                     uri= isObject(p) ? p.uri: p,
                     vars = isObject(p) ? p.variables: {};
                 return plugins.reload(root, arg, uri, { cli_variables: vars, link: link })
-                    .then(function () { return log('reload', verbose)(arg); });
+                    .then(function () { return logging('reload')(arg); });
             } else {
                 var opts = { cli_variables: variables };
                 if (action === 'add') { opts.link = link; }
@@ -93,7 +91,7 @@ function raw_plugin (root, action, arg, variables, link, verbose) {
                         return val;
                     })
                     .then(actions[action].updateTarifaFile(root))
-                    .then(log(action, verbose));
+                    .then(logging(action));
             }
         });
 }
@@ -107,15 +105,10 @@ function getVariableFromCli(v, rst) {
 }
 
 function action (argv) {
-    var verbose = false,
-        helpPath = path.join(__dirname, 'usage.txt'),
-        link = false,
+    var link = false,
         variables = null;
 
-    if(argsHelper.checkValidOptions(argv, ['V', 'verbose', 'variable', 'link'])) {
-        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
-            verbose = true;
-        }
+    if(argsHelper.checkValidOptions(argv, ['variable', 'link'])) {
         if(argsHelper.matchOptionWithValue(argv, null, 'variable')) {
             variables = argv.variable;
             if(variables instanceof Array)
@@ -129,7 +122,7 @@ function action (argv) {
             if (argv._[0] === 'add' || argv._[0] === 'reload') {
                 link = true;
             } else {
-                return fs.read(helpPath).then(print);
+                return fs.read(helpPath).then(console.log);
             }
         }
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
@@ -137,11 +130,11 @@ function action (argv) {
         }
         if(Object.keys(actions).indexOf(argv._[0]) > -1 &&
             argsHelper.matchArgumentsCount(argv, [2])) {
-                return plugin(argv._[0], argv._[1], variables, link, verbose);
+                return plugin(argv._[0], argv._[1], variables, link);
             }
     }
 
-    return fs.read(helpPath).then(print);
+    return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 }
 
 action.plugin = plugin;

@@ -3,13 +3,12 @@ var fs = require('q-io/fs'),
     argsHelper = require('../../lib/helper/args');
 
 module.exports = function (argv) {
-    if (argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
-        var verbose = argsHelper.matchOption(argv, 'V', 'verbose');
+    if (argsHelper.checkValidOptions(argv, [])) {
         if (argsHelper.matchArgumentsCount(argv, [0]) || argsHelper.matchCmd(argv._, ['project'])) {
-            return require('./project')(verbose);
+            return require('./project')();
         }
         if (argsHelper.matchCmd(argv._, ['plugin'])) {
-            return require('./plugin')(verbose);
+            return require('./plugin')();
         }
     }
     return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);

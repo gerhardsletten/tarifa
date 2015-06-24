@@ -7,9 +7,9 @@ var Q = require('q'),
     collsHelper = require('../../lib/helper/collections'),
     argsHelper = require('../../lib/helper/args'),
     hockeyapp = require('../../lib/hockeyapp/hockeyapp'),
-    print = require('../../lib/helper/print');
+    log = require('../../lib/helper/log');
 
-var mergeParams = function (localSettings, argv, verbose) {
+var mergeParams = function (localSettings, argv) {
     // check for hockeyapp options in conf
     var params = collsHelper.mapKeys(collsHelper.filterKeys(localSettings.hockeyapp, function (e) {
             return [
@@ -33,15 +33,13 @@ var mergeParams = function (localSettings, argv, verbose) {
 
     return {
         localSettings: localSettings,
-        uploadParams: collsHelper.mergeObject(params, opts),
-        verbose: verbose
+        uploadParams: collsHelper.mergeObject(params, opts)
     };
 };
 
 var upload = function (msg) {
     var config = msg.config,
         platform = msg.platform,
-        verbose = msg.verbose,
         localSettings = msg.localSettings,
         envSettings = localSettings.configurations[platform][config],
         hockeyapp_id = envSettings.hockeyapp_id;
@@ -50,7 +48,7 @@ var upload = function (msg) {
         return Q.reject('No hockeyapp informations are available in the current tarifa.json file.');
 
     // check for hockeyapp options in conf
-    var conf = mergeParams(localSettings, msg.argv, verbose),
+    var conf = mergeParams(localSettings, msg.argv),
         productFileName = pathHelper.productFile(
             platform,
             envSettings.product_file_name,
@@ -58,7 +56,8 @@ var upload = function (msg) {
         );
 
     return hockeyapp.uploadVersion(productFileName, conf, hockeyapp_id).then(function (data) {
-        print.success(
+        log.send(
+            'success',
             'Uploaded new package "%s" successfully.\nSee new version at %s',
             path.basename(productFileName),
             data.public_url
@@ -66,7 +65,7 @@ var upload = function (msg) {
         // in case of app creation, add 'hockeyapp_id' to configuration
         if (data.public_identifier) {
             return tarifaFile.addHockeyappId(pathHelper.root(), platform, config, data.public_identifier).then(function() {
-                print.success('Created hockeyapp application successfully.');
+                 log.send('success', 'Created hockeyapp application successfully.');
             });
         }
     });
@@ -74,7 +73,6 @@ var upload = function (msg) {
 
 var clean = function (msg, nbToKeep) {
     var localSettings = msg.localSettings,
-        verbose = msg.verbose,
         appIds = collsHelper.findByKey(localSettings, 'hockeyapp_id');
 
     if(!localSettings.hockeyapp)
@@ -90,7 +88,8 @@ var clean = function (msg, nbToKeep) {
             localSettings.hockeyapp.api_url,
             nbToKeep
     ).then(function (total) {
-        print.success(
+        log.send(
+            'success',
             'Successfully deleted %s version(s). Notice: deletion is asynchronous and version may still appear in listings for a while.',
             total
         );
@@ -100,8 +99,7 @@ var clean = function (msg, nbToKeep) {
 var updateLast = function (msg) {
     var config = msg.config,
         platform = msg.platform,
-        argv = msg.argv,
-        verbose = msg.verbose;
+        argv = msg.argv;
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         var envSettings = localSettings.configurations[platform][config],
@@ -119,13 +117,12 @@ var updateLast = function (msg) {
             // get relevant options in cmd args
             uploadParams: collsHelper.filterKeys(argv, function(e) {
                 return ['notes', 'notify', 'status', 'tags', 'teams', 'users'].indexOf(e) > -1;
-            }),
-            verbose: verbose
+            })
         };
 
         return hockeyapp.listVersions(conf, false).then(function (list) {
             return hockeyapp.updateVersion(list.app_versions[0].id, conf).then(function () {
-                print.success('Updated version successfully.');
+                log.send('success', 'Updated version successfully.');
             });
         });
     });
@@ -133,8 +130,7 @@ var updateLast = function (msg) {
 
 var list = function(msg) {
     var config = msg.config,
-        platform = msg.platform,
-        verbose = msg.verbose;
+        platform = msg.platform;
 
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         var envSettings = localSettings.configurations[platform][config],

@@ -26,8 +26,7 @@ function build(root, id, identity, profile_path, profile_name, dist) {
             platform: 'ios',
             configuration: 'stage',
             localSettings: localSettings,
-            keepFileChanges: false,
-            verbose: false
+            keepFileChanges: false
         });
     });
 }

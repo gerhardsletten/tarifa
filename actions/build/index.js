@@ -25,7 +25,6 @@ var prepare = function (conf) {
     log.send('success', 'start cordova prepare');
 
     return cordova.raw.prepare({
-        verbose: conf.verbose,
         platforms: [ conf.platform ],
         options: []
     }).then(function (){
@@ -48,7 +47,6 @@ var compile = function (conf) {
     options = beforeCompile ? beforeCompile(conf, options) : options;
 
     return cordova.raw.compile({
-        verbose: conf.verbose,
         platforms: [ conf.platform ],
         options: options
     }).then(function (){
@@ -97,12 +95,11 @@ var buildƒ = function (conf){
         });
 };
 
-var buildMultipleConfs = function(platform, configs, localSettings, keepFileChanges, verbose) {
+var buildMultipleConfs = function(platform, configs, localSettings, keepFileChanges) {
     var message = {
         platform: platform,
         localSettings: localSettings,
-        keepFileChanges: keepFileChanges,
-        verbose: verbose
+        keepFileChanges: keepFileChanges
     };
 
     configs = configs || tarifaFile.getPlatformConfigs(localSettings, platform);
@@ -118,7 +115,7 @@ var buildMultipleConfs = function(platform, configs, localSettings, keepFileChan
     });
 };
 
-var buildMultiplePlatforms = function (platforms, config, keepFileChanges, verbose) {
+var buildMultiplePlatforms = function (platforms, config, keepFileChanges) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         platforms = (platforms || localSettings.platforms.map(platformHelper.getName));
         return tarifaFile.checkPlatforms(platforms, localSettings).then(function (availablePlatforms) {
@@ -129,7 +126,7 @@ var buildMultiplePlatforms = function (platforms, config, keepFileChanges, verbo
                     } else if (argsHelper.matchWildcard(config)) {
                         config = argsHelper.getFromWildcard(config);
                     }
-                    return buildMultipleConfs(platform, config, localSettings, keepFileChanges, verbose);
+                    return buildMultipleConfs(platform, config, localSettings, keepFileChanges);
                 });
             }, Q());
         });
@@ -137,18 +134,16 @@ var buildMultiplePlatforms = function (platforms, config, keepFileChanges, verbo
 };
 
 var action = function (argv) {
-    var verbose = argsHelper.matchOption(argv, 'V', 'verbose'),
-        keepFileChanges = argsHelper.matchOption(argv, null, 'keep-file-changes');
+    var keepFileChanges = argsHelper.matchOption(argv, null, 'keep-file-changes');
 
     if (argsHelper.matchCmd(argv._, ['__all__', '*']))
-        return buildMultiplePlatforms(null, argv._[1] || 'default', keepFileChanges, verbose);
+        return buildMultiplePlatforms(null, argv._[1] || 'default', keepFileChanges);
 
     if (argsHelper.matchCmd(argv._, ['__some__', '*'])) {
         return buildMultiplePlatforms(
             argsHelper.getFromWildcard(argv._[0]),
             argv._[1] || 'default',
-            keepFileChanges,
-            verbose
+            keepFileChanges
         );
     }
 

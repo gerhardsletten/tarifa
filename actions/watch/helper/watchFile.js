@@ -1,17 +1,17 @@
 var chokidar = require('chokidar'),
     Q = require('q'),
-    print = require('../../../lib/helper/print');
+    log = require('../../../lib/helper/log');
 
-module.exports = function watchFile(filePath, verbose) {
+module.exports = function watchFile(filePath) {
     var d = Q.defer(),
         w = chokidar.watch(filePath),
         onError = function (error) {
-            if (verbose) { print(error); }
+            log.send('error', error);
             return d.reject(format('cannot watch %s', filePath));
         };
     w.once('ready', function () {
         w.removeListener('error', onError);
-        if (verbose) { print.success('watching %s', filePath); }
+        log.send('success', 'watching %s', filePath);
         d.resolve(w);
     });
     w.once('error', onError);

@@ -11,7 +11,7 @@ var Q = require('q'),
     pathHelper = require('../../lib/helper/path'),
     builder = require('../../lib/builder'),
     feature = require('../../lib/feature'),
-    print = require('../../lib/helper/print'),
+    log = require('../../lib/helper/log'),
     isAvailableOnHost = require('../../lib/cordova/platforms').isAvailableOnHost,
     runAction = require('../run'),
     tarifaFile = require('../../lib/tarifa-file'),
@@ -44,7 +44,7 @@ function sigint(ƒ) {
     return d.promise;
 }
 
-function watch(platform, config, httpPort, norun, verbose) {
+function watch(platform, config, httpPort, norun) {
     if (!feature.isAvailable('watch', platform)) {
         return Q.reject(format('feature not available on %s!', platform));
     }
@@ -52,22 +52,21 @@ function watch(platform, config, httpPort, norun, verbose) {
     return Q.all([
         tarifaFile.parse(pathHelper.root(), platform, config),
         isAvailableOnHost(platform)
-    ]).spread(run(platform, config, httpPort, norun, verbose))
+    ]).spread(run(platform, config, httpPort, norun))
       .spread(wait)
       .spread(closeWatchers);
 }
 
-function closeWatchers(tarifaFileWatch, tarifaPrivateWatch, closeBuilderWatch, verbose) {
+function closeWatchers(tarifaFileWatch, tarifaPrivateWatch, closeBuilderWatch) {
     return sigint(function () {
-        print();
-        if(verbose) print.success('closing www builder');
+        log.send('success', 'closing www builder');
         tarifaFileWatch.close();
         tarifaPrivateWatch.close();
         closeBuilderWatch();
     });
 }
 
-function run(platform, config, httpPort, norun, verbose) {
+function run(platform, config, httpPort, norun) {
     return function (localSettings) {
         return Q.all([
             askHostIp(),
@@ -75,29 +74,28 @@ function run(platform, config, httpPort, norun, verbose) {
             findPorts(httpPort, 1, 1),
             builder.checkWatcher(pathHelper.root())
         ]).spread(function (ip, lrPorts, httpPorts) {
-            return startLiveReloadServer(lrPorts[0], verbose).then(function () {
-                return startHttpServer(lrPorts[0], httpPorts[0], platform, verbose);
+            return startLiveReloadServer(lrPorts[0]).then(function () {
+                return startHttpServer(lrPorts[0], httpPorts[0], platform);
             }).then(function () {
                 var msg = {
                     localSettings: localSettings,
                     platform : platform,
                     configuration: config,
-                    watch: format('http://%s:%s/index.html', ip, httpPorts[0]),
-                    verbose: verbose
+                    watch: format('http://%s:%s/index.html', ip, httpPorts[0])
                 };
                 return norun ? Q(msg) : runAction.runƒ(msg);
             }).then(function (msg) {
-                if (verbose) print.success('watch %s at %s', platform, chalk.green.underline(msg.watch));
-                return [localSettings, platform, config, ip, lrPorts[0], httpPorts[0], verbose];
+                log.send('success', 'watch %s at %s', platform, chalk.green.underline(msg.watch));
+                return [localSettings, platform, config, ip, lrPorts[0], httpPorts[0]];
             });
         });
     };
 }
 
-function onWatcherError(filePath, verbose) {
+function onWatcherError(filePath) {
     return function (err) {
-        if (verbose) { print(err); }
-        print.error('error watching %s', filePath);
+        log.send('error', err);
+        log.send('error', 'error watching %s', filePath);
     };
 };
 
@@ -115,44 +113,42 @@ function onChange(root, platform, config, currentConf, confEmitter) {
 
 function logTime(t0) {
     return function () {
-        if(verbose) {
-            var t = (new Date()).getTime();
-            print('\n\t%s', chalk.green(cool()));
-            print(chalk.magenta('\ndone in ~ %ds\n'), Math.floor((t-t0)/1000));
-        }
+        var t = (new Date()).getTime();
+        log.send('info', '\n\t%s', chalk.green(cool()));
+        log.send('info', chalk.magenta('\ndone in ~ %ds\n'), Math.floor((t-t0)/1000));
     };
 }
 
-function trigger(localSettings, platform, config, ip, httpPort, lrPort, verbose) {
+function trigger(localSettings, platform, config, ip, httpPort, lrPort) {
     return function (filePath) {
         var t0 = (new Date()).getTime();
-        if(verbose) print.success('www project triggering tarifa');
+        log.send('success', 'www project triggering tarifa');
 
         var www = pathHelper.cordova_www(),
             out = localSettings.project_output;
 
-        return prepare(www, out, localSettings, platform, config, verbose).then(function () {
-            return onchange(ip, httpPort, lrPort, out, filePath, verbose).then(logTime(t0));
+        return prepare(www, out, localSettings, platform, config).then(function () {
+            return onchange(ip, httpPort, lrPort, out, filePath).then(logTime(t0));
         });
     };
 }
 
-function wait(localSettings, platform, config, ip, lrPort, httpPort, verbose) {
+function wait(localSettings, platform, config, ip, lrPort, httpPort) {
     var root = pathHelper.root(),
         tarifaFilePath = path.join(root, settings.publicTarifaFileName),
         tarifaPrivatePath = path.join(root, settings.privateTarifaFileName);
 
     return Q.all([
-        watchFile(tarifaFilePath, verbose), watchFile(tarifaPrivatePath, verbose)
+        watchFile(tarifaFilePath), watchFile(tarifaPrivatePath)
     ]).spread(function (tarifaFileWatch, tarifaPrivateWatch) {
 
-        tarifaFileWatch.on('error', onWatcherError(tarifaFilePath, verbose));
-        tarifaPrivateWatch.on('error', onWatcherError(tarifaPrivatePath, verbose));
+        tarifaFileWatch.on('error', onWatcherError(tarifaFilePath));
+        tarifaPrivateWatch.on('error', onWatcherError(tarifaPrivatePath));
 
         var confEmitter = new EventEmitter();
         var closeBuilderWatch = builder.watch(
                 pathHelper.root(),
-                trigger(localSettings, platform, config, ip, httpPort, lrPort, verbose),
+                trigger(localSettings, platform, config, ip, httpPort, lrPort),
                 localSettings,
                 platform,
                 config,
@@ -165,35 +161,30 @@ function wait(localSettings, platform, config, ip, lrPort, httpPort, verbose) {
             tarifaPrivateWatch.on('change', onChange(root, platform, config, currentConf, confEmitter));
         }, 1000);
 
-        return [ tarifaFileWatch, tarifaPrivateWatch, closeBuilderWatch, verbose ];
+        return [ tarifaFileWatch, tarifaPrivateWatch, closeBuilderWatch ];
     });
 }
 
 var action = function (argv) {
-    var verbose = false,
-        norun = false,
-        httpPort = settings.default_http_port,
-        helpPath = path.join(__dirname, 'usage.txt');
+    var norun = false,
+        httpPort = settings.default_http_port;
 
     if (argsHelper.matchArgumentsCount(argv, [1, 2]) &&
-            argsHelper.checkValidOptions(argv, ['V', 'verbose', 'p', 'port', 'norun'])) {
-        if (argsHelper.matchOption(argv, 'V', 'verbose')) {
-            verbose = true;
-        }
+            argsHelper.checkValidOptions(argv, ['p', 'port', 'norun'])) {
 
         if (argsHelper.matchOptionWithValue(argv, 'p', 'port')) {
             httpPort = parseInt(argv.p || argv.port, 10);
             if (isNaN(httpPort)) {
-                print.error('httpPort `%s` is not valid', argv.port === true ? '' : argv.port);
-                return fs.read(helpPath).then(print);
+                log.send('error', 'httpPort `%s` is not valid', argv.port === true ? '' : argv.port);
+                return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
             }
         }
 
         norun = argsHelper.matchOptionWithValue(argv, 'norun');
-        return watch(argv._[0], argv._[1] || 'default', httpPort, norun, verbose);
+        return watch(argv._[0], argv._[1] || 'default', httpPort, norun);
     }
 
-    return fs.read(helpPath).then(print);
+    return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };
 
 module.exports = action;

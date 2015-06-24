@@ -38,7 +38,7 @@ function launchTasks(message, platforms, tasks, userTasks) {
     }, message);
 }
 
-function regenerate(verbose) {
+function regenerate() {
     var defer = Q.defer();
 
     rimraf(pathHelper.app(), function (err) {
@@ -47,38 +47,37 @@ function regenerate(verbose) {
     });
 
     return defer.promise.then(function () {
-        return createProject.createFromTarifaJSONFile(pathHelper.root(), verbose);
+        return createProject.createFromTarifaJSONFile(pathHelper.root());
     }).then(function () {
         log.send('success', 'regenerate app from tarifa.json');
     });
 }
 
-function regenerateTask(force, verbose) {
+function regenerateTask(force) {
     return fs.exists(pathHelper.app()).then(function (exist) {
         if(exist && !force) return Q();
-        return regenerate(verbose);
+        return regenerate();
     });
 }
 
-var check = function (force, verbose) {
+var check = function (force) {
     var cwd = process.cwd(),
         root = pathHelper.root();
 
-    return regenerateTask(force, verbose).then(function () {
+    return regenerateTask(force).then(function () {
         return Q.all([tarifaFile.parse(root), listAvailableOnHost()]);
     }).spread(function (localSettings, platforms) {
         process.chdir(root);
         var projectPlatforms = localSettings.platforms.map(platformHelper.getName);
         return launchTasks({
-                settings: localSettings,
-                verbose: verbose
+                settings: localSettings
             },
             intersection(platforms, projectPlatforms),
             platformTasks,
             loadUserTasks(platforms, localSettings)
         );
     }).then(function (msg) {
-        return builder.init(pathHelper.root(), msg.verbose);
+        return builder.init(pathHelper.root());
     }).then(function (val) {
         process.chdir(cwd);
         return val;
@@ -90,10 +89,9 @@ var check = function (force, verbose) {
 
 var action = function (argv) {
     if(argsHelper.matchArgumentsCount(argv, [0])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose', 'force'])) {
-        var verbose = argsHelper.matchOption(argv, 'V', 'verbose'),
-            force = argsHelper.matchOption(argv, 'force');
-        return check(force, verbose);
+            && argsHelper.checkValidOptions(argv, ['force'])) {
+        var force = argsHelper.matchOption(argv, 'force');
+        return check(force);
     }
 
     return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);

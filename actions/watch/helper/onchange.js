@@ -2,6 +2,7 @@ var Q = require('q'),
     format = require('util').format,
     path = require('path'),
     restler = require('restler'),
+    log = require('../../../lib/helper/log'),
     pathHelper = require('../../../lib/helper/path');
 
 var rewritePathƒ = function (projectOutput, ip) {
@@ -11,7 +12,7 @@ var rewritePathƒ = function (projectOutput, ip) {
     };
 };
 
-module.exports = function onchange(ip, httpPort, lrPort, project_output, file, verbose) {
+module.exports = function onchange(ip, httpPort, lrPort, project_output, file) {
 
     var defer = Q.defer(),
         rewritePath = rewritePathƒ(project_output, ip);
@@ -19,9 +20,9 @@ module.exports = function onchange(ip, httpPort, lrPort, project_output, file, v
         data: JSON.stringify({ files: rewritePath(file, httpPort) })
     }).on('complete', function(data, response) {
         if (response.statusCode >= 200 && response.statusCode < 300) {
-            if(verbose) print.success('live reload updated: %s', rewritePath(file, httpPort));
+            log.send('success', 'live reload updated: %s', rewritePath(file, httpPort));
         } else {
-            print.error('can not update live reload %s', response.statusCode);
+            log.send('error', 'can not update live reload %s', response.statusCode);
         }
         defer.resolve();
     });

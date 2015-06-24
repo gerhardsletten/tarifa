@@ -3,9 +3,9 @@ var Q = require('q'),
     lr = require('connect-livereload'),
     serveStatic = require('serve-static')
     pathHelper = require('../../../lib/helper/path'),
-    print = require('../../../lib/helper/print');
+    log = require('../../../lib/helper/log');
 
-module.exports = function startHttpServer(lrPort, httpPort, platform, verbose) {
+module.exports = function startHttpServer(lrPort, httpPort, platform) {
     var d = Q.defer(),
         app = connect(),
         index = pathHelper.wwwFinalLocation(pathHelper.root(), platform),
@@ -13,11 +13,11 @@ module.exports = function startHttpServer(lrPort, httpPort, platform, verbose) {
     app.use(lr({port: lrPort}));
     app.use(serve);
     var server = app.listen(httpPort, function () {
-        print.success('started web server on port %s for platform %s', httpPort, platform);
+        log.send('success', 'started web server on port %s for platform %s', httpPort, platform);
         d.resolve();
     });
     server.on('error', function (err) {
-        if (verbose) { print(err); }
+        log.send('info', err); }
         d.reject(format('Cannot serve %s on port %s for platform %s', index, httpPort, platform));
     });
     return d.promise;

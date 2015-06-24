@@ -7,15 +7,11 @@ var Q = require('q'),
     argsHelper = require('../../lib/helper/args'),
     platformHelper = require('../../lib/helper/platform'),
     platformsLib = require('../../lib/cordova/platforms'),
-    print = require('../../lib/helper/print'),
+    log = require('../../lib/helper/log'),
     tasks = require('./tasks'),
     argsHelper = require('../../lib/helper/args');
 
-function printHelp() {
-    return fs.read(path.join(__dirname, 'usage.txt')).then(print);
-}
-
-function multiplePlatformsTask(task, platforms, config, argv, verbose) {
+function multiplePlatformsTask(task, platforms, config, argv) {
     var conf = [tarifaFile.parse(pathHelper.root()), platformsLib.listAvailableOnHost()];
     return Q.all(conf).spread(function (localSettings, availablePlatforms) {
         platforms = intersection(
@@ -24,15 +20,14 @@ function multiplePlatformsTask(task, platforms, config, argv, verbose) {
         );
         return platforms.reduce(function(promise, platform) {
             return promise.then(function () {
-                print.outline('Run task for %s platform', platform);
+                log.send('outline', 'Run task for %s platform', platform);
                 return tarifaFile.parse(pathHelper.root(), platform, config)
                     .then(function (localSettings) {
                         return task({
                             localSettings: localSettings,
                             platform: platform,
                             config: config,
-                            argv: argv,
-                            verbose: verbose
+                            argv: argv
                         });
                     });
             });
@@ -40,40 +35,35 @@ function multiplePlatformsTask(task, platforms, config, argv, verbose) {
     });
 }
 
-function runTask(task, platform, config, argv, verbose) {
+function runTask(task, platform, config, argv) {
     if (platform === 'all')
-        return multiplePlatformsTask(task, null, config, argv, verbose);
+        return multiplePlatformsTask(task, null, config, argv);
     else if (argsHelper.matchWildcard(platform))
-        return multiplePlatformsTask(task, argsHelper.getFromWildcard(platform), config, argv, verbose);
+        return multiplePlatformsTask(task, argsHelper.getFromWildcard(platform), config, argv);
     else
-        return multiplePlatformsTask(task, [platform], config, argv, verbose);
+        return multiplePlatformsTask(task, [platform], config, argv);
 }
 
-function clean(nbToKeep, verbose) {
+function clean(nbToKeep) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        return tasks.clean({ localSettings: localSettings, verbose: verbose}, nbToKeep);
+        return tasks.clean({ localSettings: localSettings }, nbToKeep);
     });
 }
 
 var action = function (argv) {
-    var verbose = false;
-
-    if(argsHelper.matchOption(argv, 'V', 'verbose'))
-        verbose = true;
-
     if(argsHelper.matchCmd(argv._, ['version', 'list', '+', '+']))
-        return runTask(tasks.list, argv._[2], argv._[3] || 'default', argv, verbose);
+        return runTask(tasks.list, argv._[2], argv._[3] || 'default', argv);
 
     if(argsHelper.matchCmd(argv._, ['version', 'upload', '+', '+']))
-        return runTask(tasks.upload, argv._[2], argv._[3] || 'default', argv, verbose);
+        return runTask(tasks.upload, argv._[2], argv._[3] || 'default', argv);
 
     if(argsHelper.matchCmd(argv._, ['version', 'update', '+', '+']))
-        return runTask(tasks.updateLast, argv._[2], argv._[3] || 'default', argv, verbose);
+        return runTask(tasks.updateLast, argv._[2], argv._[3] || 'default', argv);
 
     if(argsHelper.matchCmd(argv._, ['version', 'clean', '*']))
-        return clean(argv._[2], verbose);
+        return clean(argv._[2]);
 
-    return printHelp();
+    return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };
 
 module.exports = action;

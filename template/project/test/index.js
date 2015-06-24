@@ -11,7 +11,7 @@ describe("the default tarifa app", function () {
 
     before(function () {
         driver = helper.wd.promiseChainRemote(settings.appium);
-        if(settings.verbose) helper.initLog(driver);
+        helper.initLog(driver);
         return driver.init(settings.caps).setImplicitWaitTimeout(3000);
     });
 

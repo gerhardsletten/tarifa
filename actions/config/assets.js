@@ -11,7 +11,7 @@ var Q = require('q'),
     generateSplashscreens = require('../../lib/cordova/splashscreen').generate,
     createFolders = require('../../lib/cordova/assets').createFolders;
 
-function generate(color, config, f, verbose) {
+function generate(color, config, f) {
     config = config || 'default';
     var root = pathHelper.root();
     if(!colorHelper.validate(color)) return Q.reject('invalid color!');
@@ -19,31 +19,31 @@ function generate(color, config, f, verbose) {
     return tarifaFile.parse(root).then(function (localSettings) {
         var platforms = localSettings.platforms.map(platformHelper.getName);
         return Q.all(createFolders(root, platforms, config)).then(function () {
-            return f(color, root, platforms, config, verbose);
+            return f(color, root, platforms, config);
         });
     });
 }
 
-function generateFromFile(file, config, f, verbose) {
+function generateFromFile(file, config, f) {
     config = config || 'default';
     var root = pathHelper.root();
 
     return tarifaFile.parse(root).then(function (localSettings) {
         var platforms = localSettings.platforms.map(platformHelper.getName);
         return Q.all(createFolders(root, platforms, config)).then(function () {
-            return f(file, root, platforms, config, verbose);
+            return f(file, root, platforms, config);
         });
     });
 }
 
-module.exports.generateIcons = function (color, config, verbose) {
-    return generate(color, config, generateIcons, verbose);
+module.exports.generateIcons = function (color, config) {
+    return generate(color, config, generateIcons);
 };
 
-module.exports.generateIconsFromFile = function (file, config, verbose) {
-    return generateFromFile(file, config, generateIconsFromFile, verbose);
+module.exports.generateIconsFromFile = function (file, config) {
+    return generateFromFile(file, config, generateIconsFromFile);
 };
 
-module.exports.generateSplashscreens = function (color, config, verbose) {
-    return generate(color, config, generateSplashscreens, verbose);
+module.exports.generateSplashscreens = function (color, config) {
+    return generate(color, config, generateSplashscreens);
 };

@@ -26,35 +26,34 @@ function usage() {
 }
 
 var action = function (argv) {
-    if(argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
-        var verbose = argsHelper.matchOption(argv, 'V', 'verbose');
+    if(argsHelper.checkValidOptions(argv, [])) {
 
         if(match(argv._, ['icons', 'generate', '+', '*']))
-            return action.generateIcons(argv._[2], argv._[3], verbose);
+            return action.generateIcons(argv._[2], argv._[3]);
         if(match(argv._, ['icons', 'file', '+', '*']))
-            return action.generateIconsFromFile(pathHelper.resolve(argv._[2]), argv._[3], verbose);
+            return action.generateIconsFromFile(pathHelper.resolve(argv._[2]), argv._[3]);
         if(match(argv._, ['splashscreens', '+', '*']))
-            return action.generateSplashscreens(argv._[1], argv._[2], verbose);
+            return action.generateSplashscreens(argv._[1], argv._[2]);
 
         for(var i=0,l=platformCommands.length; i<l; i++) {
             if(match(argv._, platformCommands[i].def))
-                return platformCommands[i].action(argv._, verbose);
+                return platformCommands[i].action(argv._);
         }
         return usage();
     }
     return usage();
 };
 
-action.generateIcons = function (color, config, verbose) {
-    return require('./assets').generateIcons(color, config, verbose);
+action.generateIcons = function (color, config) {
+    return require('./assets').generateIcons(color, config);
 };
 
-action.generateIconsFromFile = function (filePath, config, verbose) {
-    return require('./assets').generateIconsFromFile(filePath, config, verbose);
+action.generateIconsFromFile = function (filePath, config) {
+    return require('./assets').generateIconsFromFile(filePath, config);
 };
 
-action.generateSplashscreens = function (color, config, verbose) {
-    return require('./assets').generateSplashscreens(color, config, verbose);
+action.generateSplashscreens = function (color, config) {
+    return require('./assets').generateSplashscreens(color, config);
 };
 
 module.exports = action;

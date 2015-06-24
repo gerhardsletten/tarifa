@@ -85,7 +85,7 @@ module.exports.close = function () {
     if(watcher) watcher.close();
 };
 
-module.exports.test = function (platform, settings, config, caps, appium, verbose) {
+module.exports.test = function (platform, settings, config, caps, appium) {
     var Mocha = require('mocha'),
         mocha = new Mocha(),
         defer = Q.defer(),
@@ -93,7 +93,6 @@ module.exports.test = function (platform, settings, config, caps, appium, verbos
         settings = {
             caps: caps,
             appium: appium,
-            verbose: verbose,
             platform: platform,
             localSettings: settings,
             configuration: config

@@ -5,7 +5,7 @@ var Q = require('q'),
     path = require('path'),
     fs = require('q-io/fs'),
     argsHelper = require('../../lib/helper/args'),
-    print = require('../../lib/helper/print'),
+    log = require('../../lib/helper/log'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
     settings = require('../../lib/settings'),
@@ -31,15 +31,15 @@ var prepareƒ = function (conf) {
         projectWWW = path.join(pathHelper.root(), conf.localSettings.project_output),
         link_method = settings.www_link_method[os.platform()];
 
-    if(conf.verbose) print.success('prepare, launch www project build');
-    return builder.build(pathHelper.root(), conf.platform, conf.localSettings, conf.configuration, conf.verbose).then(function () {
+    log.send('success', 'prepare, launch www project build');
+    return builder.build(pathHelper.root(), conf.platform, conf.localSettings, conf.configuration).then(function () {
         var defer = Q.defer();
         rimraf(cordovaWWW, function (err) {
             if(err) defer.reject(err);
-            if(conf.verbose) print.success('prepare, rm cordova www folder');
+            log.send('success', 'prepare, rm cordova www folder');
             // link/copy app www to project output
             method[link_method](cordovaWWW, projectWWW).then(function() {
-                if(conf.verbose) print.success('prepare, %s www project to cordova www', link_method);
+                log.send('success', 'prepare, %s www project to cordova www', link_method);
                 defer.resolve(conf);
             }, function (err) { defer.reject(err); });
         });
@@ -47,30 +47,22 @@ var prepareƒ = function (conf) {
     });
 };
 
-var prepare = function (platform, config, verbose) {
+var prepare = function (platform, config) {
     return tarifaFile.parse(pathHelper.root(), platform, config)
         .then(function (localSettings) {
             return prepareƒ({
                 localSettings: localSettings,
                 platform : platform,
-                configuration: config,
-                verbose : verbose
+                configuration: config
             });
         });
 };
 
 var action = function (argv) {
-    var verbose = false,
-        helpPath = path.join(__dirname, 'usage.txt');
+    if(argsHelper.matchArgumentsCount(argv, [1,2]))
+        return prepare(argv._[0], argv._[1] || 'default');
 
-    if(argsHelper.matchArgumentsCount(argv, [1,2]) &&
-    argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
-        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
-            verbose = true;
-        }
-        return prepare(argv._[0], argv._[1] || 'default', verbose);
-    }
-    return fs.read(helpPath).then(print);
+    return fs.read(helpPath).then(path.join(__dirname, 'usage.txt'));
 };
 
 action.prepare = prepare;

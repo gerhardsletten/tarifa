@@ -7,7 +7,7 @@ var Q = require('q'),
     exec = require('child_process').exec,
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
-    print = require('../../lib/helper/print'),
+    log = require('../../lib/helper/log'),
     builder = require('../../lib/builder'),
     feature = require('../../lib/feature'),
     buildAction = require('../build'),
@@ -15,7 +15,7 @@ var Q = require('q'),
     devices = require('../../lib/devices'),
     tarifaFile = require('../../lib/tarifa-file');
 
-var log = function (o) { print(o.toString().replace(/\n/g, '')); };
+var logging = function (o) { log.send('info', o.toString().replace(/\n/g, '')); };
 
 var launchAppiumServer = function (conf) {
      var appiumPath = path.resolve(__dirname, '../../node_modules/appium/bin/appium.js'),
@@ -25,9 +25,11 @@ var launchAppiumServer = function (conf) {
         cmd = 'node';
         args = appiumPath + ' ' + args;
     }
+
     conf.appiumChild = spawn(cmd, args.split(' '));
-    if(conf.verbose) conf.appiumChild.stdout.on('data', log);
-    if(conf.verbose) conf.appiumChild.stderr.on('data', log);
+    conf.appiumChild.stdout.on('data', logging);
+    conf.appiumChild.stderr.on('data', logging);
+
     return Q.delay(conf, 2000);
 };
 
@@ -35,8 +37,8 @@ var launchIosWebkitDebugProxy = function (conf) {
     if (conf.platform === 'ios') {
         var args = format("-c %s:27753", conf.device.value).split(' ');
         conf.IosWebkitDebugProxy = spawn('ios_webkit_debug_proxy', args);
-        if(conf.verbose) conf.IosWebkitDebugProxy.stdout.on('data', log);
-        if(conf.verbose) conf.IosWebkitDebugProxy.stderr.on('data', log);
+        conf.IosWebkitDebugProxy.stdout.on('data', logging);
+        conf.IosWebkitDebugProxy.stderr.on('data', logging);
         return Q.delay(conf, 1000);
     } else {
         return conf;
@@ -103,8 +105,7 @@ var runTest = function (conf) {
             conf.localSettings,
             conf.configuration,
             conf.caps,
-            conf.appiumConf,
-            conf.verbose
+            conf.appiumConf
         ).then(function () {
             conf.appiumChild.kill();
             if(conf.IosWebkitDebugProxy) conf.IosWebkitDebugProxy.kill();
@@ -116,7 +117,7 @@ var runTest = function (conf) {
         });
 };
 
-var test = function (platform, config, verbose) {
+var test = function (platform, config) {
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         if(!feature.isAvailable('test', platform))
             return Q.reject(format('feature not available on %s!', platform));
@@ -124,7 +125,6 @@ var test = function (platform, config, verbose) {
             localSettings: localSettings,
             platform: platform,
             configuration: config,
-            verbose: verbose,
             log: true // to allow only 1 device on `askDevice`
         };
     })
@@ -137,18 +137,10 @@ var test = function (platform, config, verbose) {
 };
 
 var action = function (argv) {
-    var verbose = false,
-        helpPath = path.join(__dirname, 'usage.txt');
+    if(argsHelper.matchArgumentsCount(argv, [1,2]))
+        return test(argv._[0], argv._[1] || 'default');
 
-    if(argsHelper.matchArgumentsCount(argv, [1,2])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
-        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
-            verbose = true;
-        }
-        return test(argv._[0], argv._[1] || 'default', verbose);
-    }
-
-    return fs.read(helpPath).then(print);
+    return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };
 
 action.test = test;

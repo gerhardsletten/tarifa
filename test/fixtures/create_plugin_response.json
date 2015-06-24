@@ -1,7 +1,4 @@
 {
-    "options": {
-        "verbose": false
-    },
     "path": "plugin",
     "id": "tools.tarifa",
     "name": "Plugin",

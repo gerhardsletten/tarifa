@@ -3,19 +3,17 @@ var Q = require('q'),
     ask = require('../../../lib/questions/ask'),
     questions = require('../../../lib/questions/list'),
     createProject = require('../../../lib/create'),
-    print = require('../../../lib/helper/print');
+    banner = require('../../../lib/helper/banner');
 
-function create(verbose) {
-    if (verbose) print.banner();
+function create() {
+    banner();
 
     var initResponse = {
-        options : {
-            verbose : verbose
-        }
+        options : { }
     };
 
     return ask(questions.project)(initResponse).then(function (response) {
-        console.log(); spinner();
+        spinner();
         return response;
     }).then(createProject.createFromResponse);
 }

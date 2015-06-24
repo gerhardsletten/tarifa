@@ -15,7 +15,7 @@ var Q = require('q'),
     settings = require('../../lib/settings'),
     platformTasks = tasksHelper.load(settings.platforms, 'clean', 'tasks');
 
-var tryRemoveWWW = function (verbose) {
+var tryRemoveWWW = function () {
     var defer = Q.defer(),
         www = path.join(pathHelper.app(), "www");
 
@@ -29,18 +29,17 @@ var tryRemoveWWW = function (verbose) {
     return defer.promise;
 };
 
-var runTasks = function (platforms, localSettings, verbose) {
+var runTasks = function (platforms, localSettings) {
     return function () {
         return platforms.reduce(function (msg, platform) {
             return Q.when(msg, tasksHelper.execSequence(platformTasks[platform].map(require)));
         }, {
-            settings: localSettings,
-            verbose : verbose
+            settings: localSettings
         });
     };
 };
 
-var clean = function (platform, verbose) {
+var clean = function (platform) {
     var cwd = process.cwd(),
         conf = [tarifaFile.parse(pathHelper.root()), listAvailableOnHost()];
 
@@ -60,8 +59,8 @@ var clean = function (platform, verbose) {
             return Q.reject('platform not defined in project!');
 
         return tryRemoveWWW().then(function () {
-            return cordovaClean(pathHelper.root(), usablePlatforms, verbose);
-        }).then(runTasks(usablePlatforms, localSettings, verbose));
+            return cordovaClean(pathHelper.root(), usablePlatforms);
+        }).then(runTasks(usablePlatforms, localSettings));
 
     }).then(function (msg) {
         process.chdir(cwd);
@@ -74,9 +73,8 @@ var clean = function (platform, verbose) {
 
 var action = function (argv) {
 
-    if(argsHelper.matchArgumentsCount(argv, [0, 1])
-            && argsHelper.checkValidOptions(argv, ['V', 'verbose'])) {
-        return clean(argv._[0], argsHelper.matchOption(argv, 'V', 'verbose'));
+    if(argsHelper.matchArgumentsCount(argv, [0, 1])) {
+        return clean(argv._[0]);
     }
     return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };

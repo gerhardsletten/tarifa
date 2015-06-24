@@ -24,7 +24,7 @@ function testRun(projectDefer) {
                     });
 
             return projectDefer.promise.then(function (rslt) {
-                return runAction.runMultiplePlatforms(platforms, 'dev,default', { verbose: true });
+                return runAction.runMultiplePlatforms(platforms, 'dev,default');
             });
         });
 

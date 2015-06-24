@@ -17,7 +17,6 @@ function testSign(projectDefer) {
                         configuration: 'prod',
                         localSettings: localSettings,
                         keepFileChanges: false,
-                        verbose: false,
                         keystore_pass: '123456',
                         keystore_alias_pass: '123456'
                     });

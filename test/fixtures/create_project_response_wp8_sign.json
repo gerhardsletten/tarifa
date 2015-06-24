@@ -1,7 +1,4 @@
 {
-  "options": {
-    "verbose": true
-  },
   "path": "we1",
   "id": "com.test",
   "name": "we",

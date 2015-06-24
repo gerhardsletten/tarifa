@@ -10,7 +10,7 @@ var Q = require('q'),
     tarifaFile = require('../../lib/tarifa-file'),
     settings = require('../../lib/settings'),
     pathHelper = require('../../lib/helper/path'),
-    print = require('../../lib/helper/print'),
+    log = require('../../lib/helper/log'),
     platformHelper = require('../../lib/helper/platform'),
     platformsLib = require('../../lib/cordova/platforms'),
     pluginsLib = require('../../lib/cordova/plugins'),
@@ -18,7 +18,7 @@ var Q = require('q'),
     createDefaultAssetsFolders = require('../../lib/cordova/assets').createFolders,
     copyDefaultSplash = require('../../lib/cordova/splashscreen').copyDefault;
 
-function addAssets(platform, verbose) {
+function addAssets(platform) {
     var root = pathHelper.root(),
         platformName = platformHelper.getName(platform),
         imagesFolderExistsForPlatform = fs.existsSync(path.resolve(root, settings.images, platformName));
@@ -26,22 +26,22 @@ function addAssets(platform, verbose) {
     if (imagesFolderExistsForPlatform) return Q();
 
     return Q.all(createDefaultAssetsFolders(root, [platformName], 'default'))
-        .then(function () { return copyDefaultIcons(root, [platformName], verbose); })
-        .then(function () { return copyDefaultSplash(root, [platformName], verbose); });
+        .then(function () { return copyDefaultIcons(root, [platformName]); })
+        .then(function () { return copyDefaultSplash(root, [platformName]); });
 }
 
-function rmAssets(platform, verbose) {
+function rmAssets(platform) {
     var defer = Q.defer();
     var platformAssetsPath = path.join(pathHelper.root(), settings.images, platform);
     rimraf(platformAssetsPath, function (err) {
-        if(err) print.warning('%s assets folder could not be removed: %s', platform, err);
-        if(!err && verbose) print.success('removed asset folder');
+        if(err) log.send('warning', '%s assets folder could not be removed: %s', platform, err);
+        else log.send('success', 'removed asset folder');
         defer.resolve();
     });
     return defer.promise;
 }
 
-function add(platform, prune, verbose) {
+function add(platform, prune) {
     // cordova has a bug that when you install a platform with a plugin
     // with variable already installed, the install will crash
     // so before adding the platform we remove any plugin
@@ -56,7 +56,7 @@ function add(platform, prune, verbose) {
                     if (isObject(plugins[key]) && plugins[key].variables !== undefined) {
                         if (pluginsWithVariables === undefined) pluginsWithVariables = {};
                         pluginsWithVariables[key] = plugins[key];
-                        if (verbose) print.info('Removing temporarily plugin: ' + key);
+                        log.send('info', 'Removing temporarily plugin: %s', key);
                         promises.push(pluginsLib.remove(pathHelper.root(), key));
                     }
                 }
@@ -64,34 +64,36 @@ function add(platform, prune, verbose) {
             }
         })
         .then(function () {
-            return platformsLib.add(pathHelper.root(), [platform], verbose);
+            return platformsLib.add(pathHelper.root(), [platform]);
         })
         .then(function () {
             var promises = [];
             if (pluginsWithVariables !== undefined) {
                 for (var key in pluginsWithVariables) {
                     var p = pluginsWithVariables[key];
-                    if (verbose) print.info('Reinstalling plugin: ' + key);
-                    promises.push(pluginsLib.add(pathHelper.root(), p.uri, { cli_variables: p.variables }));
+                    log.send('info', 'Reinstalling plugin: %s', key);
+                    promises.push(pluginsLib.add(pathHelper.root(), p.uri, {
+                        cli_variables: p.variables
+                    }));
                 }
             }
             if (promises.length) return Q.allSettled(promises);
         })
         .then(function () {
-            return addAssets(platform, verbose);
+            return addAssets(platform);
         });
 }
 
-function remove(platform, prune, verbose) {
+function remove(platform, prune) {
     return tarifaFile.removePlatform(pathHelper.root(), platform)
-        .then(function () { return platformsLib.remove(pathHelper.root(), [platform], verbose); })
+        .then(function () { return platformsLib.remove(pathHelper.root(), [platform]); })
         .then(function () {
-            if (prune) return rmAssets(platform, verbose);
+            if (prune) return rmAssets(platform);
             else return Q();
         });
 }
 
-function platformAction (action, platform, prune, verbose) {
+function platformAction (action, platform, prune) {
     var promises = [
         tarifaFile.parse(pathHelper.root()),
         platformsLib.isAvailableOnHost(platformHelper.getName(platform))
@@ -101,53 +103,50 @@ function platformAction (action, platform, prune, verbose) {
         if(!available)
             return Q.reject(format("Can't %s %s!, %s is not available on your host", action, platform, platform));
         if(action === 'add')
-            return add(platformsLib.extendPlatform(platform), prune, verbose);
+            return add(platformsLib.extendPlatform(platform), prune);
         else
-            return remove(platform, prune, verbose);
+            return remove(platform, prune);
     });
 }
 
-function list(verbose) {
+function list() {
     return tarifaFile.parse(pathHelper.root()).then(function () {
-        return platformsLib.list(pathHelper.root(), verbose);
+        return platformsLib.list(pathHelper.root());
     });
 }
 
-function info(verbose) {
-    print.outline('Supported cordova platforms:\n');
+function info() {
+    log.send('outline', 'Supported cordova platforms:\n');
     platformsLib.info().forEach(function (platform) {
-        print('  %s current version %s\n  supported versions: %s\n', platform.name, platform.version, platform.versions.join(', '));
+        log.send(
+            'msg',
+            '  %s current version %s\n  supported versions: %s\n',
+            platform.name,
+            platform.version,
+            platform.versions.join(', ')
+        );
     });
     return Q();
 }
 
 function action (argv) {
-    var verbose = false,
-        prune = false,
+    var prune = argsHelper.matchOption(argv, null, 'prune'),
         actions = ['add', 'remove'],
         helpPath = path.join(__dirname, 'usage.txt');
 
-    if(argsHelper.checkValidOptions(argv, ['V', 'verbose', 'prune'])) {
-        if(argsHelper.matchOption(argv, 'V', 'verbose')) {
-            verbose = true;
-        }
-
-        if(argsHelper.matchOption(argv, null, 'prune')) {
-            prune = true;
-        }
-
+    if(argsHelper.checkValidOptions(argv, ['prune'])) {
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
-            return list(true);
+            return list();
         }
         if(argv._[0] === 'info' && argsHelper.matchArgumentsCount(argv, [1])){
-            return info(verbose);
+            return info();
         }
         if(actions.indexOf(argv._[0]) > -1 && argsHelper.matchArgumentsCount(argv, [2])) {
-            return platformAction(argv._[0], argv._[1], prune, verbose);
+            return platformAction(argv._[0], argv._[1], prune);
         }
     }
 
-    return qfs.read(helpPath).then(print);
+    return qfs.read(helpPath).then(console.log);
 }
 
 action.platform = platformAction;

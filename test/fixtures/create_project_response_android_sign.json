@@ -1,7 +1,4 @@
 {
-  "options": {
-    "verbose": false
-  },
   "path": "we1",
   "id": "com.test",
   "name": "we",
@@ -9,9 +6,7 @@
   "author_name": "Paul Panserrieu",
   "author_email": "paul@42loops.com",
   "author_href": "http://42loops.com",
-  "platforms": [
-    "android"
-  ],
+  "platforms": ["android"],
   "plugins": [],
   "www": "template/project",
   "color": "blue",

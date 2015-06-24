@@ -12,11 +12,11 @@ var Q = require('q'),
     pathHelper = require('../../lib/helper/path'),
     platformHelper = require('../../lib/helper/platform'),
     settings = require('../../lib/settings'),
-    print = require('../../lib/helper/print'),
+    log = require('../../lib/helper/log'),
     tarifaFile = require('../../lib/tarifa-file'),
     pkg = require('../../package.json');
 
-function getToolVersion(name, tool, verbose) {
+function getToolVersion(name, tool) {
     var defer = Q.defer(),
         options = {
             timeout : 10000,
@@ -36,7 +36,7 @@ function getToolVersion(name, tool, verbose) {
     return defer.promise;
 }
 
-function check_tools(verbose) {
+function check_tools() {
     return function (platforms) {
         var rslts = [],
             ok = true,
@@ -47,8 +47,7 @@ function check_tools(verbose) {
                 && bins[bin].os_platforms.indexOf(os.platform()) > -1) {
                 rslts.push(getToolVersion(
                             bins[bin]['name'],
-                            bins[bin]['print_version'],
-                            verbose)
+                            bins[bin]['print_version'])
                         );
             }
         }
@@ -56,7 +55,8 @@ function check_tools(verbose) {
         return Q.allSettled(rslts).then(function (results) {
             results.forEach(function (result) {
                 if (result.state === "fulfilled") {
-                    print(
+                    log.send(
+                        'msg',
                         "%s %s %s",
                         chalk.green(result.value.name),
                         chalk.green('version:'),
@@ -64,8 +64,8 @@ function check_tools(verbose) {
                     );
                 } else {
                     ok = false;
-                    print(chalk.cyan('%s not found!'), result.reason.split(' ')[0]);
-                    if (verbose) print('\tReason: %s', chalk.cyan(result.reason));
+                    log.send('msg', chalk.cyan('%s not found!'), result.reason.split(' ')[0]);
+                    log.send('success', '\tReason: %s', chalk.cyan(result.reason));
                 }
             });
             return Q.resolve({
@@ -84,7 +84,7 @@ function listAvailablePlatforms() {
     return r;
 }
 
-function check_cordova(platforms, verbose) {
+function check_cordova(platforms) {
     var cordovaLibPaths = platforms.reduce(function (promise, platform) {
             return promise.then(function (rslt) {
                 return cordova_lazy_load.cordova(platform).then(function (libPath) {
@@ -99,15 +99,15 @@ function check_cordova(platforms, verbose) {
 
     return cordovaLibPaths.then(function (libs) {
         libs.forEach(function (lib) {
-            print("%s %s", chalk.green(format("cordova %s lib path:", lib.name)), lib.path);
+            log.send('msg', "%s %s", chalk.green(format("cordova %s lib path:", lib.name)), lib.path);
         });
     }, function (err) {
-        print.error("Could not check cordova lib. Use --verbose for details");
-        if (verbose) print.trace(err);
+        log.send('error', "Could not check cordova lib. Use --verbose for details");
+        log.send('error', chalk.red(err.stack || err));
     });
 }
 
-function check_cordova_platform_version(verbose) {
+function check_cordova_platform_version() {
     return function (platforms) {
         return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
             return getCordovaPlatformsVersion(
@@ -115,49 +115,49 @@ function check_cordova_platform_version(verbose) {
                 localSettings.platforms.map(platformHelper.getName).filter(platformsLib.isAvailableOnHostSync)
             ).then(function (versions) {
                 versions.forEach(function (v) {
-                    print("%s %s", chalk.green(format("current project version %s:", v.name)), v.version);
+                    log.send('msg', "%s %s", chalk.green(format("current project version %s:", v.name)), v.version);
                 });
             });
         }, function (err) {
-            if(verbose) print.warning(err);
-            print.warning("Not in a tarifa project, can't output installed platform versions");
+            log.send('info', err);
+            log.send('warning', "Not in a tarifa project, can't output installed platform versions");
         }).then(function () {
             return platforms;
         });
     };
 }
 
-function check_requirements(verbose) {
+function check_requirements() {
     return function () {
-        return platformsLib.listAvailableOnHost(verbose).then(function (platforms) {
+        return platformsLib.listAvailableOnHost().then(function (platforms) {
             if (platforms.length)
-                print("%s %s", chalk.green("installed platforms on host:"), platforms.join(', '));
+                log.send('msg', "%s %s", chalk.green("installed platforms on host:"), platforms.join(', '));
             else
-                print("no platform installed!");
+                log.send('msg', "no platform installed!");
             return platforms;
         });
     };
 }
 
-function info(verbose) {
-    print("%s %s", chalk.green('node version:'), process.versions.node);
-    print("%s %s", chalk.green('cordova-lib version:'), pkg.dependencies['cordova-lib']);
+function info() {
+    log.send('msg', "%s %s", chalk.green('node version:'), process.versions.node);
+    log.send('msg', "%s %s", chalk.green('cordova-lib version:'), pkg.dependencies['cordova-lib']);
 
     var platforms = listAvailablePlatforms();
 
-    return check_cordova(platforms, verbose)
-        .then(check_requirements(verbose))
-        .then(check_cordova_platform_version(verbose))
-        .then(check_tools(verbose))
+    return check_cordova(platforms)
+        .then(check_requirements())
+        .then(check_cordova_platform_version())
+        .then(check_tools())
         .then(function (msg) {
-            if(!msg.noerrors) print.warning("not all needed tools are available!");
+            if(!msg.noerrors) log.send('warning', "not all needed tools are available!");
             return msg;
         });
 }
 
 function dump_configuration() {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
-        print("%s\n%s",
+        log.send('msg', "%s\n%s",
             chalk.green('tarifa configuration after the parsing:'),
             JSON.stringify(localSettings, null, 2)
         );
@@ -166,15 +166,14 @@ function dump_configuration() {
 
 module.exports = function (argv) {
     var hasNoArgs = argsHelper.matchArgumentsCount(argv, [0]),
-        hasValidDumpOpt = argsHelper.checkValidOptions(argv, ['V', 'verbose', 'dump-configuration']);
+        hasValidDumpOpt = argsHelper.checkValidOptions(argv, ['dump-configuration']);
 
     if(!hasNoArgs || !hasValidDumpOpt)
         return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 
-    var verbose = argsHelper.matchOption(argv, 'V', 'verbose'),
-        isDump = argsHelper.matchOption(argv, null, 'dump-configuration');
+    var isDump = argsHelper.matchOption(argv, null, 'dump-configuration');
 
-    return isDump ? dump_configuration(): info(verbose);
+    return isDump ? dump_configuration() : info();
 };
 
 module.exports.info = info;

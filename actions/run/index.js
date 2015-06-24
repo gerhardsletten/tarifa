@@ -8,7 +8,7 @@ var Q = require('q'),
     existsSync = require('fs').existsSync,
     argsHelper = require('../../lib/helper/args'),
     platformHelper = require('../../lib/helper/platform'),
-    print = require('../../lib/helper/print'),
+    log = require('../../lib/helper/log'),
     settings = require('../../lib/settings'),
     tarifaFile = require('../../lib/tarifa-file'),
     pathHelper = require('../../lib/helper/path'),
@@ -51,12 +51,11 @@ var runƒ = function (conf) {
 };
 
 var run = function (platform, config, localSettings, options) {
-    print.outline('Launch run for %s platform and configuration %s !', platform, config);
+    log.send('outline', 'Launch run for %s platform and configuration %s !', platform, config);
     return runƒ({
         localSettings: localSettings,
         platform: platform,
         configuration: config,
-        verbose: options.verbose,
         nobuild: options.nobuild,
         log: options.log,
         all: options.all,
@@ -83,8 +82,7 @@ var startVorlon = function (defer, options) {
             options.ip = ip;
 
             child.on('close', function(code) {
-                print();
-                if (options.verbose) print.success('killed `vorlon`');
+                log.send('successs', 'killed `vorlon`');
                 if (code > 0) defer.reject('vorlon failed with code ' + code);
                 else defer.resolve(msg);
             });
@@ -107,10 +105,10 @@ var wait = function (defer, options) {
         else {
             var clientScript = "<script src=\"http://%s:1337/vorlon.js\"></script>",
                 script = format(clientScript, options.ip);
-            print.warning();
-            print.warning("/!\\ You need to add \"%s\" to your index.html", script);
-            print.warning();
-            print.success("vorlon dashbord: http://%s:1337", options.ip);
+            log.send('warning');
+            log.send('warning', "/!\\ You need to add \"%s\" to your index.html", script);
+            log.send('warning');
+            log.send('successs', "vorlon dashbord: http://%s:1337", options.ip);
             return defer.promise;
         }
     };
@@ -143,32 +141,16 @@ var runMultiplePlatforms = function (platforms, config, options) {
 
 var action = function (argv) {
     var options = {
-            verbose : false,
-            nobuild:false,
-            log:false,
-            all:false,
-            debug:false
-        },
-        helpPath = path.join(__dirname, 'usage.txt');
+            nobuild: argsHelper.matchOption(argv, null, 'nobuild'),
+            log: argsHelper.matchOption(argv, 'l', 'log'),
+            all: argsHelper.matchOption(argv, null, 'all'),
+            debug: argsHelper.matchOption(argv, 'd', 'debug')
+        };
 
-    if(argsHelper.matchOption(argv, 'V', 'verbose'))
-        options.verbose = true;
-
-    if (argsHelper.matchOption(argv, null, 'nobuild'))
-        options.nobuild = true;
-
-    if (argsHelper.matchOption(argv, null, 'all'))
-        options.all = true;
-
-    if (argsHelper.matchOption(argv, 'd', 'debug'))
-        options.debug = true;
-
-    if (argsHelper.matchOption(argv, 'l', 'log')) {
-        options.log = true;
+    if (options.log) {
         if(argsHelper.matchCmd(argv._, ['__multi__', '*']) || argsHelper.matchCmd(argv._, ['*', '__multi__'])) {
-            print.error('Oops, not `--log` option on multiple configurations or multiple platforms!');
-            print();
-            return fs.read(helpPath).then(print);
+            log.send('error', 'Oops, not `--log` option on multiple configurations or multiple platforms!');
+            return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
         }
     }
 
@@ -183,7 +165,7 @@ var action = function (argv) {
         );
     }
 
-    return fs.read(helpPath).then(print);
+    return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };
 
 action.run = run;
