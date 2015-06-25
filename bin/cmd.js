@@ -22,16 +22,14 @@ var availableActions = [
         { name : 'build', action : '../actions/build' },
         { name : 'run', action : '../actions/run' },
         { name : 'clean', action : '../actions/clean' },
-        // clean alias
-        { name : 'cls', action : '../actions/clean' },
+        { name : 'cls', action : '../actions/clean' }, // clean alias
         { name : 'check', action : '../actions/check' },
         { name : 'hockeyapp', action: '../actions/hockeyapp' },
         { name : 'update', action: '../actions/update' },
         { name : 'watch', action: '../actions/watch' },
         { name : 'test', action: '../actions/test'},
         { name : 'device', action: '../actions/device'},
-        // alias
-        { name : 'devices', action: '../actions/device'}
+        { name : 'devices', action: '../actions/device'} // alias
     ],
     singleOptions = [
         { small: 'v', name : 'version', action : printVersion },
@@ -42,7 +40,7 @@ function printHelp(errMessage) {
     if(errMessage) log.send('error', errMessage);
     fs.read(path.join(__dirname, 'usage.txt'))
         .then(function (help) {
-            log.send('msg', help)
+            log.send('msg', help);
             process.exit(0);
         });
 }
@@ -72,8 +70,15 @@ function actionError(name) {
 
 function main(args) {
     log.init(argsHelper.matchOption(argv, 'V', 'verbose'));
+
+    var validArgs = false;
+
     for(var i=0, l=singleOptions.length; i<l; i++) {
-        if(argsHelper.matchSingleOptionWithArguments(args, singleOptions[i].small, singleOptions[i].name, [0])) {
+        validArgs = argsHelper.matchSingleOptionWithArguments(
+            args, singleOptions[i].small, singleOptions[i].name, [0]
+        );
+
+        if(validArgs) {
             return singleOptions[i].action();
         }
     }
@@ -87,7 +92,12 @@ function main(args) {
         require(actionName)(args)
             .done(actionSuccess, actionError(action));
     } else {
-        printHelp(args._.length && util.format("Tarifa does not know command '%s'\n", args._.join(' ')));
+        var unknownCmd = util.format(
+            "Tarifa does not know command '%s'\n",
+            args._.join(' ')
+        );
+
+        printHelp(args._.length && unknownCmd);
     }
 }
 
