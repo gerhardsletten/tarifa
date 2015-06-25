@@ -36,7 +36,7 @@
   ],
   "homepage": "http://tarifa.tools",
   "dependencies": {
-    "appium": "1.4.1",
+    "appium": "1.4.6",
     "chalk": "1.0.0",
     "char-spinner": "1.0.1",
     "chokidar": "1.0.2",
