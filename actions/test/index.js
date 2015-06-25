@@ -121,6 +121,8 @@ var test = function (platform, config) {
     return tarifaFile.parse(pathHelper.root(), platform, config).then(function (localSettings) {
         if(!feature.isAvailable('test', platform))
             return Q.reject(format('feature not available on %s!', platform));
+        if(platform === 'android' && localSettings.plugins['cordova-plugin-crosswalk-webview'])
+            return Q.reject(format('[android] appium does not support crosswalk!'));
         return {
             localSettings: localSettings,
             platform: platform,
