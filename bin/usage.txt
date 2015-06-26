@@ -26,4 +26,4 @@ Options:
 
 Global options:
 
-    --debug, -D    Print helpful stack trace on error
+    --debug, -d    Print helpful stack trace on error

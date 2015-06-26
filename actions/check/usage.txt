@@ -8,3 +8,4 @@ Options:
     --help, -h     Show this message
     --force        Force cordova app regenerate
     --verbose, -V  Be more verbose on everything
+    --debug, -d    Print helpful stack trace on error

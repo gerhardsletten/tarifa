@@ -8,6 +8,7 @@ Options:
     --help, -h              Show this message
     --verbose, -V           Be more verbose on everything
     --keep-file-changes     Keep all modifications made by tarifa in your files
+    --debug, -d             Print helpful stack trace on error
 
 Examples:
 

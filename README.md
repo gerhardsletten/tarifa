@@ -72,6 +72,10 @@ Options:
     --version, -v  Show tarifa version number
     --verbose, -V  Add verbosity to commands
     --help, -h     Show this message
+
+Global options:
+
+    --debug, -d    Print helpful stack trace on error
 ```
 
 ### Install for developement

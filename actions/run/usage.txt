@@ -16,6 +16,7 @@ Options:
                             developing with the crosswalk-webview-plugin.
                             If you're using crosswalk, tarifa will assume 'armv7'
                             as default arch, so this flag is optional.
+    --debug, -d             Print helpful stack trace on error
 
 Examples:
 
