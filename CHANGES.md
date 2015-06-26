@@ -6,6 +6,7 @@
 - [android] add device cpu infos on `tarifa device` [#235](https://github.com/TarifaTools/tarifa/issues/235)
 - refactoring logs with EventEmitter [#224](https://github.com/TarifaTools/tarifa/issues/224)
 - update vorlon@0.0.15 and appium@1.4.6
+- add global option --debug for more helpful stack trace [#239](https://github.com/TarifaTools/tarifa/issues/239)
 
 ## 0.10.0 (06/16/2015)
 
