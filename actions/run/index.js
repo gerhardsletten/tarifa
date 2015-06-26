@@ -76,7 +76,7 @@ var runMultipleConfs = function(platform, configs, localSettings, options) {
 
 var startVorlon = function (defer, options) {
     return function (msg) {
-        if (!options.debug) return msg;
+        if (!options.vorlon) return msg;
         return askIp().then(function (ip) {
             var child = child_process.exec(path.resolve(__dirname, '../../node_modules/vorlon/bin', 'vorlon'));
             options.ip = ip;
@@ -101,7 +101,7 @@ var startVorlon = function (defer, options) {
 
 var wait = function (defer, options) {
     return function (msg) {
-        if (!options.debug) { return msg; }
+        if (!options.vorlon) { return msg; }
         else {
             var clientScript = "<script src=\"http://%s:1337/vorlon.js\"></script>",
                 script = format(clientScript, options.ip);
@@ -150,7 +150,7 @@ var action = function (argv) {
             nobuild: argsHelper.matchOption(argv, null, 'nobuild'),
             log: argsHelper.matchOption(argv, 'l', 'log'),
             all: argsHelper.matchOption(argv, null, 'all'),
-            debug: argsHelper.matchOption(argv, 'd', 'debug'),
+            vorlon: argsHelper.matchOption(argv, 'D', 'vorlon'),
             arch: argsHelper.matchOptionWithValue(argv, null, 'arch')
         };
 

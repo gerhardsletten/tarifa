@@ -10,7 +10,7 @@ Options:
     --all                   Run on all available devices
     --nobuild               Skip build process if build available
     --log, -l               Output app debug logs, only for single build
-    --debug, -d             Debug app with vorlon.js
+    --vorlon, -D            Debug app with vorlon.js
     --arch <ARCH>           Android only: choose your device architecture. Can 
                             be either 'armv7' or 'x86'. It is mainly useful when
                             developing with the crosswalk-webview-plugin.
