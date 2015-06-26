@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var chalk = require('chalk'),
+    Q = require('q'),
     fs = require('q-io/fs'),
     path = require('path'),
     util = require('util'),
@@ -34,6 +35,10 @@ var availableActions = [
     singleOptions = [
         { small: 'v', name : 'version', action : printVersion },
         { small: 'h', name : 'help', action : printHelp }
+    ],
+
+    globalOptions = [
+        { small: 'd', name : 'debug' }
     ];
 
 function printHelp(errMessage) {
@@ -61,9 +66,15 @@ function actionSuccess(val) {
     process.exit();
 }
 
-function actionError(name) {
+function actionError(name, options) {
     return function (err) {
         log.send('error', chalk.red(err.stack || err));
+        if(!options.debug) {
+            log.send(
+                'msg',
+                chalk.yellow('use -d or --debug for more helpful stack trace!')
+            );
+        }
         process.exit(1);
     };
 }
@@ -71,7 +82,9 @@ function actionError(name) {
 function main(args) {
     log.init(argsHelper.matchOption(argv, 'V', 'verbose'));
 
-    var validArgs = false;
+    var validArgs = false,
+        keys = Object.keys(args),
+        options = { };
 
     for(var i=0, l=singleOptions.length; i<l; i++) {
         validArgs = argsHelper.matchSingleOptionWithArguments(
@@ -83,6 +96,15 @@ function main(args) {
         }
     }
 
+    globalOptions.forEach(function (opt) {
+        if(keys.indexOf(opt.small) > -1) options[opt.name] = args[opt.small];
+        if(keys.indexOf(opt.name) > -1) options[opt.name] = args[opt.name];
+        delete args[opt.small];
+        delete args[opt.name];
+    });
+
+    if(options.debug) Q.longStackSupport = true;
+
     if(matchAction(args)) {
         var action = args._.shift(0),
             actionName = availableActions.filter(function (a) {
@@ -90,7 +112,7 @@ function main(args) {
             })[0].action;
 
         require(actionName)(args)
-            .done(actionSuccess, actionError(action));
+            .done(actionSuccess, actionError(action, options));
     } else {
         var unknownCmd = util.format(
             "Tarifa does not know command '%s'\n",
