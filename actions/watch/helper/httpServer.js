@@ -1,7 +1,7 @@
 var Q = require('q'),
     connect = require("connect"),
     lr = require('connect-livereload'),
-    serveStatic = require('serve-static')
+    serveStatic = require('serve-static'),
     pathHelper = require('../../../lib/helper/path'),
     log = require('../../../lib/helper/log');
 
