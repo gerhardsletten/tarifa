@@ -5,7 +5,7 @@
 - [android] integrate crosswalk webview plugin [#236](https://github.com/TarifaTools/tarifa/issues/236)
 - [android] add device cpu infos on `tarifa device` [#235](https://github.com/TarifaTools/tarifa/issues/235)
 - refactoring logs with EventEmitter [#224](https://github.com/TarifaTools/tarifa/issues/224)
-- update vorlon@0.0.15 and appium@1.4.6
+- update dependencies and default project dependencies
 - add global option --debug for more helpful stack trace [#239](https://github.com/TarifaTools/tarifa/issues/239)
 
 ## 0.10.0 (06/16/2015)
