@@ -25,7 +25,7 @@ function rejectOnError(d) {
 
 function bundle(conf) {
     var defer = Q.defer(),
-        b = browserify({ cache: {}, packageCache: {}, fullPaths: true });
+        b = browserify(watchify.args);
 
     if(fs.existsSync(settings)) fs.unlinkSync(settings);
     if(fs.existsSync(out)) fs.unlinkSync(out);
@@ -37,9 +37,10 @@ function bundle(conf) {
     b.add(src)
         .exclude('settings')
         .require(settings, { expose : 'settings' })
-        .bundle(rejectOnError(defer))
+        .bundle()
         .pipe(ws);
 
+    b.on('error', rejectOnError(defer));
     ws.on('finish', function() { ws.end(); defer.resolve(b); });
 
     return defer.promise;
@@ -54,7 +55,7 @@ function run(conf, f){
         w.on('update', function () {
             var ws = fs.createWriteStream(out);
 
-            w.bundle(log).pipe(ws);
+            w.bundle().pipe(ws);
 
             ws.on('finish', function() { ws.end(); f(out); });
         });
