@@ -17,7 +17,7 @@ module.exports = function startHttpServer(lrPort, httpPort, platform) {
         d.resolve();
     });
     server.on('error', function (err) {
-        log.send('info', err); }
+        log.send('info', err);
         d.reject(format('Cannot serve %s on port %s for platform %s', index, httpPort, platform));
     });
     return d.promise;
