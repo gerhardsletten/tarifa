@@ -1,4 +1,4 @@
-## 0.11.0 (not released)
+## 0.11.0 (07/07/2015)
 
 ### changes
 
@@ -7,6 +7,7 @@
 - refactoring logs with EventEmitter [#224](https://github.com/TarifaTools/tarifa/issues/224)
 - update dependencies and default project dependencies
 - add global option --debug for more helpful stack trace [#239](https://github.com/TarifaTools/tarifa/issues/239)
+- fix overwrite whitelist [#240](https://github.com/TarifaTools/tarifa/issues/240)
 
 ## 0.10.0 (06/16/2015)
 

@@ -1,5 +1,6 @@
-var should = require('should'),
-    path = require('path'),
+require('should');
+
+var path = require('path'),
     fs = require('fs'),
     Q = require('q'),
     tmp = require('tmp'),
@@ -39,7 +40,7 @@ describe('[shared] read/write cordova\'s config.xml', function() {
             xml = fs.readFileSync(file, 'utf-8'),
             defer = Q.defer();
 
-        tmp.file(function (err, p, fd) {
+        tmp.file(function (err, p) {
             if (err) throw err;
             fs.writeFileSync(p, xml);
             return ConfigXml.set(p, 'tools.tarifa.test').then(function () {
@@ -58,15 +59,15 @@ describe('[shared] read/write cordova\'s config.xml', function() {
             xml = fs.readFileSync(file, 'utf-8'),
             defer = Q.defer();
 
-        tmp.file(function (err, p, fd) {
+        tmp.file(function (err, p) {
             if (err) throw err;
             fs.writeFileSync(p, xml);
 
             var pref = {
                 DisallowOverscroll: false,
-                KeyboardDisplayRequiresUserAction:false,
-                'newpreference':'what you want...',
-                'newpreference2':'what you want...2'
+                KeyboardDisplayRequiresUserAction: false,
+                'newpreference': 'what you want...',
+                'newpreference2': 'what you want...2'
             };
 
             return ConfigXml.set(

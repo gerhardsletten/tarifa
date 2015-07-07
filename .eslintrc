@@ -16,5 +16,9 @@
     "env": {
         "browser": false,
         "node": true
+    },
+    "globals": {
+        "describe": true,
+        "it": true
     }
 }
