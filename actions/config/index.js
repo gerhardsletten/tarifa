@@ -35,7 +35,7 @@ var action = function (argv) {
         if(match(argv._, ['splashscreens', '+', '*']))
             return action.generateSplashscreens(argv._[1], argv._[2]);
 
-        for(var i=0,l=platformCommands.length; i<l; i++) {
+        for(var i = 0, l = platformCommands.length; i < l; i++) {
             if(match(argv._, platformCommands[i].def))
                 return platformCommands[i].action(argv._);
         }

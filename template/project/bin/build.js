@@ -13,7 +13,7 @@ var browserify = require('browserify'),
     watcher, // chokidar watcher instance
 
     src = path.join(__dirname, '../src/app.js'),
-    settings = path.join(__dirname, 'settings.json'),
+    settingsJSON = path.join(__dirname, 'settings.json'),
     out = path.join(__dirname, '../www/main.js'),
     www = path.join(__dirname, '../www');
 
@@ -27,16 +27,16 @@ function bundle(conf) {
     var defer = Q.defer(),
         b = browserify(watchify.args);
 
-    if(fs.existsSync(settings)) fs.unlinkSync(settings);
+    if(fs.existsSync(settingsJSON)) fs.unlinkSync(settingsJSON);
     if(fs.existsSync(out)) fs.unlinkSync(out);
 
-    fs.writeFileSync(settings, JSON.stringify(conf), null, 2);
+    fs.writeFileSync(settingsJSON, JSON.stringify(conf), null, 2);
 
     var ws = fs.createWriteStream(out);
 
     b.add(src)
         .exclude('settings')
-        .require(settings, { expose : 'settings' })
+        .require(settingsJSON, { expose : 'settings' })
         .bundle()
         .pipe(ws);
 
@@ -76,7 +76,7 @@ module.exports.watch = function watch(f, localSettings, platform, config, confEm
         }, 4000);
 
         confEmitter.on('change', function (conf) {
-            fs.writeFileSync(settings, JSON.stringify(conf), null, 2);
+            fs.writeFileSync(settingsJSON, JSON.stringify(conf), null, 2);
         });
     });
 };
@@ -91,7 +91,7 @@ module.exports.test = function (platform, settings, config, caps, appium) {
         mocha = new Mocha(),
         defer = Q.defer(),
         settingsPath = path.resolve(__dirname, '../test/settings.json'),
-        settings = {
+        testSettings = {
             caps: caps,
             appium: appium,
             platform: platform,
@@ -99,7 +99,7 @@ module.exports.test = function (platform, settings, config, caps, appium) {
             configuration: config
         };
 
-    fs.writeFileSync(settingsPath, JSON.stringify(settings), null, 2);
+    fs.writeFileSync(settingsPath, JSON.stringify(testSettings), null, 2);
 
     fs.readdirSync(path.resolve(__dirname, '../test')).filter(function(file){
         return file.substr(-3) === '.js';

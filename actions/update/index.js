@@ -35,7 +35,7 @@ function versionGreater(version1, version2) {
     function greater(a, b) { return parseInt(a, 10) > parseInt(b, 10); }
     function smaller(a, b) { return parseInt(a, 10) < parseInt(b, 10); }
 
-    for(var i=0, l=v1.length; i<l; i++) {
+    for(var i = 0, l = v1.length; i < l; i++) {
         if(greater(v1[i], v2[i])) return true;
         if(smaller(v1[i], v2[i])) return false;
     }
@@ -106,7 +106,7 @@ function _addAvailablePlugins(root) {
         msg.pluginToUpdate = [];
         return toUpdate.reduce(function (promise, p) {
             return promise.then(function () {
-                return  _pluginVersion(root, p).then(function (installedVersion) {
+                return _pluginVersion(root, p).then(function (installedVersion) {
                     if(versionGreater(availablePluginsVersions[p], installedVersion)) {
                         msg.pluginToUpdate.push(p);
                         log.send('msg', '  %s %s -> %s', p, installedVersion, availablePluginsVersions[p]);
@@ -136,7 +136,7 @@ function info(root) {
     };
 }
 
-function askUserForUpdate(root) {
+function askUserForUpdate() {
     return function (msg) {
         if(!msg.platformsToUpdate.length && !msg.pluginToUpdate.length) {
             log.send('success', 'nothing to update');
@@ -166,26 +166,24 @@ function runUpdatePlatforms(root) {
     };
 }
 
-function runUpdatePlugins(root) {
-    return function (msg) {
-        var plgs = plugins.listAll();
-        return msg.pluginToUpdate.reduce(function (promise, plugin) {
-            return promise.then(function () {
-                return pluginAction('remove', plugin);
-            }).then(function () {
-                var idx = plgs.map(function (p) {
-                    return p.value;
-                }).indexOf(plugin);
+function runUpdatePlugins(msg) {
+    var plgs = plugins.listAll();
+    return msg.pluginToUpdate.reduce(function (promise, plugin) {
+        return promise.then(function () {
+            return pluginAction('remove', plugin);
+        }).then(function () {
+            var idx = plgs.map(function (p) {
+                return p.value;
+            }).indexOf(plugin);
 
-                return pluginAction('add', plgs[idx].uri);
-            });
-        }, Q.resolve())
-        .then(function () {
-            if(msg.pluginToUpdate.length === 0) return msg;
-            log.send('success', 'updated plugins');
-            return msg;
+            return pluginAction('add', plgs[idx].uri);
         });
-    };
+    }, Q.resolve())
+    .then(function () {
+        if(msg.pluginToUpdate.length === 0) return msg;
+        log.send('success', 'updated plugins');
+        return msg;
+    });
 }
 
 function getUsablePlatforms(localSettings) {
@@ -204,13 +202,13 @@ function update(force) {
                 versionObj: JSON.parse(fs.readFileSync(path.join(root, '.tarifa.json'), 'utf-8')),
                 platforms: getUsablePlatforms(localSettings),
                 pluginToUpdate: [],
-                platformsToUpdate : []
+                platformsToUpdate: []
             };
         })
         .then(info(root))
-        .then(force ? function(i) { return i; } : askUserForUpdate(root))
+        .then(force ? function(i) { return i; } : askUserForUpdate())
         .then(runUpdatePlatforms(root))
-        .then(runUpdatePlugins(root))
+        .then(runUpdatePlugins)
         .then(function (msg) {
             fs.writeFileSync(path.join(root, '.tarifa.json'), JSON.stringify({
                 current: pkg.version,

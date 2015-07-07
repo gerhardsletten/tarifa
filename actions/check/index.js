@@ -1,5 +1,4 @@
 var Q = require('q'),
-    os = require('os'),
     path = require('path'),
     fs = require('q-io/fs'),
     rimraf = require('rimraf'),
@@ -76,7 +75,7 @@ var check = function (force) {
             platformTasks,
             loadUserTasks(platforms, localSettings)
         );
-    }).then(function (msg) {
+    }).then(function () {
         return builder.init(pathHelper.root());
     }).then(function (val) {
         process.chdir(cwd);

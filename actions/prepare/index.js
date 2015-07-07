@@ -21,7 +21,7 @@ var method = {
         });
         return defer.promise;
     },
-    link : function (cordovaWWW, projectWWW) {
+    link: function (cordovaWWW, projectWWW) {
         return fs.symbolicCopy(projectWWW, cordovaWWW, 'directory');
     }
 };
@@ -41,7 +41,7 @@ var prepareƒ = function (conf) {
             method[link_method](cordovaWWW, projectWWW).then(function() {
                 log.send('success', 'prepare, %s www project to cordova www', link_method);
                 defer.resolve(conf);
-            }, function (err) { defer.reject(err); });
+            }, function (er) { defer.reject(er); });
         });
         return defer.promise;
     });
@@ -52,17 +52,18 @@ var prepare = function (platform, config) {
         .then(function (localSettings) {
             return prepareƒ({
                 localSettings: localSettings,
-                platform : platform,
+                platform: platform,
                 configuration: config
             });
         });
 };
 
 var action = function (argv) {
-    if(argsHelper.matchArgumentsCount(argv, [1,2]))
+    if(argsHelper.matchArgumentsCount(argv, [1, 2]))
         return prepare(argv._[0], argv._[1] || 'default');
 
-    return fs.read(helpPath).then(path.join(__dirname, 'usage.txt'));
+    return fs.read(path.join(__dirname, 'usage.txt'))
+        .then(path.join(__dirname, 'usage.txt'));
 };
 
 action.prepare = prepare;

@@ -26,7 +26,7 @@ module.exports = function prepare(www, out, localSettings, platform, config) {
     return copyPromise.then(function () {
         return buildAction.prepare({
             localSettings: localSettings,
-            platform : platform,
+            platform: platform,
             configuration: config
         });
     });

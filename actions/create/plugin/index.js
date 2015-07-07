@@ -5,9 +5,7 @@ var Q = require('q'),
     intersection = require('interset/intersection'),
     spinner = require('char-spinner'),
     ask = require('../../../lib/questions/ask'),
-    pathHelper = require('../../../lib/helper/path'),
     banner = require('../../../lib/helper/banner'),
-    log = require('../../../lib/helper/log'),
     settings = require('../../../lib/settings'),
     questions = require('../../../lib/questions/list').plugin,
 
@@ -29,26 +27,31 @@ settings.platforms.forEach(function (platform) {
     ));
 });
 
-function create() {
-    banner();
-    var opts = { options: { } };
-    return ask(questions)(opts).then(function (resp) {
-        spinner();
-        return launchTasks(resp);
-    });
-}
-
-function launchTasks(resp) {
-    return makeRootDirectory(resp)
-        .then(copyPluginXml)
-        .then(copyPlatformsFiles);
-}
-
 function makeRootDirectory(resp) {
     return fs.isDirectory(resp.path).then(function (exists) {
         return exists ? resp : fs.makeDirectory(resp.path).then(function () {
             return resp;
         });
+    });
+}
+
+function inject(mixinFolder, mixinSearchPattern, dstStr) {
+    return fs.list(mixinFolder).then(function (filenames) {
+        return filenames.filter(function (filename) {
+            return mixinSearchPattern.test(filename);
+        }).sort().map(function (filename) {
+            return path.resolve(mixinFolder, filename);
+        });
+    }).then(function (mixinPaths) {
+        return mixinPaths.reduce(function (P, mixinPath) {
+            return Q.when(P, function (dst) {
+                return fs.read(mixinPath).then(function (mixinContent) {
+                    var basename = path.basename(mixinPath, path.extname(mixinPath)),
+                        mixinReplacePattern = (basename.indexOf('%') >= 0 ? '' : '%') + basename.toUpperCase();
+                    return dst.replace(mixinReplacePattern, mixinContent);
+                });
+            });
+        }, dstStr);
     });
 }
 
@@ -116,23 +119,18 @@ function copyPlatformsFiles(resp) {
     }, Q()).then(function () { return resp; });
 }
 
-function inject(mixinFolder, mixinSearchPattern, dstStr) {
-    return fs.list(mixinFolder).then(function (filenames) {
-        return filenames.filter(function (filename) {
-            return mixinSearchPattern.test(filename);
-        }).sort().map(function (filename) {
-            return path.resolve(mixinFolder, filename);
-        });
-    }).then(function (mixinPaths) {
-        return mixinPaths.reduce(function (P, mixinPath) {
-            return Q.when(P, function (dstStr) {
-                return fs.read(mixinPath).then(function (mixinContent) {
-                    var basename = path.basename(mixinPath, path.extname(mixinPath)),
-                        mixinReplacePattern = (basename.indexOf('%') >= 0 ? '' : '%') + basename.toUpperCase();
-                    return dstStr.replace(mixinReplacePattern, mixinContent);
-                });
-            });
-        }, dstStr);
+function launchTasks(resp) {
+    return makeRootDirectory(resp)
+        .then(copyPluginXml)
+        .then(copyPlatformsFiles);
+}
+
+function create() {
+    banner();
+    var opts = { options: { } };
+    return ask(questions)(opts).then(function (resp) {
+        spinner();
+        return launchTasks(resp);
     });
 }
 

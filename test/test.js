@@ -3,7 +3,6 @@ var should = require('should'),
     os = require('os'),
     fs = require('fs'),
     format = require('util').format,
-    path = require('path'),
     tmp = require('tmp'),
     setupHelper = require('./helper/setup');
 

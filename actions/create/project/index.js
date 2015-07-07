@@ -1,5 +1,4 @@
-var Q = require('q'),
-    spinner = require('char-spinner'),
+var spinner = require('char-spinner'),
     ask = require('../../../lib/questions/ask'),
     questions = require('../../../lib/questions/list'),
     createProject = require('../../../lib/create'),
@@ -9,7 +8,7 @@ function create() {
     banner();
 
     var initResponse = {
-        options : { }
+        options: { }
     };
 
     return ask(questions.project)(initResponse).then(function (response) {

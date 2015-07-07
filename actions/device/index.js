@@ -1,10 +1,8 @@
 var Q = require('q'),
     fs = require('q-io/fs'),
-    os = require('os'),
     path = require('path'),
     argsHelper = require('../../lib/helper/args'),
     devices = require('../../lib/devices'),
-    settings = require('../../lib/settings'),
     platforms = require('../../lib/cordova/platforms'),
     log = require('../../lib/helper/log');
 

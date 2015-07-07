@@ -8,15 +8,14 @@ var Q = require('q'),
     platformHelper = require('../../lib/helper/platform'),
     platformsLib = require('../../lib/cordova/platforms'),
     log = require('../../lib/helper/log'),
-    tasks = require('./tasks'),
-    argsHelper = require('../../lib/helper/args');
+    tasks = require('./tasks');
 
 function multiplePlatformsTask(task, platforms, config, argv) {
     var conf = [tarifaFile.parse(pathHelper.root()), platformsLib.listAvailableOnHost()];
-    return Q.all(conf).spread(function (localSettings, availablePlatforms) {
+    return Q.all(conf).spread(function (settings, availablePlatforms) {
         platforms = intersection(
             availablePlatforms,
-            platforms || localSettings.platforms.map(platformHelper.getName)
+            platforms || settings.platforms.map(platformHelper.getName)
         );
         return platforms.reduce(function(promise, platform) {
             return promise.then(function () {

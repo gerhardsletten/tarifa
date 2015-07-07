@@ -64,7 +64,7 @@ var upload = function (msg) {
         // in case of app creation, add 'hockeyapp_id' to configuration
         if (data.public_identifier) {
             return tarifaFile.addHockeyappId(pathHelper.root(), platform, config, data.public_identifier).then(function() {
-                 log.send('success', 'Created hockeyapp application successfully.');
+                log.send('success', 'Created hockeyapp application successfully.');
             });
         }
     });

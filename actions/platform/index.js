@@ -4,7 +4,6 @@ var Q = require('q'),
     qfs = require('q-io/fs'),
     fs = require('fs'),
     path = require('path'),
-    chalk = require('chalk'),
     isObject = require('../../lib/helper/collections').isObject,
     argsHelper = require('../../lib/helper/args'),
     tarifaFile = require('../../lib/tarifa-file'),
@@ -41,15 +40,15 @@ function rmAssets(platform) {
     return defer.promise;
 }
 
-function add(platform, prune) {
+function add(platform) {
     // cordova has a bug that when you install a platform with a plugin
     // with variable already installed, the install will crash
     // so before adding the platform we remove any plugin
     // with variable and we reinstall them after
     var pluginsWithVariables;
     return tarifaFile.addPlatform(pathHelper.root(), platform)
-        .then(function (settings) {
-            var plugins = settings.plugins;
+        .then(function (localSettings) {
+            var plugins = localSettings.plugins;
             var promises = [];
             if (plugins) {
                 for (var key in plugins){
@@ -93,7 +92,7 @@ function remove(platform, prune) {
         });
 }
 
-function platformAction (action, platform, prune) {
+function platformAction (f, platform, prune) {
     var promises = [
         tarifaFile.parse(pathHelper.root()),
         platformsLib.isAvailableOnHost(platformHelper.getName(platform))
@@ -101,8 +100,8 @@ function platformAction (action, platform, prune) {
 
     return Q.all(promises).spread(function (localSettings, available) {
         if(!available)
-            return Q.reject(format("Can't %s %s!, %s is not available on your host", action, platform, platform));
-        if(action === 'add')
+            return Q.reject(format('Can\'t %s %s!, %s is not available on your host', f, platform, platform));
+        if(f === 'add')
             return add(platformsLib.extendPlatform(platform), prune);
         else
             return remove(platform, prune);

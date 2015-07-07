@@ -11,7 +11,6 @@ var Q = require('q'),
     prepareAction = require('../prepare'),
     platformsLib = require('../../lib/cordova/platforms'),
     getPlatformVersion = require('../../lib/cordova/version').getPlatformVersion,
-    argsHelper = require('../../lib/helper/args'),
     tasksHelper = require('../../lib/helper/tasks'),
     tasks = {};
 

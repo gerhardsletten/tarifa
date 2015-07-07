@@ -1,4 +1,5 @@
 var chokidar = require('chokidar'),
+    format = require('util').format,
     Q = require('q'),
     log = require('../../../lib/helper/log');
 

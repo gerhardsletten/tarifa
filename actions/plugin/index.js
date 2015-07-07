@@ -7,13 +7,12 @@ var Q = require('q'),
     pathHelper = require('../../lib/helper/path'),
     log = require('../../lib/helper/log'),
     isObject = require('../../lib/helper/collections').isObject,
-    settings = require('../../lib/settings'),
     pluginXML = require('../../lib/xml/plugin.xml'),
     plugins = require('../../lib/cordova/plugins');
 
 function printPlugins(items) {
     if(items.length === 0) {
-        log.send('msg', "no plugin installed!");
+        log.send('msg', 'no plugin installed!');
         return Q.resolve();
     }
 
@@ -27,10 +26,10 @@ function printPlugins(items) {
     }, {});
 }
 
-function logging(action) {
+function logging(f) {
     return function (val) {
-        if(val) log.send('info', "%s plugin: %s", action, val);
-        else log.send('info', "no plugin added!");
+        if(val) log.send('info', '%s plugin: %s', f, val);
+        else log.send('info', 'no plugin added!');
         return val;
     };
 }
@@ -51,8 +50,8 @@ var actions = {
         }
     },
     'reload': {
-        updateTarifaFile: function (root) {
-            return function (def) { return true; };
+        updateTarifaFile: function () {
+            return function () { return true; };
         }
     }
 };
@@ -61,39 +60,39 @@ function list() {
     return plugins.list(pathHelper.root());
 }
 
-function plugin(action, arg, variables, link) {
-    return raw_plugin(pathHelper.root(), action, arg, variables, link);
-}
-
-function raw_plugin (root, action, arg, variables, link) {
+function raw_plugin (root, f, arg, variables, link) {
     return tarifaFile.parse(root)
         .then(function (settings) {
-            if(action == 'remove' && (!settings.plugins || Object.keys(settings.plugins).indexOf(arg) < 0))
-                return Q.reject(format("Can't remove uninstalled plugin %s", arg));
-            if(action == 'add' && (settings.plugins && Object.keys(settings.plugins).indexOf(arg) > -1))
-                return Q.reject(format("Can't install already installed plugin %s", arg));
-            if(action == 'reload' && (settings.plugins && Object.keys(settings.plugins).indexOf(arg) < 0))
-                return Q.reject(format("Can't reload not installed plugin %s", arg));
-            if(action == 'reload') {
+            if(f === 'remove' && (!settings.plugins || Object.keys(settings.plugins).indexOf(arg) < 0))
+                return Q.reject(format('Can\'t remove uninstalled plugin %s', arg));
+            if(f === 'add' && (settings.plugins && Object.keys(settings.plugins).indexOf(arg) > -1))
+                return Q.reject(format('Can\'t install already installed plugin %s', arg));
+            if(f === 'reload' && (settings.plugins && Object.keys(settings.plugins).indexOf(arg) < 0))
+                return Q.reject(format('Can\'t reload not installed plugin %s', arg));
+            if(f === 'reload') {
                 var p = settings.plugins[arg],
-                    uri= isObject(p) ? p.uri: p,
-                    vars = isObject(p) ? p.variables: {};
+                    uri = isObject(p) ? p.uri : p,
+                    vars = isObject(p) ? p.variables : {};
                 return plugins.reload(root, arg, uri, { cli_variables: vars, link: link })
                     .then(function () { return logging('reload')(arg); });
             } else {
                 var opts = { cli_variables: variables };
-                if (action === 'add') { opts.link = link; }
-                return plugins[action](root, arg, opts)
+                if (f === 'add') { opts.link = link; }
+                return plugins[f](root, arg, opts)
                     .then(function (val) {
                         if (!val || !val.val || !val.uri) {
-                            return Q.reject("no plugin changed!");
+                            return Q.reject('no plugin changed!');
                         }
                         return val;
                     })
-                    .then(actions[action].updateTarifaFile(root))
-                    .then(logging(action));
+                    .then(actions[f].updateTarifaFile(root))
+                    .then(logging(f));
             }
         });
+}
+
+function plugin(f, arg, variables, link) {
+    return raw_plugin(pathHelper.root(), f, arg, variables, link);
 }
 
 function getVariableFromCli(v, rst) {
@@ -113,7 +112,7 @@ function action (argv) {
             variables = argv.variable;
             if(variables instanceof Array)
                 variables = variables.reduce(function(acc, val) {
-                  return getVariableFromCli(val, acc);
+                    return getVariableFromCli(val, acc);
                 }, {});
             else
                 variables = getVariableFromCli(variables);
@@ -122,7 +121,8 @@ function action (argv) {
             if (argv._[0] === 'add' || argv._[0] === 'reload') {
                 link = true;
             } else {
-                return fs.read(helpPath).then(console.log);
+                return fs.read(path.join(__dirname, 'usage.txt'))
+                    .then(console.log);
             }
         }
         if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
@@ -130,8 +130,8 @@ function action (argv) {
         }
         if(Object.keys(actions).indexOf(argv._[0]) > -1 &&
             argsHelper.matchArgumentsCount(argv, [2])) {
-                return plugin(argv._[0], argv._[1], variables, link);
-            }
+            return plugin(argv._[0], argv._[1], variables, link);
+        }
     }
 
     return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);

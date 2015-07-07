@@ -1,5 +1,6 @@
 var Q = require('q'),
-    connect = require("connect"),
+    connect = require('connect'),
+    format = require('util').format,
     lr = require('connect-livereload'),
     serveStatic = require('serve-static'),
     pathHelper = require('../../../lib/helper/path'),

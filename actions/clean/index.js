@@ -1,6 +1,6 @@
 var Q = require('q'),
     rimraf = require('rimraf'),
-    spinner = require("char-spinner"),
+    spinner = require('char-spinner'),
     path = require('path'),
     fs = require('q-io/fs'),
     intersection = require('interset/intersection'),
@@ -17,7 +17,7 @@ var Q = require('q'),
 
 var tryRemoveWWW = function () {
     var defer = Q.defer(),
-        www = path.join(pathHelper.app(), "www");
+        www = path.join(pathHelper.app(), 'www');
 
     rimraf(www, function (err) {
         if(err) {

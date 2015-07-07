@@ -1,5 +1,5 @@
 var Q = require('q'),
-    spinner = require("char-spinner"),
+    spinner = require('char-spinner'),
     child_process = require('child_process'),
     path = require('path'),
     format = require('util').format,
@@ -15,27 +15,27 @@ var Q = require('q'),
     platformsLib = require('../../lib/cordova/platforms'),
     buildAction = require('../build'),
     askDevice = require('./ask_device'),
-    argsHelper = require('../../lib/helper/args'),
     askIp = require('../watch/helper/askip'),
     platformTasks = tasksHelper.load(settings.platforms, 'run', 'tasks');
 
 var binaryExists = function (conf) {
-    var exists = false, productFileName, productFolder;
+    var exists, productFileName, productFolder;
     try {
         productFileName = pathHelper.productFile(
             conf.platform,
             conf.localSettings.configurations[conf.platform][conf.configuration].product_file_name
         );
-    } catch(err) { }
-    if (productFileName && existsSync(productFileName)) exists = true;
+        if (productFileName && existsSync(productFileName)) exists = true;
+    } catch(err) { exists = false; }
 
     try {
         productFolder = pathHelper.productFolder(
             conf.platform,
             conf.localSettings.configurations[conf.platform][conf.configuration].product_name
         );
-    } catch(err) { }
-    if (productFolder && existsSync(productFolder)) exists = true;
+        if (productFolder && existsSync(productFolder)) exists = true;
+    } catch(err) { exists = false; }
+
     return exists;
 };
 
@@ -89,8 +89,8 @@ var startVorlon = function (defer, options) {
 
             function killVorlon() { Q.delay(500).then(child.kill); }
 
-            process.openStdin().on("keypress", function(chunk, key) {
-                if(key && key.name === "c" && key.ctrl) { killVorlon(); }
+            process.openStdin().on('keypress', function(chunk, key) {
+                if(key && key.name === 'c' && key.ctrl) { killVorlon(); }
             });
 
             process.on('SIGINT', killVorlon);
@@ -103,12 +103,12 @@ var wait = function (defer, options) {
     return function (msg) {
         if (!options.vorlon) { return msg; }
         else {
-            var clientScript = "<script src=\"http://%s:1337/vorlon.js\"></script>",
+            var clientScript = '<script src="http://%s:1337/vorlon.js"></script>',
                 script = format(clientScript, options.ip);
             log.send('warning');
-            log.send('warning', "/!\\ You need to add \"%s\" to your index.html", script);
+            log.send('warning', '/!\\ You need to add "%s" to your index.html', script);
             log.send('warning');
-            log.send('successs', "vorlon dashbord: http://%s:1337", options.ip);
+            log.send('successs', 'vorlon dashbord: http://%s:1337', options.ip);
             return defer.promise;
         }
     };
@@ -117,7 +117,7 @@ var wait = function (defer, options) {
 var runMultiplePlatforms = function (platforms, config, options) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         if (options.arch && !localSettings.plugins['cordova-plugin-crosswalk-webview'])
-            return Q.reject("You are running a specified architecture but you don't have 'cordova-plugin-crosswalk-webview' installed.\nYou should run 'tarifa plugin add cordova-plugin-crosswalk-webview' if you which to use crosswalk.");
+            return Q.reject('You are running a specified architecture but you don\'t have \'cordova-plugin-crosswalk-webview\' installed.\nYou should run \'tarifa plugin add cordova-plugin-crosswalk-webview\' if you which to use crosswalk.');
 
         // let's assume the arch is armv7 since it is overwhelmingly majority
         if (!options.arch && localSettings.plugins['cordova-plugin-crosswalk-webview'])

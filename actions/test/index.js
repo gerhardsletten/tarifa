@@ -18,9 +18,9 @@ var Q = require('q'),
 var logging = function (o) { log.send('info', o.toString().replace(/\n/g, '')); };
 
 var launchAppiumServer = function (conf) {
-     var appiumPath = path.resolve(__dirname, '../../node_modules/appium/bin/appium.js'),
+    var appiumPath = path.resolve(__dirname, '../../node_modules/appium/bin/appium.js'),
          cmd = appiumPath,
-         args = "--command-timeout 7200 --automation-name Appium --log-level debug";
+         args = '--command-timeout 7200 --automation-name Appium --log-level debug';
     if (os.platform() === 'win32') {
         cmd = 'node';
         args = appiumPath + ' ' + args;
@@ -35,7 +35,7 @@ var launchAppiumServer = function (conf) {
 
 var launchIosWebkitDebugProxy = function (conf) {
     if (conf.platform === 'ios') {
-        var args = format("-c %s:27753", conf.device.value).split(' ');
+        var args = format('-c %s:27753', conf.device.value).split(' ');
         conf.IosWebkitDebugProxy = spawn('ios_webkit_debug_proxy', args);
         conf.IosWebkitDebugProxy.stdout.on('data', logging);
         conf.IosWebkitDebugProxy.stderr.on('data', logging);
@@ -48,7 +48,8 @@ var launchIosWebkitDebugProxy = function (conf) {
 var findAndroidPlatformVersion = function (conf) {
     var d = Q.defer(),
         cmd = format('adb -s %s shell "grep ro.build.version.release= system/build.prop"', conf.device.value);
-    exec(cmd, function (err, stdout, stderr) {
+    exec(cmd, function (err, stdout) {
+        if (err) { d.reject(err); return; }
         d.resolve(stdout.toString().replace(/\n|\r/g, '').replace('ro.build.version.release=', ''));
     });
     return d.promise;
@@ -139,7 +140,7 @@ var test = function (platform, config) {
 };
 
 var action = function (argv) {
-    if(argsHelper.matchArgumentsCount(argv, [1,2]))
+    if(argsHelper.matchArgumentsCount(argv, [1, 2]))
         return test(argv._[0], argv._[1] || 'default');
 
     return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
