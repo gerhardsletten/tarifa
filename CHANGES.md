@@ -1,3 +1,9 @@
+## 0.11.1 (07/08/2015)
+
+### changes
+
+- fix `tarifa run ios` (was not able to exit ios-deploy, fix wrong ios-deploy options)
+
 ## 0.11.0 (07/07/2015)
 
 ### changes
