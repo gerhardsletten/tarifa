@@ -19,27 +19,20 @@ var Q = require('q'),
     platformTasks = tasksHelper.load(settings.platforms, 'run', 'tasks');
 
 var binaryExists = function (conf) {
-    var exists, productFileName, productFolder;
-    try {
-        productFileName = pathHelper.productFile(
-            conf.platform,
-            conf.localSettings.configurations[conf.platform][conf.configuration].product_file_name,
-            conf.arch
-        );
-        if (productFileName && existsSync(productFileName)) exists = true;
-    } catch(err) { exists = false; }
-
-    // product folder is only for ios platform
-    // maybe a if (conf.platform === 'ios') would be better here than the try/catch
-    try {
-        productFolder = pathHelper.productFolder(
-            conf.platform,
-            conf.localSettings.configurations[conf.platform][conf.configuration].product_name
-        );
-        if (productFolder && existsSync(productFolder)) exists = true;
-        else exists = false;
-    } catch(err) {}
-
+    var exists = false,
+        configurations = conf.localSettings.configurations[conf.platform],
+        c = configurations[conf.configuration],
+        productFileName, productFolder;
+    if(conf.platform !== 'ios') {
+        productFileName = pathHelper.productFile(conf.platform, c.product_file_name, conf.arch);
+        if (productFileName && existsSync(productFileName)) {
+            exists = true;
+        }
+    } else {
+        productFolder = pathHelper.productFolder(conf.platform, c.product_name);
+        if (productFolder && existsSync(productFolder))
+            exists = true;
+    }
     return exists;
 };
 
