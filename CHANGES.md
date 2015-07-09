@@ -3,7 +3,7 @@
 ### changes
 
 - fix android check command in `tarifa check` [#243](https://github.com/TarifaTools/tarifa/issues/243)
-- fix `tarifa run ios` --nobuild option
+- fix `tarifa run android` --nobuild option
 
 ## 0.11.1 (07/08/2015)
 
