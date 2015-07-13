@@ -1,3 +1,10 @@
+## 0.11.3 (07/13/2015)
+
+### changes
+
+- [android] first package component has no min length [#246](https://github.com/TarifaTools/tarifa/issues/246)
+- restrict product file name (composed of letters, digits, ., _ or -)
+
 ## 0.11.2 (07/09/2015)
 
 ### changes
