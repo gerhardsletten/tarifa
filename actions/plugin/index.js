@@ -34,29 +34,27 @@ function logging(f) {
     };
 }
 
-var addAction = {
+var actions = {
+    'add': {
         updateTarifaFile: function (root) {
             return function (def) {
                 return tarifaFile.addPlugin(root, def.val, def.uri, def.variables);
             };
         }
     },
-    actions = {
-        'add': addAction,
-        'install': addAction,
-        'remove': {
-            updateTarifaFile: function (root) {
-                return function (def) {
-                    return tarifaFile.removePlugin(root, def.val);
-                };
-            }
-        },
-        'reload': {
-            updateTarifaFile: function () {
-                return function () { return true; };
-            }
+    'remove': {
+        updateTarifaFile: function (root) {
+            return function (def) {
+                return tarifaFile.removePlugin(root, def.val);
+            };
         }
-    };
+    },
+    'reload': {
+        updateTarifaFile: function () {
+            return function () { return true; };
+        }
+    }
+};
 
 function list() { return plugins.list(pathHelper.root()); }
 
@@ -73,7 +71,7 @@ function validateRemoveAction(f, arg) {
 
 function validateAddAction(f, arg) {
     return function (settings) {
-        var act = f === 'add' || f === 'install',
+        var act = f === 'add',
             hasPlugin = settings.plugins && Object.keys(settings.plugins).indexOf(arg) > -1;
         if(act && hasPlugin) {
             return Q.reject(format('Can\'t install already installed plugin %s', arg));
@@ -107,7 +105,7 @@ function raw_plugin (root, f, arg, variables, link) {
                     .then(function () { return logging('reload')(arg); });
             } else {
                 var opts = { cli_variables: variables };
-                if (f === 'add' || f === 'install') { opts.link = link; }
+                if (f === 'add') { opts.link = link; }
                 return plugins[f](root, arg, opts)
                     .then(function (val) {
                         if (!val || !val.val || !val.uri) {
@@ -135,6 +133,7 @@ function getVariableFromCli(v, rst) {
 
 function action (argv) {
     var link = false,
+        act = argv._[0],
         variables = null;
 
     if(argsHelper.checkValidOptions(argv, ['variable', 'link'])) {
@@ -147,20 +146,21 @@ function action (argv) {
             else
                 variables = getVariableFromCli(variables);
         }
+        if(act === 'install') act = 'add';
         if (argsHelper.matchOption(argv, null, 'link')) {
-            if (['add', 'reload', 'install'].indexOf(argv._[0]) > -1) {
+            if (['add', 'reload'].indexOf(act) > -1) {
                 link = true;
             } else {
                 return fs.read(path.join(__dirname, 'usage.txt'))
                     .then(console.log);
             }
         }
-        if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
+        if(act === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
             return list().then(printPlugins);
         }
-        if(Object.keys(actions).indexOf(argv._[0]) > -1 &&
+        if(Object.keys(actions).indexOf(act) > -1 &&
             argsHelper.matchArgumentsCount(argv, [2])) {
-            return plugin(argv._[0], argv._[1], variables, link);
+            return plugin(act, argv._[1], variables, link);
         }
     }
 
