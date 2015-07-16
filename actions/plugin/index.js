@@ -34,41 +34,71 @@ function logging(f) {
     };
 }
 
-var actions = {
-    'add': {
+var addAction = {
         updateTarifaFile: function (root) {
             return function (def) {
                 return tarifaFile.addPlugin(root, def.val, def.uri, def.variables);
             };
         }
     },
-    'remove': {
-        updateTarifaFile: function (root) {
-            return function (def) {
-                return tarifaFile.removePlugin(root, def.val);
-            };
+    actions = {
+        'add': addAction,
+        'install': addAction,
+        'remove': {
+            updateTarifaFile: function (root) {
+                return function (def) {
+                    return tarifaFile.removePlugin(root, def.val);
+                };
+            }
+        },
+        'reload': {
+            updateTarifaFile: function () {
+                return function () { return true; };
+            }
         }
-    },
-    'reload': {
-        updateTarifaFile: function () {
-            return function () { return true; };
-        }
-    }
-};
+    };
 
-function list() {
-    return plugins.list(pathHelper.root());
+function list() { return plugins.list(pathHelper.root()); }
+
+function validateRemoveAction(f, arg) {
+    return function (settings) {
+        var act = f === 'remove',
+            noPlugin = !settings.plugins || Object.keys(settings.plugins).indexOf(arg) < 0;
+        if(act && noPlugin) {
+            return Q.reject(format('Can\'t remove uninstalled plugin %s', arg));
+        }
+        return Q.resolve(settings);
+    };
+}
+
+function validateAddAction(f, arg) {
+    return function (settings) {
+        var act = f === 'add' || f === 'install',
+            hasPlugin = settings.plugins && Object.keys(settings.plugins).indexOf(arg) > -1;
+        if(act && hasPlugin) {
+            return Q.reject(format('Can\'t install already installed plugin %s', arg));
+        }
+        return Q.resolve(settings);
+    };
+}
+
+function validateReloadAction(f, arg) {
+    return function (settings) {
+        var act = f === 'reload',
+            noPlugin = settings.plugins && Object.keys(settings.plugins).indexOf(arg) < 0;
+        if(act && noPlugin) {
+            return Q.reject(format('Can\'t reload not installed plugin %s', arg));
+        }
+        return Q.resolve(settings);
+    };
 }
 
 function raw_plugin (root, f, arg, variables, link) {
     return tarifaFile.parse(root)
+        .then(validateRemoveAction(f, arg))
+        .then(validateAddAction(f, arg))
+        .then(validateReloadAction(f, arg))
         .then(function (settings) {
-            if(f === 'remove' && (!settings.plugins || Object.keys(settings.plugins).indexOf(arg) < 0))
-                return Q.reject(format('Can\'t remove uninstalled plugin %s', arg));
-            if(f === 'add' && (settings.plugins && Object.keys(settings.plugins).indexOf(arg) > -1))
-                return Q.reject(format('Can\'t install already installed plugin %s', arg));
-            if(f === 'reload' && (settings.plugins && Object.keys(settings.plugins).indexOf(arg) < 0))
-                return Q.reject(format('Can\'t reload not installed plugin %s', arg));
             if(f === 'reload') {
                 var p = settings.plugins[arg],
                     uri = isObject(p) ? p.uri : p,
@@ -77,7 +107,7 @@ function raw_plugin (root, f, arg, variables, link) {
                     .then(function () { return logging('reload')(arg); });
             } else {
                 var opts = { cli_variables: variables };
-                if (f === 'add') { opts.link = link; }
+                if (f === 'add' || f === 'install') { opts.link = link; }
                 return plugins[f](root, arg, opts)
                     .then(function (val) {
                         if (!val || !val.val || !val.uri) {
@@ -118,7 +148,7 @@ function action (argv) {
                 variables = getVariableFromCli(variables);
         }
         if (argsHelper.matchOption(argv, null, 'link')) {
-            if (argv._[0] === 'add' || argv._[0] === 'reload') {
+            if (['add', 'reload', 'install'].indexOf(argv._[0]) > -1) {
                 link = true;
             } else {
                 return fs.read(path.join(__dirname, 'usage.txt'))
