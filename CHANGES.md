@@ -1,3 +1,10 @@
+## 0.11.4 (07/18/2015)
+
+### changes
+
+- add `tarifa plugin install` aliasing `tarifa plugin add`
+- fix `tarifa devices` for android devices
+
 ## 0.11.3 (07/13/2015)
 
 ### changes
