@@ -1,3 +1,11 @@
+## 0.11.5 (07/20/2015)
+
+### changes
+
+- fix output of `tarifa devices --verbose` and get properly cpu architecture
+for android devices via `adb shell getprop ro.product.cpu.abi`
+- fix `tarifa run android` with the `arch` option
+
 ## 0.11.4 (07/18/2015)
 
 ### changes
