@@ -148,9 +148,8 @@ var action = function (argv) {
             log: argsHelper.matchOption(argv, 'l', 'log'),
             all: argsHelper.matchOption(argv, null, 'all'),
             vorlon: argsHelper.matchOption(argv, 'D', 'vorlon'),
-            arch: argsHelper.matchOptionWithValue(argv, null, 'arch')
+            arch: argsHelper.matchOptionWithValue(argv, null, 'arch') && argv.arch
         };
-
     if (options.log) {
         if(argsHelper.matchCmd(argv._, ['__multi__', '*']) || argsHelper.matchCmd(argv._, ['*', '__multi__'])) {
             log.send('error', 'Oops, not `--log` option on multiple configurations or multiple platforms!');
