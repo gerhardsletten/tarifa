@@ -51,6 +51,7 @@
     "findit": "2.0.0",
     "inquirer": "0.8.5",
     "interset": "0.0.2",
+    "is-online": "5.0.0",
     "jsonlint": "1.6.2",
     "minimist": "1.1.1",
     "mkdirp": "0.5.1",
