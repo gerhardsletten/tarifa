@@ -2,7 +2,7 @@
 
 ### changes
 
-- skip requirements checks when offline, fix[#251](https://github.com/TarifaTools/tarifa/issues/251)
+- skip requirements checks when offline, fix [#251](https://github.com/TarifaTools/tarifa/issues/251)
 
 ## 0.11.5 (07/20/2015)
 
