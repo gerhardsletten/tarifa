@@ -1,25 +1,25 @@
-var should = require('should'),
-    path = require('path'),
+var path = require('path'),
     fs = require('fs'),
     Q = require('q'),
     tmp = require('tmp'),
-    AndroidManifestXml = require('../../../lib/platforms/android/lib/xml/AndroidManifest.xml');
+    AndroidManifestXml = require('../../../../lib/platforms/android/lib/xml/AndroidManifest.xml');
 
 describe('[android] replacing stuff in AndroidManifest.xml', function(){
 
+    var fixture = path.join(__dirname, '../../../fixtures/AndroidManifest.xml');
+
     it('find activity name and id', function () {
-        var file = path.join(__dirname, '../../fixtures/AndroidManifest.xml');
-        return AndroidManifestXml.getActivityInfo(file).then(function (result) {
+        return AndroidManifestXml.getActivityInfo(fixture).then(function (result) {
             result.name.should.equal('Ohhhhhh');
             result.id.should.equal('com.fortytwoloops.tarifa');
         });
     });
 
     it('change activity name and id', function () {
-        var xml = fs.readFileSync(path.join(__dirname, '../../fixtures/AndroidManifest.xml'), 'utf-8'),
+        var xml = fs.readFileSync(fixture, 'utf-8'),
             defer = Q.defer();
 
-        tmp.file(function (err, p, fd) {
+        tmp.file(function (err, p) {
             if (err) throw err;
             fs.writeFileSync(p, xml);
             return AndroidManifestXml.setActivityInfo(p, 'Wrooooooommmm', 'com.tarifa.test').then(function () {

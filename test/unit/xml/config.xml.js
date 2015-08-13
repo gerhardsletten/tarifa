@@ -4,13 +4,14 @@ var path = require('path'),
     fs = require('fs'),
     Q = require('q'),
     tmp = require('tmp'),
-    ConfigXml = require('../../lib/xml/config.xml');
+    ConfigXml = require('../../../lib/xml/config.xml');
 
 describe('[shared] read/write cordova\'s config.xml', function() {
 
+    var fixture = path.join(__dirname, '../../fixtures/config.xml');
+
     it('parse config.xml', function () {
-        var file = path.join(__dirname, '../fixtures/config.xml');
-        return ConfigXml.get(file).then(function (result) {
+        return ConfigXml.get(fixture).then(function (result) {
             result.id.should.equal('tools.tarifa.fixture');
             result.version.should.equal('0.0.0');
             result.author_name.should.equal('paul');
@@ -36,8 +37,7 @@ describe('[shared] read/write cordova\'s config.xml', function() {
     });
 
     it('change id', function () {
-        var file = path.join(__dirname, '../fixtures/config.xml'),
-            xml = fs.readFileSync(file, 'utf-8'),
+        var xml = fs.readFileSync(fixture, 'utf-8'),
             defer = Q.defer();
 
         tmp.file(function (err, p) {
@@ -55,8 +55,7 @@ describe('[shared] read/write cordova\'s config.xml', function() {
     });
 
     it('change id, version, author, description, preference, whitelist', function () {
-        var file = path.join(__dirname, '../fixtures/config.xml'),
-            xml = fs.readFileSync(file, 'utf-8'),
+        var xml = fs.readFileSync(fixture, 'utf-8'),
             defer = Q.defer();
 
         tmp.file(function (err, p) {

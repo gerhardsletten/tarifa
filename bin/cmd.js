@@ -125,4 +125,8 @@ function main(args) {
     }
 }
 
-main(argv);
+if(require.main === module) {
+    main(argv);
+} else {
+    module.exports = main;
+}
