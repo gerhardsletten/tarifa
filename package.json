@@ -78,11 +78,11 @@
     "node-ios-device": "0.4.1"
   },
   "scripts": {
-    "test": "mocha test --recursive"
+    "test": "tape test"
   },
   "devDependencies": {
     "cat-names": "1.0.2",
-    "mocha": "2.2.5",
-    "should": "7.0.1"
+    "tape": "4.1.0",
+    "tape-spawn": "1.4.0"
   }
 }
