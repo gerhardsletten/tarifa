@@ -1,10 +1,10 @@
 // FIXME unit tests
-// FIXME require('./unit/xml/config.xml');
-// FIXME require('./unit/xml/android/string.xml');
-// FIXME require('./unit/xml/android/project');
-// FIXME require('./unit/xml/android/AndroidManifest.xml');
-// FIXME require('./unit/xml/wp8/csproj');
-// FIXME require('./unit/xml/wp8/WMAppManifest.xml');
+require('./unit/xml/config.xml');
+require('./unit/xml/android/string.xml');
+require('./unit/xml/android/project');
+require('./unit/xml/android/AndroidManifest.xml');
+require('./unit/xml/wp8/csproj');
+require('./unit/xml/wp8/WMAppManifest.xml');
 // FIXME require('./unit/tarifa-file/extend_tests');
 // cli tests by actions
 require('./cli/noargs');

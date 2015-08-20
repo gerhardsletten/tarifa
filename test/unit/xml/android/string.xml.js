@@ -1,41 +1,29 @@
 var path = require('path'),
+    test = require('tape'),
     fs = require('fs'),
-    Q = require('q'),
     tmp = require('tmp'),
-    stringXml = require('../../../../lib/platforms/android/lib/xml/string.xml');
+    stringXml = require('../../../../lib/platforms/android/lib/xml/string.xml'),
+    fixture = path.join(__dirname, '../../../fixtures/strings.xml');
 
-describe('[android] setting app_name in android/res/values/strings.xml', function() {
-
-    var fixture = path.join(__dirname, '../../../fixtures/strings.xml');
-
-    it('find app_name', function () {
-        return stringXml.getAppName(fixture).then(function (app_name) {
-            app_name.should.equal('demo prod');
-        });
+test('parsing android/res/values/strings.xml and getting app_name', function(t) {
+    t.plan(1);
+    stringXml.getAppName(fixture).then(function (app_name) {
+        t.equal(app_name, 'demo prod');
     });
+});
 
-    it('find app_name in strings.xml with multiple strings', function () {
-        return stringXml.getAppName(fixture).then(function (app_name) {
-            app_name.should.equal('demo prod');
-        });
-    });
+test('parsing android/res/values/strings.xml and change app_name', function (t) {
+    t.plan(1);
 
-    it('change app_name', function () {
-        var xml = fs.readFileSync(fixture, 'utf-8'),
-            defer = Q.defer();
-
-        tmp.file(function (err, p) {
-            if (err) throw err;
-            fs.writeFileSync(p, xml);
-            return stringXml.changeAppName(p, 'another app name').then(function () {
-                return stringXml.getAppName(p).then(function (app_name) {
-                    app_name.should.equal('another app name');
-                    tmp.setGracefulCleanup();
-                    defer.resolve();
-                }).done();
-            });
-        });
-
-        return defer.promise;
+    var xml = fs.readFileSync(fixture, 'utf-8');
+    tmp.file(function (err, p) {
+        if (err) throw err;
+        fs.writeFileSync(p, xml);
+        stringXml.changeAppName(p, 'another app name').then(function () {
+            stringXml.getAppName(p).then(function (app_name) {
+                t.equal(app_name, 'another app name');
+                tmp.setGracefulCleanup();
+            }).done();
+        }).done();
     });
 });

@@ -1,35 +1,30 @@
 var path = require('path'),
     fs = require('fs'),
-    Q = require('q'),
+    test = require('tape'),
     tmp = require('tmp'),
-    BuildCsproj = require('../../../../lib/platforms/wp8/lib/xml/csproj');
+    BuildCsproj = require('../../../../lib/platforms/wp8/lib/xml/csproj'),
+    fixture = path.join(__dirname, '../../../fixtures/zanimo_js.csproj');
 
-describe('[wp8] setting XapFilename tag in wp8/*.csproj', function() {
-
-    var fixture = path.join(__dirname, '../../../fixtures/zanimo_js.csproj');
-
-    it('get XapFilename', function () {
-        return BuildCsproj.getProductFilename(fixture).then(function (name) {
-            name.should.equal('zanimojsdev.xap');
-        });
+test('parsing wp8 csproj file and extracting xap filename', function(t) {
+    t.plan(1);
+    BuildCsproj.getProductFilename(fixture).then(function (name) {
+        t.equal(name, 'zanimojsdev.xap');
     });
+});
 
-    it('change XapFilename', function () {
-        var xml = fs.readFileSync(fixture, 'utf-8'),
-            defer = Q.defer();
+test('parsing wp8 csproj file and changing xap file name', function (t) {
+    t.plan(1);
 
-        tmp.file(function (err, p) {
-            if (err) throw err;
-            fs.writeFileSync(p, xml);
-            return BuildCsproj.setProductFilename(p, 'Ooops.xap').then(function () {
-                return BuildCsproj.getProductFilename(p).then(function (name) {
-                    name.should.equal('Ooops.xap');
-                    tmp.setGracefulCleanup();
-                    defer.resolve();
-                }).done();
-            });
-        });
+    var xml = fs.readFileSync(fixture, 'utf-8');
 
-        return defer.promise;
+    tmp.file(function (err, p) {
+        if (err) throw err;
+        fs.writeFileSync(p, xml);
+        BuildCsproj.setProductFilename(p, 'Ooops.xap').then(function () {
+            BuildCsproj.getProductFilename(p).then(function (name) {
+                t.equal(name, 'Ooops.xap');
+                tmp.setGracefulCleanup();
+            }).done();
+        }).done();
     });
 });

@@ -1,139 +1,136 @@
-require('should');
-
-var path = require('path'),
+var test = require('tape'),
+    path = require('path'),
     fs = require('fs'),
-    Q = require('q'),
     tmp = require('tmp'),
-    ConfigXml = require('../../../lib/xml/config.xml');
+    ConfigXml = require('../../../lib/xml/config.xml'),
+    fixture = path.join(__dirname, '../../fixtures/config.xml');
 
-describe('[shared] read/write cordova\'s config.xml', function() {
+test('parse cordova\'s config.xml', function (t) {
+    t.plan(12);
+    ConfigXml.get(fixture).then(function (r) {
 
-    var fixture = path.join(__dirname, '../../fixtures/config.xml');
+        t.equal(r.id, 'tools.tarifa.fixture');
+        t.equal(r.version, '0.0.0');
+        t.equal(r.author_name, 'paul');
+        t.equal(r.author_email, 'paul@42loops.com');
+        t.equal(r.author_href, 'http://42loops.com');
+        t.equal(r.description, 'toto');
 
-    it('parse config.xml', function () {
-        return ConfigXml.get(fixture).then(function (result) {
-            result.id.should.equal('tools.tarifa.fixture');
-            result.version.should.equal('0.0.0');
-            result.author_name.should.equal('paul');
-            result.author_email.should.equal('paul@42loops.com');
-            result.author_href.should.equal('http://42loops.com');
-            result.description.should.equal('toto');
+        t.equal(r.whitelist.shared.filter(function (w) {
+            return w.type === 'access-origin';
+        })[0].origin[0], '*');
 
-            result.whitelist.shared.filter(function (w) {
-                return w.type === 'access-origin';
-            })[0].origin[0].should.equal('*');
-            result.whitelist.shared.filter(function (w) {
-                return w.type === 'allow-navigation';
-            })[0].origin[0].should.equal('*');
-            result.whitelist.shared.filter(function (w) {
-                return w.type === 'allow-intent';
-            })[0].origin[0].should.equal('tel:*');
+        t.equal(r.whitelist.shared.filter(function (w) {
+            return w.type === 'allow-navigation';
+        })[0].origin[0], '*');
 
-            result.preference.DisallowOverscroll.should.equal('true');
-            result.preference.KeyboardDisplayRequiresUserAction.should.equal('false');
-            result.preference.KeyboardDisplayRequiresUserAction.should.equal('false');
-            result.preference.EnableViewportScale.should.equal('false');
-        });
+        t.equal(r.whitelist.shared.filter(function (w) {
+            return w.type === 'allow-intent';
+        })[0].origin[0], 'tel:*');
+
+        t.equal(r.preference.DisallowOverscroll, 'true');
+        t.equal(r.preference.KeyboardDisplayRequiresUserAction, 'false');
+        t.equal(r.preference.EnableViewportScale, 'false');
     });
+});
 
-    it('change id', function () {
-        var xml = fs.readFileSync(fixture, 'utf-8'),
-            defer = Q.defer();
+test('change cordova\'s config.xml id', function (t) {
+    t.plan(1);
 
-        tmp.file(function (err, p) {
-            if (err) throw err;
-            fs.writeFileSync(p, xml);
-            return ConfigXml.set(p, 'tools.tarifa.test').then(function () {
-                return ConfigXml.get(p).then(function (result) {
-                    result.id.should.equal('tools.tarifa.test');
-                    tmp.setGracefulCleanup();
-                    defer.resolve();
-                }).done();
-            });
-        });
-        return defer.promise;
+    tmp.file(function (err, p) {
+        if (err) throw err;
+        fs.writeFileSync(p, fs.readFileSync(fixture, 'utf-8'));
+        ConfigXml.set(p, 'tools.tarifa.test').then(function () {
+            ConfigXml.get(p).then(function (r) {
+                t.equal(r.id, 'tools.tarifa.test');
+                tmp.setGracefulCleanup();
+            }).done();
+        }).done();
     });
+});
 
-    it('change id, version, author, description, preference, whitelist', function () {
-        var xml = fs.readFileSync(fixture, 'utf-8'),
-            defer = Q.defer();
+test('change cordova\'s config.xml id', function (t) {
+    t.plan(16);
 
-        tmp.file(function (err, p) {
-            if (err) throw err;
-            fs.writeFileSync(p, xml);
-
-            var pref = {
-                DisallowOverscroll: false,
-                KeyboardDisplayRequiresUserAction: false,
-                'newpreference': 'what you want...',
-                'newpreference2': 'what you want...2'
-            };
-
-            return ConfigXml.set(
-                p,
-                'tools.tarifa.oops',
-                '1.0.0',
-                'pp',
-                'pp@42loops.com',
-                'http://tarifa.tools',
-                'this is a test',
-                pref,
+    var pref = {
+            DisallowOverscroll: false,
+            KeyboardDisplayRequiresUserAction: false,
+            'newpreference': 'what you want...',
+            'newpreference2': 'what you want...2'
+        },
+        whitelist = {
+            shared: [
                 {
-                    shared: [
-                        {
-                            type: 'access-origin',
-                            origin: ['tarifa.tools', 'zengularity.com']
-                        },
-                        {
-                            type: 'allow-intent',
-                            origin: ['tel:*']
-                        },
-                        {
-                            type: 'allow-navigation',
-                            origin: ['github.com']
-                        }
-                    ],
-                    android: [
-                        {
-                            type: 'allow-navigation',
-                            origin: ['google.com']
-                        }
-                    ]
+                    type: 'access-origin',
+                    origin: ['tarifa.tools', 'zengularity.com']
+                },
+                {
+                    type: 'allow-intent',
+                    origin: ['tel:*']
+                },
+                {
+                    type: 'allow-navigation',
+                    origin: ['github.com']
                 }
-            ).then(function () {
-                return ConfigXml.get(p).then(function (result) {
-                    result.id.should.equal('tools.tarifa.oops');
-                    result.version.should.equal('1.0.0');
-                    result.author_name.should.equal('pp');
-                    result.author_email.should.equal('pp@42loops.com');
-                    result.author_href.should.equal('http://tarifa.tools');
-                    result.description.should.equal('this is a test');
-                    result.whitelist.shared.filter(function (w) {
-                        return w.type === 'access-origin';
-                    })[0].origin[0].should.equal('tarifa.tools');
-                    result.whitelist.shared.filter(function (w) {
-                        return w.type === 'access-origin';
-                    })[0].origin[1].should.equal('zengularity.com');
-                    result.whitelist.shared.filter(function (w) {
-                        return w.type === 'allow-intent';
-                    })[0].origin[0].should.equal('tel:*');
-                    result.whitelist.shared.filter(function (w) {
-                        return w.type === 'allow-navigation';
-                    }).should.have.length(0);
-                    result.whitelist.android.filter(function (w) {
-                        return w.type === 'allow-navigation';
-                    })[0].origin[0].should.equal('google.com');
-                    result.whitelist.shared.should.have.length(2);
-                    result.preference.DisallowOverscroll.should.equal('false');
-                    result.preference.KeyboardDisplayRequiresUserAction.should.equal('false');
-                    result.preference.newpreference.should.equal('what you want...');
-                    result.preference.newpreference2.should.equal('what you want...2');
-                    tmp.setGracefulCleanup();
-                    defer.resolve();
-                }).done();
-            });
-        });
-        return defer.promise;
-    });
+            ],
+            android: [
+                {
+                    type: 'allow-navigation',
+                    origin: ['google.com']
+                }
+            ]
+        };
 
+    tmp.file(function (err, p) {
+        if (err) throw err;
+        fs.writeFileSync(p, fs.readFileSync(fixture, 'utf-8'));
+        ConfigXml.set(
+            p,
+            'tools.tarifa.oops',
+            '1.0.0',
+            'pp',
+            'pp@42loops.com',
+            'http://tarifa.tools',
+            'this is a test',
+            pref,
+            whitelist
+        ).then(function () {
+            ConfigXml.get(p).then(function (r) {
+
+                t.equal(r.id, 'tools.tarifa.oops');
+                t.equal(r.version, '1.0.0');
+                t.equal(r.author_name, 'pp');
+                t.equal(r.author_email, 'pp@42loops.com');
+                t.equal(r.author_href, 'http://tarifa.tools');
+                t.equal(r.description, 'this is a test');
+
+                t.equal(r.whitelist.shared.filter(function (w) {
+                    return w.type === 'access-origin';
+                })[0].origin[0], 'tarifa.tools');
+
+                t.equal(r.whitelist.shared.filter(function (w) {
+                    return w.type === 'access-origin';
+                })[0].origin[1], 'zengularity.com');
+
+                t.equal(r.whitelist.shared.filter(function (w) {
+                    return w.type === 'allow-intent';
+                })[0].origin[0], 'tel:*');
+
+                t.equal(r.whitelist.shared.filter(function (w) {
+                    return w.type === 'allow-navigation';
+                }).length, 0);
+
+                t.equal(r.whitelist.android.filter(function (w) {
+                    return w.type === 'allow-navigation';
+                })[0].origin[0], 'google.com');
+
+                t.equal(r.whitelist.shared.length, 2);
+                t.equal(r.preference.DisallowOverscroll, 'false');
+                t.equal(r.preference.KeyboardDisplayRequiresUserAction, 'false');
+                t.equal(r.preference.newpreference, 'what you want...');
+                t.equal(r.preference.newpreference2, 'what you want...2');
+                tmp.setGracefulCleanup();
+            }).done();
+        }).done();
+    });
 });
