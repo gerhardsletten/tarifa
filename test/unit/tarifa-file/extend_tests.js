@@ -1,4 +1,4 @@
-var assert = require('assert'),
+var test = require('tape'),
     Q = require('q'),
     extendSyntax = require('../../../lib/tarifa-file/extend_syntax');
 
@@ -52,66 +52,77 @@ var extendFixtureFailure = {
   }
 };
 
-describe('extend a configuration', function() {
-    it('should extend mixin from configurations_mixins', function () {
-        var extended = extendSyntax(extendFixtureNominal);
+test('extend a configuration, extend mixin from configurations_mixins', function(t) {
+    t.plan(5);
 
-        var green_extended_ios = extended.configurations.ios.green_dev;
-        var red_extended_ios = extended.configurations.ios.red_dev;
-        var blue_extended_android = extended.configurations.android.blue_dev;
+    var extended = extendSyntax(extendFixtureNominal);
+    var green_extended_ios = extended.configurations.ios.green_dev;
+    var red_extended_ios = extended.configurations.ios.red_dev;
+    var blue_extended_android = extended.configurations.android.blue_dev;
+    var green_mixin = extendFixtureNominal.configurations_mixins.green;
+    var blue_mixin = extendFixtureNominal.configurations_mixins.blue;
 
-        var green_mixin = extendFixtureNominal.configurations_mixins.green;
-        var blue_mixin = extendFixtureNominal.configurations_mixins.blue;
+    t.equal(
+        green_extended_ios.assets_path,
+        green_mixin.assets_path,
+        'Shallow extend for green configuration in ios'
+    );
 
-        assert.equal(
-            green_extended_ios.assets_path,
-            green_mixin.assets_path,
-            'Shallow extend for green configuration in ios'
-        );
+    t.equal(
+        blue_extended_android.assets_path,
+        blue_mixin.assets_path,
+        'Shallow extend for blue configuration in android'
+    );
 
-        assert.equal(
-            blue_extended_android.assets_path,
-            blue_mixin.assets_path,
-            'Shallow extend for blue configuration in android'
-        );
+    t.deepEqual(
+        green_extended_ios.cordova,
+        { 'preferences': { 'StatusBarBackgroundColor': '#34AD8F' } },
+        'Deep extend'
+    );
 
-        assert.deepEqual(
-            green_extended_ios.cordova,
-            { 'preferences': { 'StatusBarBackgroundColor': '#34AD8F' } },
-            'Deep extend'
-        );
+    t.equal(
+        green_extended_ios.should_be_kept,
+        'yes',
+        'Should keep values that are not in mixin'
+    );
 
-        assert.equal(
-            green_extended_ios.should_be_kept,
-            'yes',
-            'Should keep values that are not in mixin'
-        );
+    t.equal(
+        red_extended_ios.name,
+        'Red name',
+        'Should keep configurations even if they don\'t extend anything'
+    );
+});
 
-        assert.equal(
-            red_extended_ios.name,
-            'Red name',
-            'Should keep configurations even if they don\'t extend anything'
-        );
-    });
+test('extend a configuration, should throw an error when a mixin doesn\'t exist', function(t) {
+    t.plan(4);
+    var extended = extendSyntax(extendFixtureFailure);
+    var inspected = Q(extended).inspect();
 
-    it('should throw an error when a mixin doesn\'t exist', function() {
-        var extended = extendSyntax(extendFixtureFailure);
-        var inspected = Q(extended).inspect();
+    t.equal(inspected.state, 'rejected', 'Must be rejected');
+    t.notEqual(
+        inspected.reason.match(/mixin "nonexistent"/),
+        null,
+        'Rejection message should contain mixin name'
+    );
+    t.notEqual(
+        inspected.reason.match(/platform "android"/),
+        null,
+        'Rejection message should contain platform name'
+    );
+    t.notEqual(
+        inspected.reason.match(/configuration "default"/),
+        null,
+        'Rejection message should contain configuration name'
+    );
+});
 
-        assert.equal(inspected.state, 'rejected', 'Must be rejected');
-        assert.notStrictEqual(inspected.reason.match(/mixin "nonexistent"/), null, 'Rejection message should contain mixin name');
-        assert.notStrictEqual(inspected.reason.match(/platform "android"/), null, 'Rejection message should contain platform name');
-        assert.notStrictEqual(inspected.reason.match(/configuration "default"/), null, 'Rejection message should contain configuration name');
-    });
+test('extend a configuration, should not throw any error when called with an empty object', function(t) {
+    t.plan(3);
+    t.deepEqual(extendSyntax({}), {});
 
-    it('should not throw any error when called with an empty object', function() {
-        assert.deepEqual(extendSyntax({}), {});
+    var confOnlyWithPlatforms = {'platforms': ['ios', 'android']};
+    t.deepEqual(extendSyntax(confOnlyWithPlatforms), confOnlyWithPlatforms);
 
-        var confOnlyWithPlatforms = {'platforms': ['ios', 'android']};
-        assert.deepEqual(extendSyntax(confOnlyWithPlatforms), confOnlyWithPlatforms);
-
-        var withEmptyConfs = {'platforms': ['ios', 'android'], 'configurations': {'a': {'b': 'c'}} };
-        assert.deepEqual(extendSyntax(withEmptyConfs), withEmptyConfs);
-    });
-
+    var withEmptyConfs = {'platforms': ['ios', 'android'], 'configurations': {'a': {'b': 'c'}} };
+    t.deepEqual(extendSyntax(withEmptyConfs), withEmptyConfs);
 });

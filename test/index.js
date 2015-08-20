@@ -5,7 +5,7 @@ require('./unit/xml/android/project');
 require('./unit/xml/android/AndroidManifest.xml');
 require('./unit/xml/wp8/csproj');
 require('./unit/xml/wp8/WMAppManifest.xml');
-// FIXME require('./unit/tarifa-file/extend_tests');
+require('./unit/tarifa-file/extend_tests');
 // cli tests by actions
 require('./cli/noargs');
 require('./cli/option-version');
