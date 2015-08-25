@@ -44,12 +44,13 @@ function sigint(ƒ) {
 }
 function run(platform, config, httpPort, norun) {
     return function (localSettings) {
-        return Q.all([
-            askHostIp(),
-            findPorts(settings.livereload_port, settings.livereload_range, 1),
-            findPorts(httpPort, 1, 1),
-            builder.checkWatcher(pathHelper.root())
-        ]).spread(function (ip, lrPorts, httpPorts) {
+        return builder.checkWatcher(pathHelper.root()).then(function () {
+            return Q.all([
+                askHostIp(),
+                findPorts(settings.livereload_port, settings.livereload_range, 1),
+                findPorts(httpPort, 1, 1)
+            ]);
+        }).spread(function (ip, lrPorts, httpPorts) {
             return startLiveReloadServer(lrPorts[0]).then(function () {
                 return startHttpServer(lrPorts[0], httpPorts[0], platform);
             }).then(function () {
