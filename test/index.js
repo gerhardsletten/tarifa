@@ -24,3 +24,15 @@ require('./cli/info');
 // FIXME require('./cli/update');
 // FIXME require('./cli/watch');
 // FIXME require('./cli/test');
+
+var rimraf = require('rimraf'),
+    path = require('path'),
+    fs = require('fs');
+
+require('tape')('clean tmp folder', function (t) {
+    t.plan(1);
+    rimraf.sync(path.resolve(__dirname, 'tmp'));
+    fs.mkdirSync(path.resolve(__dirname, 'tmp'));
+    fs.closeSync(fs.openSync(path.resolve(__dirname, 'tmp', '.gitkeep'), 'w'));
+    t.equal(fs.readdirSync(path.resolve(__dirname, 'tmp')).length, 1);
+});
