@@ -10,6 +10,14 @@ Commands:
 
 Options:
 
+    --name         Name of the project
+    --id           Id of the project (android package, iOS bundle, ...)
+    --path         Project's path
     --help, -h     Show this message
     --verbose, -V  Be more verbose on everything
     --debug, -d    Print helpful stack trace on error
+
+Examples:
+
+    tarifa create --name oops --id tools.tarifa --path .   # non-interactive project creation
+    tarifa create plugin --name myplugin --id tools.tarifa --path ./myplugin   # non-interactive plugin creation

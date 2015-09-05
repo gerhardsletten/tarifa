@@ -8,7 +8,8 @@ var Q = require('q'),
     banner = require('../../../lib/helper/banner'),
     settings = require('../../../lib/settings'),
     questions = require('../../../lib/questions/list').plugin,
-
+    isInteractive = require('../project/').isInteractive,
+    check = require('../project/').check,
     templates = {
         www: {
             root: path.resolve(__dirname, 'template'),
@@ -16,7 +17,21 @@ var Q = require('q'),
         }
     },
 
-    root = path.resolve(__dirname, '../../../');
+    root = path.resolve(__dirname, '../../../'),
+
+    initResponse = {
+        options: { },
+        path: null,
+        id: null,
+        name: null,
+        platforms: [ 'ios', 'android', 'wp8', 'browser' ],
+        use_variables: false,
+        version: '1.0.0',
+        description: '',
+        author_name: '',
+        keywords: 'tarifa, plugin',
+        license: 'Apache 2.0'
+    };
 
 settings.platforms.forEach(function (platform) {
     templates[platform] = require(path.resolve(
@@ -125,10 +140,18 @@ function launchTasks(resp) {
         .then(copyPlatformsFiles);
 }
 
-function create() {
+function create(options) {
     banner();
-    var opts = { options: { } };
-    return ask(questions)(opts).then(function (resp) {
+    options.path = options.path.toString();
+    return isInteractive(options).then(function (interactive) {
+        if(interactive) return ask(questions.project)(initResponse);
+        else return check(options).then(function () {
+            initResponse.path = options.path;
+            initResponse.name = options.name;
+            initResponse.id = options.id;
+            return initResponse;
+        });
+    }).then(function (resp) {
         spinner();
         return launchTasks(resp);
     });
