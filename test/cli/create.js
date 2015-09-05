@@ -3,13 +3,21 @@ var test = require('tape'),
     tarifa = require('../helpers').cmd,
     catValues = require('../helpers').catValues,
     format = require('util').format,
+    path = require('path'),
+    fs = require('fs'),
     isFile = require('../helpers').isFile,
     isDirectory = require('../helpers').isDirectory,
     projVal = catValues(),
     pluginVal = catValues();
 
 test('tarifa create', function (t) {
-    var st = spawn(t, tarifa(format('create --path %s --id %s --name %s', projVal.tmpPath, projVal.id, projVal.name)));
+    var cmd = format(
+            'create --path %s --id %s --name %s',
+            projVal.tmpPath,
+            projVal.id,
+            projVal.name
+        ),
+        st = spawn(t, tarifa(cmd));
     st.exitCode(0);
     st.end();
 });
@@ -26,7 +34,13 @@ test('project folders created', function (t) {
 });
 
 test('tarifa create plugin', function (t) {
-    var st = spawn(t, tarifa(format('create plugin --path %s --id %s --name %s', pluginVal.tmpPath, pluginVal.id, pluginVal.name)));
+    var cmd = format(
+            'create plugin --path %s --id %s --name %s',
+            pluginVal.tmpPath,
+            pluginVal.id,
+            pluginVal.name
+        ),
+        st = spawn(t, tarifa(cmd));
     st.exitCode(0);
     st.end();
 });
@@ -38,4 +52,23 @@ test('plugin folders created', function (t) {
     t.ok(isFile(pluginVal.tmpPath, 'plugin.xml'), 'plugin.xml file created');
     t.ok(isDirectory(pluginVal.tmpPath, 'android'), 'android dir created');
     t.ok(isDirectory(pluginVal.tmpPath, 'ios'), 'ios dir created');
+});
+
+test('tarifa create -h', function (t) {
+    var st = spawn(t, tarifa('create -h')),
+        usageFilePath = path.join(__dirname, '../../actions/create/usage.txt'),
+        helpText = fs.readFileSync(usageFilePath).toString() + '\n';
+
+    st.stdout.match(helpText, 'help text matched');
+    st.exitCode(0);
+    st.end();
+});
+
+test('tarifa create ejw je wjofiew', function (t) {
+    var st = spawn(t, tarifa('create ejw je wjofiew')),
+        usageFilePath = path.join(__dirname, '../../actions/create/usage.txt'),
+        helpText = fs.readFileSync(usageFilePath).toString() + '\n';
+
+    st.stdout.match(helpText, 'help text matched');
+    st.end();
 });
