@@ -142,9 +142,9 @@ function launchTasks(resp) {
 
 function create(options) {
     banner();
-    options.path = options.path.toString();
+
     return isInteractive(options).then(function (interactive) {
-        if(interactive) return ask(questions.project)(initResponse);
+        if(interactive) return ask(questions)(initResponse);
         else return check(options).then(function () {
             initResponse.path = options.path;
             initResponse.name = options.name;
