@@ -9,7 +9,7 @@ require('./unit/tarifa-file/extend_tests');
 // cli tests by actions
 require('./cli/noargs');
 require('./cli/option-version');
-// FIXME require('./cli/create');
+require('./cli/create');
 // FIXME require('./cli/prepare');
 // FIXME require('./cli/platform');
 // FIXME require('./cli/plugin');
