@@ -62,8 +62,7 @@ var action = function (argv) {
     if(argsHelper.matchArgumentsCount(argv, [1, 2]))
         return prepare(argv._[0], argv._[1] || 'default');
 
-    return fs.read(path.join(__dirname, 'usage.txt'))
-        .then(path.join(__dirname, 'usage.txt'));
+    return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };
 
 action.prepare = prepare;
