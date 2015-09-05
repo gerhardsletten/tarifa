@@ -9,8 +9,7 @@ test('tarifa without any args', function (t) {
         usageFilePath = path.join(__dirname, '../../bin/usage.txt'),
         helpText = fs.readFileSync(usageFilePath).toString() + '\n';
 
-    st.succeeds('help text matched!');
-    st.stdout.match(helpText);
+    st.stdout.match(helpText, 'help text matched');
     st.exitCode(0);
     st.end();
 });
