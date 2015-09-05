@@ -71,7 +71,7 @@ function actionSuccess() {
 function actionError(name, options) {
     return function (err) {
         log.send('error', chalk.red(err.stack || err));
-        if(!options.debug) {
+        if(!options.debug && err.stack) {
             log.send(
                 'msg',
                 chalk.yellow('use -d or --debug for more helpful stack trace!')
