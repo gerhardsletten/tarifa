@@ -1,4 +1,4 @@
-// FIXME unit tests
+// unit tests
 require('./unit/xml/config.xml');
 require('./unit/xml/android/string.xml');
 require('./unit/xml/android/project');
@@ -15,7 +15,7 @@ require('./cli/option-version');
 // FIXME require('./cli/plugin');
 // FIXME require('./cli/build');
 // FIXME require('./cli/run');
-// FIXME require('./cli/info');
+require('./cli/info');
 // FIXME require('./cli/device');
 // FIXME require('./cli/config');
 // FIXME require('./cli/check');

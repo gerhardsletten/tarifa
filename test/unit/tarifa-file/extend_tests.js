@@ -116,7 +116,7 @@ test('extend a configuration, should throw an error when a mixin doesn\'t exist'
     );
 });
 
-test('extend a configuration, should not throw any error when called with an empty object', function(t) {
+test('extend a configuration, should not throw any error when called with empty object', function(t) {
     t.plan(3);
     t.deepEqual(extendSyntax({}), {});
 
