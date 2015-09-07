@@ -36,15 +36,7 @@ test('plugin folders created', function (t) {
     t.ok(h.isDirectory(pluginVal.tmpPath, 'ios'), 'ios dir created');
 });
 
-test('tarifa create -h', function (t) {
-    var st = spawn(t, h.cmd('create -h')),
-        usageFilePath = path.join(__dirname, '../../actions/create/usage.txt'),
-        helpText = fs.readFileSync(usageFilePath).toString() + '\n';
-
-    st.stdout.match(helpText, 'help text matched');
-    st.exitCode(0);
-    st.end();
-});
+test('tarifa create -h', h.usageTest('create'));
 
 test('tarifa create ejw je wjofiew', function (t) {
     var st = spawn(t, h.cmd('create ejw je wjofiew')),

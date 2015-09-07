@@ -1,7 +1,4 @@
-describe.skip('tarifa platform', function() {
+var test = require('tape'),
+    h = require('../helpers');
 
-    it.skip('', function () {
-
-    });
-
-});
+test('tarifa platform -h', h.usageTest('platform'));

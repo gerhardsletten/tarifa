@@ -1,9 +1,11 @@
 var path = require('path'),
     spawn = require('tape-spawn'),
+    test = require('tape'),
     format = require('util').format,
     fs = require('fs'),
     untildify = require('untildify'),
     catNames = require('cat-names'),
+    rimraf = require('rimraf'),
     currentProjectVal = {},
     currentPluginVal = {};
 
@@ -65,6 +67,18 @@ module.exports.plugin = function(t) {
     st.end();
 };
 
+module.exports.usageTest = function (action) {
+    return function (t) {
+        var st = spawn(t, cmd(action + ' -h')),
+            usageFilePath = path.join(__dirname, '../actions', action.replace(/ /g, '/'), 'usage.txt'),
+            helpText = fs.readFileSync(usageFilePath).toString() + '\n';
+
+        st.stdout.match(helpText, 'help text matched');
+        st.exitCode(0);
+        st.end();
+    };
+};
+
 module.exports.cmd = cmd;
 
 module.exports.isFile = function (/* args */) {
@@ -76,3 +90,13 @@ module.exports.isDirectory = function (/* args */) {
     var args = Array.prototype.slice.call(arguments, 0);
     return fs.statSync(path.resolve(untildify(path.join.apply(this, args)))).isDirectory();
 };
+
+module.exports.cleanTest = function () {
+    test('clean tmp folder', function (t) {
+        t.plan(1);
+        rimraf.sync(path.resolve(__dirname, 'tmp'));
+        fs.mkdirSync(path.resolve(__dirname, 'tmp'));
+        fs.closeSync(fs.openSync(path.resolve(__dirname, 'tmp', '.gitkeep'), 'w'));
+        t.equal(fs.readdirSync(path.resolve(__dirname, 'tmp')).length, 1);
+    });
+}

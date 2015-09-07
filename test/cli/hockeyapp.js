@@ -1,7 +1,4 @@
-describe.skip('tarifa hockeyapp', function() {
+var test = require('tape'),
+    h = require('../helpers');
 
-    it.skip('', function () {
-
-    });
-
-});
+test('tarifa hockeyapp -h', h.usageTest('hockeyapp'));

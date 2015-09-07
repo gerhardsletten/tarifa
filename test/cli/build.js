@@ -1,6 +1,4 @@
-describe('tarifa build', function() {
+var test = require('tape'),
+    h = require('../helpers');
 
-    it.skip('should be able to build various platforms', function () {
-
-    });
-});
+test('tarifa build -h', h.usageTest('build'));

@@ -1,7 +1,4 @@
-describe.skip('tarifa watch', function() {
+var test = require('tape'),
+    h = require('../helpers');
 
-    it.skip('', function () {
-
-    });
-
-});
+test('tarifa watch -h', h.usageTest('watch'));

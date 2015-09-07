@@ -19,28 +19,18 @@ helpers.pluginValues();
 
 require('./cli/create');
 require('./cli/prepare');
-// FIXME require('./cli/platform');
-// FIXME require('./cli/plugin');
-// FIXME require('./cli/build');
-// FIXME require('./cli/run');
+require('./cli/platform');
+require('./cli/plugin');
+require('./cli/build');
+require('./cli/run');
 require('./cli/info');
-// FIXME require('./cli/device');
-// FIXME require('./cli/config');
-// FIXME require('./cli/check');
-// FIXME require('./cli/clean');
-// FIXME require('./cli/hockeyapp');
-// FIXME require('./cli/update');
-// FIXME require('./cli/watch');
-// FIXME require('./cli/test');
+require('./cli/device');
+require('./cli/config');
+require('./cli/check');
+require('./cli/clean');
+require('./cli/hockeyapp');
+require('./cli/update');
+require('./cli/watch');
+require('./cli/test');
 
-var rimraf = require('rimraf'),
-    path = require('path'),
-    fs = require('fs');
-
-require('tape')('clean tmp folder', function (t) {
-    t.plan(1);
-    rimraf.sync(path.resolve(__dirname, 'tmp'));
-    fs.mkdirSync(path.resolve(__dirname, 'tmp'));
-    fs.closeSync(fs.openSync(path.resolve(__dirname, 'tmp', '.gitkeep'), 'w'));
-    t.equal(fs.readdirSync(path.resolve(__dirname, 'tmp')).length, 1);
-});
+helpers.cleanTest();

@@ -1,7 +1,4 @@
-describe.skip('tarifa run', function() {
+var test = require('tape'),
+    h = require('../helpers');
 
-    it.skip('', function () {
-
-    });
-
-});
+test('tarifa run -h', h.usageTest('run'));

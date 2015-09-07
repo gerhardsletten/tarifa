@@ -1,7 +1,4 @@
-describe.skip('tarifa device', function() {
+var test = require('tape'),
+    h = require('../helpers');
 
-    it.skip('', function () {
-
-    });
-
-});
+test('tarifa device -h', h.usageTest('device'));
