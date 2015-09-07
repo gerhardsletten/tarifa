@@ -18,9 +18,10 @@ function device(withDescription) {
 
 module.exports = function (argv) {
     var hasNoArgs = argsHelper.matchArgumentsCount(argv, [0]),
-        verbose = argsHelper.matchOption(argv, 'V', 'verbose');
+        verbose = argsHelper.matchOption(argv, 'V', 'verbose'),
+        helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help');
 
-    if(hasNoArgs) return device(verbose);
+    if(hasNoArgs && !helpOpt) return device(verbose);
 
     return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };

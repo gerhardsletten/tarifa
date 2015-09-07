@@ -2,6 +2,7 @@ var Q = require('q'),
     path = require('path'),
     os = require('os'),
     fs = require('fs'),
+    qfs = require('q-io/fs'),
     chalk = require('chalk'),
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
@@ -220,10 +221,9 @@ function update(force) {
 }
 
 var action = function (argv) {
-
-    if(argsHelper.matchArgumentsCount(argv, [ 0 ])) return update(false);
-
-    return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
+    var helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help');
+    if(argsHelper.matchArgumentsCount(argv, [ 0 ]) && !helpOpt) return update(false);
+    return qfs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };
 
 action.update = update;

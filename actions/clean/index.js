@@ -72,8 +72,8 @@ var clean = function (platform) {
 };
 
 var action = function (argv) {
-
-    if(argsHelper.matchArgumentsCount(argv, [0, 1])) {
+    var helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help');
+    if(argsHelper.matchArgumentsCount(argv, [0, 1]) && !helpOpt) {
         return clean(argv._[0]);
     }
     return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);

@@ -50,16 +50,17 @@ function clean(nbToKeep) {
 }
 
 var action = function (argv) {
-    if(argsHelper.matchCmd(argv._, ['version', 'list', '+', '+']))
+    var helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help');
+    if(!helpOpt && argsHelper.matchCmd(argv._, ['version', 'list', '+', '+']))
         return runTask(tasks.list, argv._[2], argv._[3] || 'default', argv);
 
-    if(argsHelper.matchCmd(argv._, ['version', 'upload', '+', '+']))
+    if(!helpOpt && argsHelper.matchCmd(argv._, ['version', 'upload', '+', '+']))
         return runTask(tasks.upload, argv._[2], argv._[3] || 'default', argv);
 
-    if(argsHelper.matchCmd(argv._, ['version', 'update', '+', '+']))
+    if(!helpOpt && argsHelper.matchCmd(argv._, ['version', 'update', '+', '+']))
         return runTask(tasks.updateLast, argv._[2], argv._[3] || 'default', argv);
 
-    if(argsHelper.matchCmd(argv._, ['version', 'clean', '*']))
+    if(!helpOpt && argsHelper.matchCmd(argv._, ['version', 'clean', '*']))
         return clean(argv._[2]);
 
     return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
