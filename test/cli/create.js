@@ -1,6 +1,5 @@
 var test = require('tape'),
     spawn = require('tape-spawn'),
-    format = require('util').format,
     path = require('path'),
     fs = require('fs'),
     h = require('../helpers'),
