@@ -14,10 +14,11 @@ require('./cli/option-version');
 
 // setting up 1 test project random names
 helpers.projectValues();
+// setting up 1 test plugin random names
 helpers.pluginValues();
 
 require('./cli/create');
-//require('./cli/prepare');
+require('./cli/prepare');
 // FIXME require('./cli/platform');
 // FIXME require('./cli/plugin');
 // FIXME require('./cli/build');
