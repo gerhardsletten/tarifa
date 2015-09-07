@@ -1,3 +1,5 @@
+var helpers = require('./helpers');
+
 // unit tests
 require('./unit/xml/config.xml');
 require('./unit/xml/android/string.xml');
@@ -9,8 +11,13 @@ require('./unit/tarifa-file/extend_tests');
 // cli tests by actions
 require('./cli/noargs');
 require('./cli/option-version');
+
+// setting up 1 test project random names
+helpers.projectValues();
+helpers.pluginValues();
+
 require('./cli/create');
-// FIXME require('./cli/prepare');
+//require('./cli/prepare');
 // FIXME require('./cli/platform');
 // FIXME require('./cli/plugin');
 // FIXME require('./cli/build');
