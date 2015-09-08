@@ -36,7 +36,7 @@ function bundle(conf) {
 
     b.add(src)
         .exclude('settings')
-        .require(settingsJSON, { expose : 'settings' })
+        .require(settingsJSON, { expose: 'settings' })
         .bundle()
         .pipe(ws);
 
@@ -48,7 +48,7 @@ function bundle(conf) {
 
 function run(conf, f){
     return bundle(conf).then(function (b) {
-        var w = watchify(b);
+        w = watchify(b);
 
         b.bundle(function () { w.on('log', log); });
 
@@ -68,7 +68,7 @@ module.exports.build = function build(platform, localSettings, config) {
 };
 
 module.exports.watch = function watch(f, localSettings, platform, config, confEmitter) {
-    run(localSettings.configurations[platform][config], f).then(function (bw) {
+    run(localSettings.configurations[platform][config], f).then(function () {
         watcher = chokidar.watch(www, { ignored: /main\.js/, persistent: true });
 
         setTimeout(function () {
