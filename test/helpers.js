@@ -6,8 +6,10 @@ var path = require('path'),
     untildify = require('untildify'),
     catNames = require('cat-names'),
     rimraf = require('rimraf'),
+    os = require('os'),
     currentProjectVal = {},
-    currentPluginVal = {};
+    currentPluginVal = {},
+    currentPlatforms = [];
 
 function cat() { return catNames.random().replace(/ /g, '').toLowerCase(); }
 
@@ -26,6 +28,16 @@ function values () {
 function cmd(args) {
     return format('node %s %s', path.resolve(__dirname, '../bin/cmd.js'), args);
 }
+
+var platformNames = {
+    'darwin': ['ios', 'android', 'browser', 'firefoxos'],
+    'win32': ['wp8', 'android', 'browser', ''],
+    'linux': ['android', 'browser']
+};
+
+module.exports.platforms = function () {
+    return platformNames[os.platform()];
+};
 
 module.exports.projectValues = function () {
     currentProjectVal = values();
