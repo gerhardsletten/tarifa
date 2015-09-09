@@ -5,14 +5,14 @@ var path = require('path'),
     stringXml = require('../../../../lib/platforms/android/lib/xml/string.xml'),
     fixture = path.join(__dirname, '../../../fixtures/strings.xml');
 
-test('parsing android/res/values/strings.xml and getting app_name', function(t) {
+test('unit: parsing android/res/values/strings.xml and getting app_name', function(t) {
     t.plan(1);
     stringXml.getAppName(fixture).then(function (app_name) {
         t.equal(app_name, 'demo prod');
     });
 });
 
-test('parsing android/res/values/strings.xml and change app_name', function (t) {
+test('unit: parsing android/res/values/strings.xml and change app_name', function (t) {
     t.plan(1);
 
     var xml = fs.readFileSync(fixture, 'utf-8');

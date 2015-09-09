@@ -3,7 +3,7 @@ var test = require('tape'),
     tarifa = require('../helpers').cmd,
     pkg = require('../../package.json');
 
-test('tarifa -v', function (t) {
+test('cli: tarifa -v', function (t) {
     var st = spawn(t, tarifa('-v'));
     st.stdout.match(pkg.version + '\n');
     st.exitCode(0);

@@ -4,7 +4,7 @@ var test = require('tape'),
     path = require('path'),
     h = require('../helpers');
 
-test('tarifa config -h', function (t) {
+test('cli: tarifa config -h', function (t) {
     var st = spawn(t, h.cmd('config -h')),
         usageFilePath = path.join(__dirname, '../../actions/config/usage.txt'),
         iosFilePath = path.join(__dirname, '../../lib/platforms/ios/actions/config/usage.txt'),

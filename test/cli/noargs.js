@@ -4,7 +4,7 @@ var test = require('tape'),
     path = require('path'),
     tarifa = require('../helpers').cmd;
 
-test('tarifa without any args', function (t) {
+test('cli: tarifa', function (t) {
     var st = spawn(t, tarifa('')),
         usageFilePath = path.join(__dirname, '../../bin/usage.txt'),
         helpText = fs.readFileSync(usageFilePath).toString() + '\n';

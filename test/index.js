@@ -33,4 +33,4 @@ require('./cli/update');
 require('./cli/watch');
 require('./cli/test');
 
-helpers.cleanTest();
+helpers.cleanTest(process.cwd());

@@ -103,12 +103,13 @@ module.exports.isDirectory = function (/* args */) {
     return fs.statSync(path.resolve(untildify(path.join.apply(this, args)))).isDirectory();
 };
 
-module.exports.cleanTest = function () {
-    test('clean tmp folder', function (t) {
-        t.plan(1);
+module.exports.cleanTest = function (dir) {
+    test('cleanup: tmp folder', function (t) {
+        process.chdir(dir);
         rimraf.sync(path.resolve(__dirname, 'tmp'));
         fs.mkdirSync(path.resolve(__dirname, 'tmp'));
         fs.closeSync(fs.openSync(path.resolve(__dirname, 'tmp', '.gitkeep'), 'w'));
         t.equal(fs.readdirSync(path.resolve(__dirname, 'tmp')).length, 1);
+        t.end();
     });
 }

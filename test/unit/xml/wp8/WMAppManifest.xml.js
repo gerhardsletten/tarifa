@@ -5,7 +5,7 @@ var path = require('path'),
     BuildWMAppManifest = require('../../../../lib/platforms/wp8/lib/xml/WMAppManifest.xml'),
     fixture = path.join(__dirname, '../../../fixtures/WMAppManifest.xml');
 
-test('parse wp8\'s WMAppManifest.xml and get title and guid', function(t) {
+test('unit: parse wp8\'s WMAppManifest.xml and get title and guid', function(t) {
     t.plan(2);
     BuildWMAppManifest.get(fixture).then(function (result) {
         t.equal(result.title, 'zanimo.js dev');
@@ -13,7 +13,7 @@ test('parse wp8\'s WMAppManifest.xml and get title and guid', function(t) {
     });
 });
 
-test('change wp8 WMAppManifest.xml\'s title and guid', function (t) {
+test('unit: change wp8 WMAppManifest.xml\'s title and guid', function (t) {
     t.plan(3);
     var xml = fs.readFileSync(fixture, 'utf-8');
 

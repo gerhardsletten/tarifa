@@ -5,7 +5,7 @@ var test = require('tape'),
     ConfigXml = require('../../../lib/xml/config.xml'),
     fixture = path.join(__dirname, '../../fixtures/config.xml');
 
-test('parse cordova\'s config.xml', function (t) {
+test('unit: parse cordova\'s config.xml', function (t) {
     t.plan(12);
     ConfigXml.get(fixture).then(function (r) {
 
@@ -34,7 +34,7 @@ test('parse cordova\'s config.xml', function (t) {
     });
 });
 
-test('change cordova\'s config.xml id', function (t) {
+test('unit: change cordova\'s config.xml id', function (t) {
     t.plan(1);
 
     tmp.file(function (err, p) {
@@ -49,7 +49,7 @@ test('change cordova\'s config.xml id', function (t) {
     });
 });
 
-test('change cordova\'s config.xml id', function (t) {
+test('unit: change cordova\'s config.xml id', function (t) {
     t.plan(16);
 
     var pref = {

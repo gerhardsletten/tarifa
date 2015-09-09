@@ -52,7 +52,7 @@ var extendFixtureFailure = {
   }
 };
 
-test('extend a configuration, extend mixin from configurations_mixins', function(t) {
+test('tarifa.json: extend a configuration, extend mixin from configurations_mixins', function(t) {
     t.plan(5);
 
     var extended = extendSyntax(extendFixtureNominal);
@@ -93,7 +93,7 @@ test('extend a configuration, extend mixin from configurations_mixins', function
     );
 });
 
-test('extend a configuration, should throw an error when a mixin doesn\'t exist', function(t) {
+test('tarifa.json: extend a configuration, should throw an error when a mixin doesn\'t exist', function(t) {
     t.plan(4);
     var extended = extendSyntax(extendFixtureFailure);
     var inspected = Q(extended).inspect();
@@ -116,7 +116,7 @@ test('extend a configuration, should throw an error when a mixin doesn\'t exist'
     );
 });
 
-test('extend a configuration, should not throw any error when called with empty object', function(t) {
+test('tarifa.json: extend a configuration, should not throw any error when called with empty object', function(t) {
     t.plan(3);
     t.deepEqual(extendSyntax({}), {});
 

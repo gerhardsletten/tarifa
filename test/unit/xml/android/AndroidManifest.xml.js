@@ -5,7 +5,7 @@ var path = require('path'),
     AndroidManifestXml = require('../../../../lib/platforms/android/lib/xml/AndroidManifest.xml'),
     fixture = path.join(__dirname, '../../../fixtures/AndroidManifest.xml');
 
-test('parse AndroidManifest.xml and find activity name and id', function(t) {
+test('unit: parse AndroidManifest.xml and find activity name and id', function(t) {
     t.plan(2);
     AndroidManifestXml.getActivityInfo(fixture).then(function (result) {
         t.equal(result.name, 'Ohhhhhh');
@@ -13,7 +13,7 @@ test('parse AndroidManifest.xml and find activity name and id', function(t) {
     });
 });
 
-test('change activity name and id', function (t) {
+test('unit: change activity name and id', function (t) {
     t.plan(2);
     var xml = fs.readFileSync(fixture, 'utf-8');
 
