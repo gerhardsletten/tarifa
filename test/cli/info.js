@@ -8,7 +8,7 @@ test('cli: tarifa info', function (t) {
     var st = spawn(t, h.cmd('info'));
     st.stdout.match(new RegExp(format('.*cordova-lib version: %s.*', pkg.dependencies['cordova-lib'])));
     st.stdout.match(new RegExp(format('.*installed platforms on host: %s.*', h.platforms().join(', '))));
-    st.exitCode(0);
+    st.succeeds();
     st.end();
 });
 
