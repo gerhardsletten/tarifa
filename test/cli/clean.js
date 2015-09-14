@@ -12,9 +12,9 @@ h.platforms().forEach(function (platform) {
 });
 
 test('cli: tarifa clean', function (t) {
-        var st = spawn(t, h.cmd('clean --verbose'));
-        st.succeeds();
-        st.end();
-    });
+    var st = spawn(t, h.cmd('clean --verbose'));
+    st.succeeds();
+    st.end();
+});
 
 test('cli: tarifa clean -h', h.usageTest('clean'));
