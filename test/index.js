@@ -27,11 +27,16 @@ require('./cli/config');
 require('./cli/check');
 require('./cli/clean');
 require('./cli/hockeyapp');
-require('./cli/update');
+
 require('./cli/watch');
 require('./cli/test');
 helpers.cleanTest(process.cwd());
 
 helpers.projectValues();
+
 require('./cli/platforms');
+helpers.cleanTest(process.cwd());
+
+helpers.projectValues();
+require('./cli/update');
 helpers.cleanTest(process.cwd());
