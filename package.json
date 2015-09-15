@@ -75,7 +75,7 @@
   "optionalDependencies": {
     "ios-deploy": "1.7.0",
     "cordova-deploy-windows-phone": "3.5.0-2",
-    "node-ios-device": "0.4.1"
+    "node-ios-device": "0.5.2"
   },
   "scripts": {
     "test": "tape test",
