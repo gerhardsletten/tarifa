@@ -78,7 +78,8 @@
     "node-ios-device": "0.4.1"
   },
   "scripts": {
-    "test": "tape test"
+    "test": "tape test",
+     "test-run": "tape test/cli/run.js"
   },
   "devDependencies": {
     "cat-names": "1.0.2",
