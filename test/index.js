@@ -40,3 +40,5 @@ helpers.cleanTest(process.cwd());
 helpers.projectValues();
 require('./cli/update');
 helpers.cleanTest(process.cwd());
+
+require('./cli/device');
