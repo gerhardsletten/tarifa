@@ -221,8 +221,9 @@ function update(force) {
 }
 
 var action = function (argv) {
-    var helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help');
-    if(argsHelper.matchArgumentsCount(argv, [ 0 ]) && !helpOpt) return update(false);
+    var helpOpt = argsHelper.matchOption(argv, 'h', 'help'),
+        force = argsHelper.matchOption(argv, 'f', 'force');
+    if(argsHelper.matchArgumentsCount(argv, [ 0 ]) && !helpOpt) return update(force);
     return qfs.read(path.join(__dirname, 'usage.txt')).then(console.log);
 };
 
