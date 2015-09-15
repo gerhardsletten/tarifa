@@ -8,13 +8,12 @@ var path = require('path'),
     rimraf = require('rimraf'),
     os = require('os'),
     currentProjectVal = {},
-    currentPluginVal = {},
-    currentPlatforms = [];
+    currentPluginVal = {};
 
 function cat() { return catNames.random().replace(/ /g, '').toLowerCase(); }
 
 function values () {
-    var tmpPath = path.resolve(__dirname, '../test/tmp/', cat()),
+    var tmpPath = path.resolve(__dirname, '../test/tmp/', cat() + cat()),
         id = format('%s.%s', cat(), cat()),
         name = cat();
 
@@ -112,4 +111,4 @@ module.exports.cleanTest = function (dir) {
         t.equal(fs.readdirSync(path.resolve(__dirname, 'tmp')).length, 1);
         t.end();
     });
-}
+};

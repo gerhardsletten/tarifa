@@ -12,9 +12,7 @@ require('./unit/tarifa-file/extend_tests');
 require('./cli/noargs');
 require('./cli/option-version');
 
-// setting up 1 test project random names
 helpers.projectValues();
-// setting up 1 test plugin random names
 helpers.pluginValues();
 
 require('./cli/create');
@@ -32,5 +30,8 @@ require('./cli/hockeyapp');
 require('./cli/update');
 require('./cli/watch');
 require('./cli/test');
+helpers.cleanTest(process.cwd());
 
+helpers.projectValues();
+require('./cli/platforms');
 helpers.cleanTest(process.cwd());
