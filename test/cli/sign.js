@@ -5,6 +5,8 @@ var test = require('tape'),
     format = require('util').format,
     h = require('../helpers');
 
+h.projectValues();
+
 test('cli: tarifa create', function (t) {
     h.project(t);
 });
@@ -41,8 +43,40 @@ function mockAndroid() {
     fs.writeFileSync(p, JSON.stringify(o));
 }
 
-function mockIos() {
-    // TODO
+function getIosSigningInfo() {
+    try {
+        var f = path.join(__dirname, '../fixtures/private.ios.json');
+        return JSON.parse(fs.readFileSync(f, 'utf-8'));
+    } catch(err) {
+        return {};
+    }
+}
+
+function mockIos(id, identity, provisioning_name, provisioning_path) {
+    var p = path.join(h.currentProjectVal().tmpPath, 'private.json'),
+        o = {
+            configurations: {
+                ios: {
+                    prod: {
+                        sign: 'store',
+                        release: true,
+                        id: id
+                    }
+                }
+            },
+            signing: {
+                ios: {
+                    store: {
+                        identity: identity,
+                        provisioning_path: provisioning_path,
+                        provisioning_name: provisioning_name
+                    }
+                }
+            }
+        };
+    if(id && identity && provisioning_name && provisioning_path)
+        fs.writeFileSync(p, JSON.stringify(o));
+    else fs.writeFileSync(p, '{}');
 }
 
 function mockWP8() {
@@ -62,7 +96,10 @@ h.platforms().forEach(function (platform) {
     test('cli: tarifa info --dump-configuration', function (t) {
 
         if(platform === 'android') mockAndroid();
-        if(platform === 'ios') mockIos();
+        if(platform === 'ios') {
+            var o = getIosSigningInfo();
+            mockIos(o.id, o.identity, o.provisioning_name, o.provisioning_path);
+        }
         if(platform === 'wp8') mockWP8();
 
         var st = spawn(t, h.cmd('info --dump-configuration'), {
@@ -81,3 +118,5 @@ h.platforms().forEach(function (platform) {
         st.end();
     });
 });
+
+h.cleanTest(process.cwd());

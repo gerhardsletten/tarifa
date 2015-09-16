@@ -1,0 +1,6 @@
+{
+    "id": "app-bundle-id",
+    "identity": "developer-identity",
+    "provisioning_name": "name of the provisioning file",
+    "provisioning_path": "provisioning file path"
+}
