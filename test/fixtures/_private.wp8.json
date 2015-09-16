@@ -1,0 +1,4 @@
+{
+    "certificate_path": "/path/to/certificate/file",
+    "password": "certificate password"
+}

@@ -43,9 +43,9 @@ function mockAndroid() {
     fs.writeFileSync(p, JSON.stringify(o));
 }
 
-function getIosSigningInfo() {
+function getSigningInfo(file) {
     try {
-        var f = path.join(__dirname, '../fixtures/private.ios.json');
+        var f = path.join(__dirname, '../fixtures', file);
         return JSON.parse(fs.readFileSync(f, 'utf-8'));
     } catch(err) {
         return {};
@@ -79,8 +79,28 @@ function mockIos(id, identity, provisioning_name, provisioning_path) {
     else fs.writeFileSync(p, '{}');
 }
 
-function mockWP8() {
-    // TODO
+function mockWP8(certif_path, pass) {
+    var p = path.join(h.currentProjectVal().tmpPath, 'private.json'),
+        o = {
+            configurations: {
+                wp8: {
+                    prod: {
+                        sign: 'store',
+                        release: true
+                    }
+                }
+            },
+            signing: {
+                wp8: {
+                    store: {
+                        certificate_path: certif_path,
+                        certificate_password: pass
+                    }
+                }
+            }
+        };
+    if(certif_path && pass)
+        fs.writeFileSync(p, JSON.stringify(o));
 }
 
 h.platforms().forEach(function (platform) {
@@ -94,13 +114,16 @@ h.platforms().forEach(function (platform) {
     });
 
     test('cli: tarifa info --dump-configuration', function (t) {
-
+        var o = getSigningInfo('private.ios.json'),
+            i = getSigningInfo('private.wp8.json');
         if(platform === 'android') mockAndroid();
         if(platform === 'ios') {
-            var o = getIosSigningInfo();
             mockIos(o.id, o.identity, o.provisioning_name, o.provisioning_path);
         }
-        if(platform === 'wp8') mockWP8();
+
+        if(platform === 'wp8') {
+            mockWP8(i.certificate_path, i.password);
+        }
 
         var st = spawn(t, h.cmd('info --dump-configuration'), {
             stdio: 'inherit'
