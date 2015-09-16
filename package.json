@@ -79,7 +79,8 @@
   },
   "scripts": {
     "test": "tape test",
-     "test-run": "tape test/cli/run.js"
+     "test-run": "tape test/cli/run.js",
+     "test-sign": "tape test/cli/sign.js"
   },
   "devDependencies": {
     "cat-names": "1.0.2",

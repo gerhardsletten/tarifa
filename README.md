@@ -86,46 +86,33 @@ git clone https://github.com/TarifaTools/tarifa.git && cd tarifa && npm link .
 
 ### Tests
 
-running all tests without devices:
+running tests without devices:
 
 ```
 npm test
 ```
 
-The stdio of `npm test` can be found on our buildbot [ci.tarifa.tools](http://ci.tarifa.tools/)
+The output of `npm test` can be found on our buildbot [ci.tarifa.tools](http://ci.tarifa.tools/)
 
-test with attached devices:
-
-```
-npm run test-with-devices
-```
-
-you can run single tests from `test/actions` or `xml/**` by calling `npm run mocha -- path/to/test/file`.
-For example, calling `tarifa prepare` action tests:
+test with devices:
 
 ```
-npm run mocha -- test/actions/prepare
+npm run test-run
 ```
 
-To test the signing process for ad-hoc distribution on ios you need to provide a developer identity, a provisioning file and a bundleid:
+signing tests:
 
 ```
-npm run mocha -- test/actions/sign_ios.js --identity="iPhone Distribution: xxxxxxxxxxxxxxxxxxxxx (xxxxxxxxxx)" --provision="/my/path/to/project.mobileprovision" --id="com.42loops.test" --dist="store"
+npm run test-sign
 ```
 
-To test the signing process for android:
+For signing tests you need to provide the following json files:
 
-```
-npm run mocha -- test/actions/sign_android.js
-```
+- `test/fixtures/private.ios.json`
+- `test/fixtures/private.wp8.json`
 
-To test the signing process for company app distribution on wp8, you need to provide the path of your certificate and the password:
-
-```
-npm run mocha -- test\actions\sign_wp8.js --certificat_path="c:\certificate.pfx" --password="xxxxxx"
-```
-
-npm >= 2.0 is needed!
+Both providing needed signing informations.
+Examples can be found in the `test/fixtures/` folder.
 
 ## License
 
