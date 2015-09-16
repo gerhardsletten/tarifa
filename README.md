@@ -106,8 +106,13 @@ signing tests:
 npm run test-sign
 ```
 
-For signing tests you need to provide the following json files: `test/fixtures/private.ios.json` and `test/fixtures/private.wp8.json`. Both providing needed signing informations.
-Examples can be found here `test/fixtures/_private.ios.json` and here `test/fixtures/_private.wp8.json`.
+For signing tests you need to provide the following json files:
+
+- `test/fixtures/private.ios.json`
+- `test/fixtures/private.wp8.json`
+
+Both providing needed signing informations.
+Examples can be found in the `test/fixtures/` folder.
 
 ## License
 
