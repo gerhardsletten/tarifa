@@ -57,6 +57,7 @@
     "mkdirp": "0.5.1",
     "ncp": "2.0.0",
     "node-firefoxos-cli-fork": "0.1.7",
+    "npm": "2.14.3",
     "plist": "1.1.0",
     "q": "1.4.1",
     "q-io": "1.13.1",
@@ -79,8 +80,8 @@
   },
   "scripts": {
     "test": "tape test",
-     "test-run": "tape test/cli/run.js",
-     "test-sign": "tape test/cli/sign.js"
+    "test-run": "tape test/cli/run.js",
+    "test-sign": "tape test/cli/sign.js"
   },
   "devDependencies": {
     "cat-names": "1.0.2",

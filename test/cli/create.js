@@ -42,7 +42,7 @@ test('cli: tarifa create -h', h.usageTest('create'));
 
 test('cli: tarifa create ejw je wjofiew', function (t) {
     var st = spawn(t, h.cmd('create ejw je wjofiew')),
-        usageFilePath = path.join(__dirname, '../../actions/create/usage.txt'),
+        usageFilePath = path.join(__dirname, '..', '..', 'actions', 'create', 'usage.txt'),
         helpText = fs.readFileSync(usageFilePath).toString() + '\n';
 
     st.stdout.match(helpText, 'help text matched');

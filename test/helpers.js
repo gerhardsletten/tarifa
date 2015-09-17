@@ -13,7 +13,7 @@ var path = require('path'),
 function cat() { return catNames.random().replace(/ /g, '').toLowerCase(); }
 
 function values () {
-    var tmpPath = path.resolve(__dirname, '../test/tmp/', cat() + cat()),
+    var tmpPath = path.resolve(__dirname, '..', 'test', 'tmp', cat() + cat()),
         id = format('%s.%s', cat(), cat()),
         name = cat();
 
@@ -25,7 +25,7 @@ function values () {
 }
 
 function cmd(args) {
-    return format('node %s %s', path.resolve(__dirname, '../bin/cmd.js'), args);
+    return format('node "%s" %s', path.resolve(__dirname, '..', 'bin', 'cmd.js'), args);
 }
 
 var platformNames = {
@@ -56,36 +56,38 @@ module.exports.currentPluginVal = function () {
 
 module.exports.project = function(t) {
     var c = format(
-            'create --path %s --id %s --name %s',
+            'create --path="%s" --id=%s --name=%s',
             currentProjectVal.tmpPath,
             currentProjectVal.id,
             currentProjectVal.name
         ),
-        st = spawn(t, cmd(c));
-    st.exitCode(0);
+        st = spawn(t, cmd(c), {
+            stdio: 'inherit'
+        });
+    st.succeeds();
     st.end();
 };
 
 module.exports.plugin = function(t) {
     var c = format(
-            'create plugin --path %s --id %s --name %s',
+            'create plugin --path="%s" --id=%s --name=%s',
             currentPluginVal.tmpPath,
             currentPluginVal.id,
             currentPluginVal.name
         ),
         st = spawn(t, cmd(c));
-    st.exitCode(0);
+    st.succeeds();
     st.end();
 };
 
 module.exports.usageTest = function (action) {
     return function (t) {
         var st = spawn(t, cmd(action + ' -h')),
-            usageFilePath = path.join(__dirname, '../actions', action.replace(/ /g, '/'), 'usage.txt'),
+            usageFilePath = path.join(__dirname, '..', 'actions', action.replace(/ /g, '/'), 'usage.txt'),
             helpText = fs.readFileSync(usageFilePath).toString() + '\n';
 
         st.stdout.match(helpText, 'help text matched');
-        st.exitCode(0);
+        st.succeeds();
         st.end();
     };
 };
@@ -105,10 +107,14 @@ module.exports.isDirectory = function (/* args */) {
 module.exports.cleanTest = function (dir) {
     test('cleanup: tmp folder', function (t) {
         process.chdir(dir);
-        rimraf.sync(path.resolve(__dirname, 'tmp'));
-        fs.mkdirSync(path.resolve(__dirname, 'tmp'));
-        fs.closeSync(fs.openSync(path.resolve(__dirname, 'tmp', '.gitkeep'), 'w'));
-        t.equal(fs.readdirSync(path.resolve(__dirname, 'tmp')).length, 1);
+        try {
+            rimraf.sync(path.resolve(__dirname, 'tmp'));
+            fs.mkdirSync(path.resolve(__dirname, 'tmp'));
+            fs.closeSync(fs.openSync(path.resolve(__dirname, 'tmp', '.gitkeep'), 'w'));
+            t.equal(fs.readdirSync(path.resolve(__dirname, 'tmp')).length, 1);
+        } catch(err) {
+            console.error(err);
+        }
         t.end();
     });
 };
