@@ -81,7 +81,9 @@
   "scripts": {
     "test": "tape test",
     "test-run": "tape test/cli/run.js",
-    "test-sign": "tape test/cli/sign.js"
+    "test-sign": "tape test/cli/sign.js",
+    "test-ios": "tape test/cli/test-ios.js",
+    "test-android": "tape test/cli/test-android.js"
   },
   "devDependencies": {
     "cat-names": "1.0.2",
