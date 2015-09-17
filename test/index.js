@@ -20,7 +20,6 @@ require('./cli/prepare');
 require('./cli/platform');
 require('./cli/plugin');
 require('./cli/build');
-require('./cli/run');
 require('./cli/info');
 require('./cli/device');
 require('./cli/config');
