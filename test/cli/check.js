@@ -5,7 +5,9 @@ var test = require('tape'),
     h = require('../helpers');
 
 test('cli: tarifa check', function (t) {
-    var st = spawn(t, h.cmd('check'));
+    var st = spawn(t, h.cmd('check'), {
+        stdio: 'inherit'
+    });
     st.succeeds();
     st.end();
 });
@@ -13,13 +15,17 @@ test('cli: tarifa check', function (t) {
 test('cli: tarifa check when `app` and `images` folder not available', function (t) {
     rimraf.sync(path.resolve(h.currentProjectVal().tmpPath, 'app'));
     rimraf.sync(path.resolve(h.currentProjectVal().tmpPath, 'images'));
-    var st = spawn(t, h.cmd('check'));
+    var st = spawn(t, h.cmd('check'), {
+        stdio: 'inherit'
+    });
     st.succeeds();
     st.end();
 });
 
 test('cli: tarifa check --force', function (t) {
-    var st = spawn(t, h.cmd('check --force'));
+    var st = spawn(t, h.cmd('check --force'), {
+        stdio: 'inherit'
+    });
     st.succeeds();
     st.end();
 });

@@ -7,12 +7,16 @@ test('cli: tarifa prepare -h', h.usageTest('prepare'));
 
 h.platforms().forEach(function (platform){
     test(format('cli: tarifa platform add %s', platform), function (t) {
-        var st = spawn(t, h.cmd(format('platform add %s', platform)));
+        var st = spawn(t, h.cmd(format('platform add %s', platform)), {
+            stdio: 'inherit'
+        });
         st.succeeds();
         st.end();
     });
     test(format('cli: tarifa prepare %s', platform), function (t) {
-        var st = spawn(t, h.cmd(format('prepare %s', platform)));
+        var st = spawn(t, h.cmd(format('prepare %s', platform)), {
+            stdio: 'inherit'
+        });
         st.succeeds();
         st.end();
     });

@@ -17,13 +17,17 @@ test('cli: jump to new project', function (t) {
 });
 
 test('cli: tarifa plugin remove cordova-plugin-splashscreen', function (t) {
-    var st = spawn(t, h.cmd('plugin remove cordova-plugin-splashscreen'));
+    var st = spawn(t, h.cmd('plugin remove cordova-plugin-splashscreen'), {
+        stdio: 'inherit'
+    });
     st.succeeds();
     st.end();
 });
 
 test('cli: tarifa plugin remove cordova-plugin-whitelist', function (t) {
-    var st = spawn(t, h.cmd('plugin remove cordova-plugin-whitelist'));
+    var st = spawn(t, h.cmd('plugin remove cordova-plugin-whitelist'), {
+        stdio: 'inherit'
+    });
     st.succeeds();
     st.end();
 });
@@ -35,19 +39,25 @@ h.platforms().forEach(function (platform) {
     versions.forEach(function (version) {
 
         test(format('cli: tarifa platform add %s@%s', platform, version), function (t) {
-            var st = spawn(t, h.cmd(format('platform add %s@%s', platform, version)));
+            var st = spawn(t, h.cmd(format('platform add %s@%s', platform, version)), {
+                stdio: 'inherit'
+            });
             st.succeeds();
             st.end();
         });
 
         test('cli: tarifa update --force', function (t) {
-            var st = spawn(t, h.cmd('update --force'));
+            var st = spawn(t, h.cmd('update --force'), {
+                stdio: 'inherit'
+            });
             st.succeeds();
             st.end();
         });
 
         test(format('cli: tarifa remove %s@%s', platform, version), function (t) {
-            var st = spawn(t, h.cmd(format('platform remove %s', platform)));
+            var st = spawn(t, h.cmd(format('platform remove %s', platform)), {
+                stdio: 'inherit'
+            });
             st.succeeds();
             st.end();
         });

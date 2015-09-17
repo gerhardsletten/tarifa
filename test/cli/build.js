@@ -6,7 +6,9 @@ var test = require('tape'),
 test('cli: tarifa build -h', h.usageTest('build'));
 
 test('cli: tarifa build all dev,stage', function (t) {
-    var st = spawn(t, h.cmd('build browser dev,stage'));
+    var st = spawn(t, h.cmd('build browser dev,stage'), {
+        stdio: 'inherit'
+    });
     st.succeeds();
     st.end();
 });
@@ -23,7 +25,9 @@ h.platforms().forEach(function (platform) {
 
 test('cli: tarifa build browser in `project` folder', function (t) {
     process.chdir('./project');
-    var st = spawn(t, h.cmd('build browser dev,stage'));
+    var st = spawn(t, h.cmd('build browser dev,stage'), {
+        stdio: 'inherit'
+    });
     process.chdir('..');
     st.succeeds();
     st.end();

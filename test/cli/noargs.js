@@ -10,6 +10,6 @@ test('cli: tarifa', function (t) {
         helpText = fs.readFileSync(usageFilePath).toString() + '\n';
 
     st.stdout.match(helpText, 'help text matched');
-    st.exitCode(0);
+    st.succeeds();
     st.end();
 });

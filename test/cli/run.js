@@ -20,7 +20,9 @@ h.platforms().filter(function (p) {
     return p !== 'firefoxos';
 }).forEach(function (platform) {
     test(format('cli: tarifa platform add %s', platform), function (t) {
-        var st = spawn(t, h.cmd(format('platform add %s', platform)));
+        var st = spawn(t, h.cmd(format('platform add %s', platform)), {
+            stdio: 'inherit'
+        });
         st.succeeds();
         st.end();
     });

@@ -75,7 +75,9 @@ module.exports.plugin = function(t) {
             currentPluginVal.id,
             currentPluginVal.name
         ),
-        st = spawn(t, cmd(c));
+        st = spawn(t, cmd(c), {
+            stdio: 'inherit'
+        });
     st.succeeds();
     st.end();
 };
