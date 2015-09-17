@@ -7,8 +7,8 @@ var test = require('tape'),
 
 test('cli: tarifa plugin -h', h.usageTest('plugin'));
 
-test(format('cli: tarifa plugin add %s', tmp.tmpPath), function (t) {
-    var st = spawn(t, h.cmd(format('plugin add %s', tmp.tmpPath)), {
+test(format('cli: tarifa plugin add "%s"', tmp.tmpPath), function (t) {
+    var st = spawn(t, h.cmd(format('plugin add "%s"', tmp.tmpPath)), {
         stdio: 'inherit'
     });
     st.succeeds();

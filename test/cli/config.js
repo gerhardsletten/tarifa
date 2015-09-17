@@ -18,7 +18,7 @@ test('cli: tarifa config -h', function (t) {
 
 test('cli: tarifa config icons file test.png stage', function (t) {
     var fixture = path.resolve(__dirname, '..', 'fixtures', 'momo.png'),
-        st = spawn(t, h.cmd(format('config icons file %s stage --verbose', fixture)), {
+        st = spawn(t, h.cmd(format('config icons file "%s" stage --verbose', fixture)), {
             stdio: 'inherit'
         });
     st.succeeds();
