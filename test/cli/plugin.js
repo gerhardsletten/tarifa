@@ -22,29 +22,6 @@ test('cli: tarifa plugin list', function (t) {
     st.end();
 });
 
-test('cli: tarifa plugin add https://github.com/apache/cordova-plugin-vibration.git#r0.3.11', function (t) {
-    var st = spawn(t, h.cmd('plugin add https://github.com/apache/cordova-plugin-vibration.git#r0.3.11'), {
-        stdio: 'inherit'
-    });
-    st.succeeds();
-    st.end();
-});
-
-test('cli: tarifa plugin list', function (t) {
-    var st = spawn(t, h.cmd('plugin list'));
-    st.stdout.match(/org\.apache\.cordova\.vibration/, 'added plugin matched');
-    st.succeeds();
-    st.end();
-});
-
-test('cli: tarifa plugin remove org.apache.cordova.vibration', function (t) {
-    var st = spawn(t, h.cmd('plugin remove org.apache.cordova.vibration'), {
-        stdio: 'inherit'
-    });
-    st.succeeds();
-    st.end();
-});
-
 test('cli: tarifa plugin remove cordova-plugin-splashscreen', function (t) {
     var st = spawn(t, h.cmd('plugin remove cordova-plugin-splashscreen'), {
         stdio: 'inherit'

@@ -23,12 +23,14 @@ require('./cli/build');
 require('./cli/info');
 require('./cli/device');
 require('./cli/config');
-require('./cli/check');
 require('./cli/clean');
 require('./cli/hockeyapp');
 
 require('./cli/watch');
 require('./cli/test');
+helpers.cleanTest(process.cwd());
+
+require('./cli/check');
 helpers.cleanTest(process.cwd());
 
 require('./cli/platforms');

@@ -109,7 +109,7 @@ module.exports.isDirectory = function (/* args */) {
 module.exports.cleanTest = function (dir) {
 
     test('adb kill-server', function (t) {
-        var st = spawn(t, cmd('adb kill-server'), {
+        var st = spawn(t, 'adb kill-server', {
             stdio: 'inherit'
         });
         st.succeeds();
