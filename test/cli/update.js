@@ -5,6 +5,7 @@ var test = require('tape'),
     h = require('../helpers');
 
 test('cli: tarifa create: create a new project', function (t) {
+    h.projectValues();
     h.project(t);
 });
 
