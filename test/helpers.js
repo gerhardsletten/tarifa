@@ -107,6 +107,15 @@ module.exports.isDirectory = function (/* args */) {
 };
 
 module.exports.cleanTest = function (dir) {
+
+    test('adb kill-server', function (t) {
+        var st = spawn(t, cmd('adb kill-server'), {
+            stdio: 'inherit'
+        });
+        st.succeeds();
+        st.end();
+    });
+
     test('cleanup: tmp folder', function (t) {
         process.chdir(dir);
         try {
