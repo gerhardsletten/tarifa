@@ -19,7 +19,10 @@ test('cli: tarifa create, project folders created', function (t) {
 });
 
 function mockAndroid() {
-    var p = path.join(h.currentProjectVal().tmpPath, 'private.json'),
+    var proj = h.currentProjectVal().tmpPath,
+        p = path.join(proj, 'private.json'),
+        dest = path.join(proj, 'app', 'platforms', 'android', 'demo.keystore'),
+        out = fs.readFileSync(path.join(__dirname, '..', 'fixtures', 'demo.keystore')),
         o = {
             configurations: {
                 android: {
@@ -31,7 +34,7 @@ function mockAndroid() {
             signing: {
                 android: {
                     store: {
-                        keystore_path: path.join(__dirname, '../fixtures/demo.keystore'),
+                        keystore_path: 'demo.keystore',
                         keystore_alias: '123456',
                         keystore_password: '123456',
                         alias_password: '123456'
@@ -39,13 +42,13 @@ function mockAndroid() {
                 }
             }
         };
-
+    fs.writeFileSync(dest, out);
     fs.writeFileSync(p, JSON.stringify(o));
 }
 
 function getSigningInfo(file) {
     try {
-        var f = path.join(__dirname, '../fixtures', file);
+        var f = path.resolve(path.dirname(__dirname), 'fixtures', file);
         return JSON.parse(fs.readFileSync(f, 'utf-8'));
     } catch(err) {
         return {};
@@ -101,6 +104,7 @@ function mockWP8(certif_path, pass) {
         };
     if(certif_path && pass)
         fs.writeFileSync(p, JSON.stringify(o));
+    else fs.writeFileSync(p, '{}');
 }
 
 h.platforms().forEach(function (platform) {
@@ -113,7 +117,7 @@ h.platforms().forEach(function (platform) {
         st.end();
     });
 
-    test('cli: tarifa info --dump-configuration', function (t) {
+    test(format('cli: tarifa info --dump-configuration (%s)', platform), function (t) {
         var o = getSigningInfo('private.ios.json'),
             i = getSigningInfo('private.wp8.json');
         if(platform === 'android') mockAndroid();
