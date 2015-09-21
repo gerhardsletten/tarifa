@@ -2,7 +2,6 @@
   "name": "browser",
   "version": "4.0.0",
   "versions": [
-    "3.6.0",
     "4.0.0"
   ]
 }
