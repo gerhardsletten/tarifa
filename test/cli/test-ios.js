@@ -31,4 +31,4 @@ test('cli: tarifa test ios', function (t) {
     st.end();
 });
 
-//h.cleanTest(process.cwd());
+h.cleanTest(process.cwd());
