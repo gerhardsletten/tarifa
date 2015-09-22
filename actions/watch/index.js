@@ -60,7 +60,7 @@ function run(platform, config, httpPort, norun) {
                     configuration: config,
                     watch: format('http://%s:%s/index.html', ip, httpPorts[0])
                 };
-                return norun ? Q(msg) : runAction.runƒ(msg);
+                return (norun || platform === 'browser') ? Q(msg) : runAction.runƒ(msg);
             }).then(function (msg) {
                 log.send('success', 'watch %s at %s', platform, chalk.green.underline(msg.watch));
                 return [localSettings, platform, config, ip, lrPorts[0], httpPorts[0]];
