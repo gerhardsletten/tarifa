@@ -3,7 +3,6 @@ var helpers = require('./helpers');
 // unit tests
 require('./unit/xml/config.xml');
 require('./unit/xml/android/string.xml');
-require('./unit/xml/android/project');
 require('./unit/xml/android/AndroidManifest.xml');
 require('./unit/xml/wp8/csproj');
 require('./unit/xml/wp8/WMAppManifest.xml');
