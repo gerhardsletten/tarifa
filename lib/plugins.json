@@ -2,108 +2,108 @@
     "name":"battery status",
     "value":"cordova-plugin-battery-status",
     "uri":"cordova-plugin-battery-status@1.0.0",
-    "version":"1.0.0",
+    "version":"1.1.0",
     "default": false
 },{
     "name":"camera",
     "value":"cordova-plugin-camera",
     "uri":"cordova-plugin-camera@1.1.0",
-    "version":"1.1.0",
+    "version":"1.2.0",
     "default": false
 },{
     "name":"console",
     "value":"cordova-plugin-console",
     "uri":"cordova-plugin-console@1.0.0",
-    "version":"1.0.0",
+    "version":"1.0.1",
     "default": false
 },{
     "name":"contacts",
     "value":"cordova-plugin-contacts",
     "uri":"cordova-plugin-contacts@1.0.0",
-    "version":"1.0.0",
+    "version":"1.1.0",
     "default": false
 },{
     "name":"device",
     "value":"cordova-plugin-device",
     "uri":"cordova-plugin-device@1.0.0",
-    "version":"1.0.0",
+    "version":"1.0.1",
     "default": false
 },{
     "name":"device motion",
     "value":"cordova-plugin-device-motion",
     "uri":"cordova-plugin-device-motion@1.1.0",
-    "version":"1.1.0",
+    "version":"1.1.1",
     "default": false
 },{
     "name":"device orientation",
     "value":"cordova-plugin-device-orientation",
     "uri":"cordova-plugin-device-orientation@1.0.0",
-    "version":"1.0.0",
+    "version":"1.0.1",
     "default": false
 },{
     "name":"dialogs",
     "value":"cordova-plugin-dialogs",
     "uri":"cordova-plugin-dialogs@1.1.0",
-    "version":"1.1.0",
+    "version":"1.1.1",
     "default": false
 },{
     "name":"file transfer",
     "value":"cordova-plugin-file-transfer",
     "uri":"cordova-plugin-file-transfer@1.1.0",
-    "version":"1.1.0",
+    "version":"1.2.0",
     "default": false
 },{
     "name":"geolocation",
     "value":"cordova-plugin-geolocation",
     "uri":"cordova-plugin-geolocation@1.0.0",
-    "version":"1.0.0",
+    "version":"1.0.1",
     "default": false
 },{
     "name":"globalization",
     "value":"cordova-plugin-globalization",
     "uri":"cordova-plugin-globalization@1.0.0",
-    "version":"1.0.0",
+    "version":"1.0.1",
     "default": false
 },{
     "name":"inappbrowser",
     "value":"cordova-plugin-inappbrowser",
     "uri":"cordova-plugin-inappbrowser@1.0.0",
-    "version":"1.0.0",
+    "version":"1.0.1",
     "default": false
 },{
     "name":"media",
     "value":"cordova-plugin-media",
     "uri":"cordova-plugin-media@1.0.0",
-    "version":"1.0.0",
+    "version":"1.0.1",
     "default": false
 },{
     "name":"network information",
     "value":"cordova-plugin-network-information",
     "uri":"cordova-plugin-network-information@1.0.0",
-    "version":"1.0.0",
+    "version":"1.0.1",
     "default": false
 },{
     "name":"splashscreen",
     "value":"cordova-plugin-splashscreen",
     "uri":"cordova-plugin-splashscreen@1.0.0",
-    "version":"1.0.0",
+    "version":"2.1.0",
     "default": true
 },{
     "name":"vibration",
     "value":"cordova-plugin-vibration",
     "uri":"cordova-plugin-vibration@1.1.0",
-    "version":"1.1.0",
+    "version":"1.2.0",
     "default": false
 },{
     "name":"whitelist",
     "value":"cordova-plugin-whitelist",
     "uri":"cordova-plugin-whitelist@1.0.0",
-    "version":"1.0.0",
+    "version":"1.1.0",
     "default": true
 },{
     "name":"crosswalk-webview",
     "value":"cordova-plugin-crosswalk-webview",
     "uri":"cordova-plugin-crosswalk-webview@1.2.0",
-    "version":"1.2.0",
+    "version":"1.3.1",
     "default": false
 }]
