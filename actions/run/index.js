@@ -1,8 +1,6 @@
 var Q = require('q'),
     spinner = require('char-spinner'),
-    child_process = require('child_process'),
     path = require('path'),
-    format = require('util').format,
     fs = require('q-io/fs'),
     existsSync = require('fs').existsSync,
     argsHelper = require('../../lib/helper/args'),
@@ -15,7 +13,6 @@ var Q = require('q'),
     platformsLib = require('../../lib/cordova/platforms'),
     buildAction = require('../build'),
     askDevice = require('./ask_device'),
-    askIp = require('../watch/helper/askip'),
     platformTasks = tasksHelper.load(settings.platforms, 'run', 'tasks');
 
 var binaryExists = function (conf) {
@@ -71,46 +68,6 @@ var runMultipleConfs = function(platform, configs, localSettings, options) {
     });
 };
 
-var startVorlon = function (defer, options) {
-    return function (msg) {
-        if (!options.vorlon) return msg;
-        return askIp().then(function (ip) {
-            var child = child_process.exec(path.resolve(__dirname, '../../node_modules/vorlon/bin', 'vorlon'));
-            options.ip = ip;
-
-            child.on('close', function(code) {
-                log.send('successs', 'killed `vorlon`');
-                if (code > 0) defer.reject('vorlon failed with code ' + code);
-                else defer.resolve(msg);
-            });
-
-            function killVorlon() { Q.delay(500).then(child.kill); }
-
-            process.openStdin().on('keypress', function(chunk, key) {
-                if(key && key.name === 'c' && key.ctrl) { killVorlon(); }
-            });
-
-            process.on('SIGINT', killVorlon);
-            return msg;
-        });
-    };
-};
-
-var wait = function (defer, options) {
-    return function (msg) {
-        if (!options.vorlon) { return msg; }
-        else {
-            var clientScript = '<script src="http://%s:1337/vorlon.js"></script>',
-                script = format(clientScript, options.ip);
-            log.send('warning');
-            log.send('warning', '/!\\ You need to add "%s" to your index.html', script);
-            log.send('warning');
-            log.send('successs', 'vorlon dashbord: http://%s:1337', options.ip);
-            return defer.promise;
-        }
-    };
-};
-
 var runMultiplePlatforms = function (platforms, config, options) {
     return tarifaFile.parse(pathHelper.root()).then(function (localSettings) {
         if (options.arch && !localSettings.plugins['cordova-plugin-crosswalk-webview'])
@@ -120,12 +77,10 @@ var runMultiplePlatforms = function (platforms, config, options) {
         if (!options.arch && localSettings.plugins['cordova-plugin-crosswalk-webview'])
             options.arch = 'armv7';
 
-        var defer = Q.defer(),
-            plts = localSettings.platforms.map(platformHelper.getName);
+        var plts = localSettings.platforms.map(platformHelper.getName);
         platforms = platforms || plts.filter(platformsLib.isAvailableOnHostSync);
 
         return tarifaFile.checkPlatforms(platforms, localSettings)
-            .then(startVorlon(defer, options))
             .then(function (availablePlatforms) {
                 return availablePlatforms.reduce(function(promise, platform) {
                     return promise.then(function () {
@@ -137,8 +92,7 @@ var runMultiplePlatforms = function (platforms, config, options) {
                         return runMultipleConfs(platform, config, localSettings, options);
                     });
                 }, Q());
-            })
-            .then(wait(defer, options));
+            });
     });
 };
 
@@ -147,7 +101,6 @@ var action = function (argv) {
             nobuild: argsHelper.matchOption(argv, null, 'nobuild'),
             log: argsHelper.matchOption(argv, 'l', 'log'),
             all: argsHelper.matchOption(argv, null, 'all'),
-            vorlon: argsHelper.matchOption(argv, 'D', 'vorlon'),
             arch: argsHelper.matchOptionWithValue(argv, null, 'arch') && argv.arch
         };
     if (options.log) {
