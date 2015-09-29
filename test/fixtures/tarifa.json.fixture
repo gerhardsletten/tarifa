@@ -1,0 +1,178 @@
+{
+  "name": "super-app",
+  "id": "oops.ooops.oops",
+  "description": "this is a test",
+  "version": "0.0.0",
+  "platforms": [
+    "ios@3.9.0",
+    "android@4.0.2",
+    "browser@4.0.0",
+    "firefoxos@3.6.3"
+  ],
+  "configurations": {
+    "ios": {
+      "default": {
+        "id": "oops.ooops.oops.init",
+        "product_name": "super-app_init",
+        "product_file_name": "super-app_init"
+      },
+      "dev": {
+        "id": "oops.ooops.oops.dev",
+        "product_name": "super-app_dev",
+        "product_file_name": "super-app_dev"
+      },
+      "stage": {
+        "id": "oops.ooops.oops.stage",
+        "product_name": "super-app_stage",
+        "product_file_name": "super-app_stage",
+        "release": true
+      },
+      "prod": {
+        "id": "oops.ooops.oops.prod",
+        "product_name": "super-app_prod",
+        "product_file_name": "super-app_prod",
+        "release": true
+      }
+    },
+    "android": {
+      "default": {
+        "id": "oops.ooops.oops.init",
+        "product_name": "super-app_init",
+        "product_file_name": "super-app_init"
+      },
+      "dev": {
+        "id": "oops.ooops.oops.dev",
+        "product_name": "super-app_dev",
+        "product_file_name": "super-app_dev"
+      },
+      "stage": {
+        "id": "oops.ooops.oops.stage",
+        "product_name": "super-app_stage",
+        "product_file_name": "super-app_stage",
+        "release": true
+      },
+      "prod": {
+        "id": "oops.ooops.oops.prod",
+        "product_name": "super-app_prod",
+        "product_file_name": "super-app_prod",
+        "release": true
+      }
+    },
+    "browser": {
+      "default": {
+        "id": "oops.ooops.oops.init",
+        "product_name": "super-app_init",
+        "product_file_name": "super-app_init"
+      },
+      "dev": {
+        "id": "oops.ooops.oops.dev",
+        "product_name": "super-app_dev",
+        "product_file_name": "super-app_dev"
+      },
+      "stage": {
+        "id": "oops.ooops.oops.stage",
+        "product_name": "super-app_stage",
+        "product_file_name": "super-app_stage",
+        "release": true
+      },
+      "prod": {
+        "id": "oops.ooops.oops.prod",
+        "product_name": "super-app_prod",
+        "product_file_name": "super-app_prod",
+        "release": true
+      }
+    },
+    "firefoxos": {
+      "default": {
+        "id": "oops.ooops.oops.init",
+        "product_name": "super-app_init",
+        "product_file_name": "super-app_init"
+      },
+      "dev": {
+        "id": "oops.ooops.oops.dev",
+        "product_name": "super-app_dev",
+        "product_file_name": "super-app_dev"
+      },
+      "stage": {
+        "id": "oops.ooops.oops.stage",
+        "product_name": "super-app_stage",
+        "product_file_name": "super-app_stage",
+        "release": true
+      },
+      "prod": {
+        "id": "oops.ooops.oops.prod",
+        "product_name": "super-app_prod",
+        "product_file_name": "super-app_prod",
+        "release": true
+      }
+    }
+  },
+  "cordova": {
+    "preferences": {
+      "DisallowOverscroll": true,
+      "EnableViewportScale": false,
+      "KeyboardDisplayRequiresUserAction": false,
+      "ShowSplashScreenSpinner": false,
+      "SplashScreen": "screen",
+      "BackgroundColor": "0xffffffff",
+      "AutoHideSplashScreen": false,
+      "KeepRunning": true,
+      "Orientation": "portrait"
+    },
+    "whitelist": {
+      "shared": [
+        {
+          "type": "access-origin",
+          "origin": [
+            "*"
+          ]
+        },
+        {
+          "type": "allow-intent",
+          "origin": [
+            "http://*/*",
+            "https://*/*",
+            "tel:*",
+            "sms:*",
+            "mailto:*",
+            "geo:*"
+          ]
+        }
+      ],
+      "android": [
+        {
+          "type": "allow-intent",
+          "origin": [
+            "market:*"
+          ]
+        },
+        {
+          "type": "allow-navigation",
+          "origin": [
+            "*"
+          ]
+        }
+      ],
+      "ios": [
+        {
+          "type": "allow-intent",
+          "origin": [
+            "itms:*",
+            "itms-apps:*"
+          ]
+        }
+      ]
+    }
+  },
+  "author": {
+    "name": "Mister Ooops",
+    "email": "oops@blablabla.bla",
+    "href": "http://blablablabla.bla"
+  },
+  "check": {
+    "ios": "./project/bin/check_ios.js",
+    "android": "./project/bin/check_android.js",
+    "browser": "./project/bin/check_browser.js",
+    "firefoxos": "./project/bin/check_firefoxos.js"
+  }
+}
