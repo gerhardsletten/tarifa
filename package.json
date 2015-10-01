@@ -36,7 +36,7 @@
   ],
   "homepage": "http://tarifa.tools",
   "dependencies": {
-    "appium": "1.4.11",
+    "appium": "1.4.13",
     "chalk": "1.1.1",
     "char-spinner": "1.0.1",
     "chokidar": "1.1.0",
@@ -61,7 +61,7 @@
     "plist": "1.1.0",
     "q": "1.4.1",
     "q-io": "1.13.1",
-    "restler": "3.3.0",
+    "restler": "3.4.0",
     "rimraf": "2.4.3",
     "serve-static": "1.10.0",
     "tiny-lr-fork": "0.0.5",
