@@ -1,3 +1,16 @@
+## 0.12.0 (not released)
+
+### changes
+
+- skip platform check if offline [#251](https://github.com/TarifaTools/tarifa/issues/251)
+- warn if cupertino is missing on macosx [#249](https://github.com/TarifaTools/tarifa/issues/249)
+- upgrade defaults cordova plugins to latest versions [#237](https://github.com/TarifaTools/tarifa/issues/237)
+- refactor tests with tape [#226](https://github.com/TarifaTools/tarifa/issues/226)
+- upgrade platforms: adding cordova-ios@3.9.0 [#253](https://github.com/TarifaTools/tarifa/issues/253), cordova-browser@4.0.0 [#255](https://github.com/TarifaTools/tarifa/issues/255) and cordova-android@4.1.1 [#252](https://github.com/TarifaTools/tarifa/issues/252)
+- upgrade cordova-lib@5.3.3 [#262](https://github.com/TarifaTools/tarifa/issues/262)
+- support nodejs v4 [#263](https://github.com/TarifaTools/tarifa/issues/263)
+- remove vorlon.js
+
 ## 0.11.6 (08/11/2015)
 
 ### changes
