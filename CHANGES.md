@@ -1,8 +1,7 @@
-## 0.12.0 (not released)
+## 0.12.0 (10/06/2015)
 
 ### changes
 
-- skip platform check if offline [#251](https://github.com/TarifaTools/tarifa/issues/251)
 - warn if cupertino is missing on macosx [#249](https://github.com/TarifaTools/tarifa/issues/249)
 - upgrade defaults cordova plugins to latest versions [#237](https://github.com/TarifaTools/tarifa/issues/237)
 - refactor tests with tape [#226](https://github.com/TarifaTools/tarifa/issues/226)
