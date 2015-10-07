@@ -1,3 +1,10 @@
+## 0.12.1 (10/07/2015)
+
+### changes
+
+- fix wrong plugin format in `tarifa.json` [#265](https://github.com/TarifaTools/tarifa/issues/265)
+- upgrade ios-deploy to 1.8.0 [#267](https://github.com/TarifaTools/tarifa/issues/267)
+
 ## 0.12.0 (10/06/2015)
 
 ### changes
