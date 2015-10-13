@@ -1,6 +1,6 @@
 {
   "name": "tarifa",
-  "version": "0.12.1",
+  "version": "0.13.0-dev",
   "author": "Paul Panserrieu <paul@42loops.com>",
   "description": "Your friendly toolchain for mobile app development on top of Apache Cordova",
   "repository": {
@@ -73,7 +73,7 @@
     "xml2js": "0.4.12"
   },
   "optionalDependencies": {
-    "ios-deploy": "1.8.0",
+    "ios-deploy": "1.8.2",
     "cordova-deploy-windows-phone": "3.5.0-2",
     "node-ios-device": "0.5.2"
   },
