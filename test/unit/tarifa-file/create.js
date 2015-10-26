@@ -15,7 +15,7 @@ var test = require('tape'),
 // tarifaFile.addPlatforms(dirname, platforms) => Promise[settingsObject]
 // tarifaFile.addPlatform(dirname, platform) => Promise[settingsObject]
 // tarifaFile.removePlugin(dirname, name) => Promise[name]
-// tarifaFile.addPlugin(dirname, name, uri, variables) => Promise[name]
+// tarifaFile.addPlugin(dirname, { val, uri, variables }) => Promise[name]
 // tarifaFile.parse(dirname, platform, config, nocheck, noextend) => Promise[settingsObject]
 
 var responseFixture = {

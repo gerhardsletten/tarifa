@@ -37,15 +37,15 @@ function logging(f) {
 var actions = {
     'add': {
         updateTarifaFile: function (root) {
-            return function (def) {
-                return tarifaFile.addPlugin(root, def.val, def.uri, def.variables);
+            return function (defs) {
+                return tarifaFile.addPlugin(root, defs);
             };
         }
     },
     'remove': {
         updateTarifaFile: function (root) {
-            return function (def) {
-                return tarifaFile.removePlugin(root, def.val);
+            return function (defs) {
+                return tarifaFile.removePlugin(root, defs);
             };
         }
     },
@@ -108,7 +108,7 @@ function raw_plugin (root, f, arg, variables, link) {
                 if (f === 'add') { opts.link = link; }
                 return plugins[f](root, arg, opts)
                     .then(function (val) {
-                        if (!val || !val.val || !val.uri) {
+                        if (val.length === 0 || !val[0] || !val[0].val || !val[0].uri) {
                             return Q.reject('no plugin changed!');
                         }
                         return val;
