@@ -7,6 +7,7 @@ Options:
 
     --port=PORT, -p=PORT  Set http server port, default is 7042
     --norun               Skip install and run app steps
+    --nolivereload        Skip live reload
     --help, -h            Show this message
     --verbose, -V         Be more verbose on everything
     --debug, -d           Print helpful stack trace on error

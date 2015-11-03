@@ -11,7 +11,7 @@ module.exports = function startHttpServer(lrPort, httpPort, platform) {
         app = connect(),
         index = pathHelper.wwwFinalLocation(pathHelper.root(), platform),
         serve = serveStatic(index, {index: false});
-    app.use(lr({port: lrPort}));
+    if (lrPort) app.use(lr({port: lrPort}));
     app.use(serve);
     var server = app.listen(httpPort, function () {
         log.send('success', 'started web server on port %s for platform %s', httpPort, platform);
