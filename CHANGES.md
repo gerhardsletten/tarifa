@@ -1,3 +1,9 @@
+## 0.12.2 (11/03/2015)
+
+### changes
+
+- make sure requirements checks are made with current cordova platforms
+
 ## 0.12.1 (10/07/2015)
 
 ### changes
