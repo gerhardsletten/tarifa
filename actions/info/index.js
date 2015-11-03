@@ -87,7 +87,13 @@ function listAvailablePlatforms() {
 function check_cordova(platforms) {
     var cordovaLibPaths = platforms.reduce(function (promise, platform) {
             return promise.then(function (rslt) {
-                return cordova_lazy_load.cordova(platform).then(function (libPath) {
+                var pkg = path.resolve(__dirname, '..', '..', 'lib', 'platforms', platform, 'package.json'),
+                    version = require(pkg).version;
+                return cordova_lazy_load.cordova_npm({
+                    name:platform,
+                    packageName: 'cordova-' + platform,
+                    version: version
+                }).then(function (libPath) {
                     rslt.push({
                         name: platform,
                         path: libPath
