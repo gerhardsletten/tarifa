@@ -21,14 +21,14 @@ function generate(color, config, f) {
     });
 }
 
-function generateFromFile(file, config, f) {
+function generateFromFile(file, config, f, color) {
     config = config || 'default';
     var root = pathHelper.root();
 
     return tarifaFile.parse(root).then(function (localSettings) {
         var platforms = localSettings.platforms.map(platformHelper.getName);
         return Q.all(createFolders(root, platforms, config)).then(function () {
-            return f(file, root, platforms, config);
+            return f(file, root, platforms, config, color);
         });
     });
 }
@@ -37,8 +37,8 @@ module.exports.generateIcons = function (color, config) {
     return generate(color, config, generateIcons);
 };
 
-module.exports.generateIconsFromFile = function (file, config) {
-    return generateFromFile(file, config, generateIconsFromFile);
+module.exports.generateIconsFromFile = function (file, config, color) {
+    return generateFromFile(file, config, generateIconsFromFile, color);
 };
 
 module.exports.generateSplashscreens = function (color, config) {

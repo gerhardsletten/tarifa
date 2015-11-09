@@ -26,12 +26,12 @@ function usage() {
 }
 
 var action = function (argv) {
-    if(argsHelper.checkValidOptions(argv, [])) {
-
+    if(argsHelper.checkValidOptions(argv, ['bgColor'])) {
+        var bgColor = argsHelper.matchOptionWithValue(argv, null, 'bgColor') && argv.bgColor;
         if(match(argv._, ['icons', 'generate', '+', '*']))
             return action.generateIcons(argv._[2], argv._[3]);
         if(match(argv._, ['icons', 'file', '+', '*']))
-            return action.generateIconsFromFile(pathHelper.resolve(argv._[2]), argv._[3]);
+            return action.generateIconsFromFile(pathHelper.resolve(argv._[2]), argv._[3], bgColor);
         if(match(argv._, ['splashscreens', '+', '*']))
             return action.generateSplashscreens(argv._[1], argv._[2]);
 
@@ -48,8 +48,8 @@ action.generateIcons = function (color, config) {
     return require('./assets').generateIcons(color, config);
 };
 
-action.generateIconsFromFile = function (filePath, config) {
-    return require('./assets').generateIconsFromFile(filePath, config);
+action.generateIconsFromFile = function (filePath, config, color) {
+    return require('./assets').generateIconsFromFile(filePath, config, color);
 };
 
 action.generateSplashscreens = function (color, config) {
