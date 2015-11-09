@@ -38,7 +38,8 @@ var responseFixture = {
       deploy: false,
       hockeyapp: false
     },
-    tarifaMock = fs.readFileSync(path.join(__dirname, '..', '..', 'fixtures', 'tarifa.json.fixture'), 'utf-8');
+    fixtureFilePath = path.join(__dirname, '..', '..', 'fixtures', 'tarifa.json.fixture'),
+    tarifaMock = fs.readFileSync(fixtureFilePath, 'utf-8').trimRight('\n');
 
 test('create a tarifa.json file', function (t) {
     t.plan(4);

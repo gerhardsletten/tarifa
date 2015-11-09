@@ -53,7 +53,8 @@ var run = function (platform, config, localSettings, options) {
         log: options.log,
         all: options.all,
         arch: options.arch,
-        spinner: spinner()
+        spinner: spinner(),
+        timeout: options.timeout
     });
 };
 
@@ -101,7 +102,8 @@ var action = function (argv) {
             nobuild: argsHelper.matchOption(argv, null, 'nobuild'),
             log: argsHelper.matchOption(argv, 'l', 'log'),
             all: argsHelper.matchOption(argv, null, 'all'),
-            arch: argsHelper.matchOptionWithValue(argv, null, 'arch') && argv.arch
+            arch: argsHelper.matchOptionWithValue(argv, null, 'arch') && argv.arch,
+            timeout: argsHelper.matchOptionWithValue(argv, null, 'timeout') && argv.timeout
         };
     if (options.log) {
         if(argsHelper.matchCmd(argv._, ['__multi__', '*']) || argsHelper.matchCmd(argv._, ['*', '__multi__'])) {

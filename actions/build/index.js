@@ -25,7 +25,7 @@ var prepare = function (conf) {
 
     return cordova.raw.prepare({
         platforms: [ conf.platform ],
-        options: []
+        options: { }
     }).then(function (){
         process.chdir(cwd);
         return conf;
@@ -37,7 +37,7 @@ var prepare = function (conf) {
 
 var compile = function (conf) {
     var cwd = process.cwd(),
-        options = conf.localSettings.mode ? [ conf.localSettings.mode ] : [],
+        options = { release: conf.localSettings.release || false },
         beforeCompile = tasks[conf.platform].beforeCompile;
 
     log.send('success', 'start cordova build');
@@ -65,7 +65,7 @@ var buildƒ = function (conf){
     var confObj = conf.localSettings.configurations[conf.platform][conf.configuration],
         cwd = process.cwd();
 
-    conf.localSettings.mode = confObj.release ? '--release' : null;
+    conf.localSettings.release = confObj.release;
 
     log.send('success', 'start to build the www project');
 

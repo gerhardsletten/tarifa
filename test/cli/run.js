@@ -28,8 +28,8 @@ h.platforms().filter(function (p) {
     });
 });
 
-test('cli: tarifa run all dev,default', function (t) {
-    var st = spawn(t, h.cmd('run all dev,default'), {
+test('cli: tarifa run all dev,default --timeout=10', function (t) {
+    var st = spawn(t, h.cmd('run all dev,default --timeout=10'), {
         stdio: 'inherit'
     });
     st.succeeds();

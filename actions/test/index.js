@@ -18,9 +18,10 @@ var Q = require('q'),
 var logging = function (o) { log.send('info', o.toString().replace(/\n/g, '')); };
 
 var launchAppiumServer = function (conf) {
-    var appiumPath = path.resolve(__dirname, '../../node_modules/appium/bin/appium.js'),
-         cmd = appiumPath,
-         args = '--command-timeout 7200 --automation-name Appium --log-level debug';
+    var appiumNpm2 = path.resolve(__dirname, '../../node_modules/appium/bin/appium.js'),
+        appiumNpm3 = path.resolve(__dirname, '../../../node_modules/appium/bin/appium.js'),
+        cmd = pathHelper.isFile(appiumNpm2) ? appiumNpm2 : appiumNpm3,
+        args = '--command-timeout 7200 --automation-name Appium --log-level debug';
     if (os.platform() === 'win32') {
         cmd = 'node';
         args = appiumPath + ' ' + args;
