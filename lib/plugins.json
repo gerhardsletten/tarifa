@@ -49,8 +49,8 @@
 },{
     "name":"file transfer",
     "value":"cordova-plugin-file-transfer",
-    "uri":"cordova-plugin-file-transfer@1.2.0",
-    "version":"1.2.0",
+    "uri":"cordova-plugin-file-transfer@1.3.0",
+    "version":"1.3.0",
     "default": false
 },{
     "name":"geolocation",
@@ -103,13 +103,13 @@
 },{
     "name":"crosswalk-webview",
     "value":"cordova-plugin-crosswalk-webview",
-    "uri":"cordova-plugin-crosswalk-webview@1.3.1",
-    "version":"1.3.1",
+    "uri":"cordova-plugin-crosswalk-webview@1.4.0",
+    "version":"1.4.0",
     "default": false
 },{
     "name":"phonegap-plugin-push",
     "value":"phonegap-plugin-push",
-    "uri":"phonegap-plugin-push@1.3.0",
-    "version":"1.3.0",
+    "uri":"phonegap-plugin-push@1.4.2",
+    "version":"1.4.2",
     "default": false
 }]
