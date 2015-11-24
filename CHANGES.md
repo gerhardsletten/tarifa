@@ -1,3 +1,24 @@
+## 0.13.0 (not released)
+
+### supported cordova platforms:
+
+- android: 4.1.1
+- ios: 3.9.0, 3.9.2 (default)
+- wp8: 3.8.1
+- browser: 4.0.0
+- firefoxos: 3.6.3
+
+### changes
+
+- nodejs 5.x and npm 3.x support [#284](https://github.com/TarifaTools/tarifa/issues/284) and [#277](https://github.com/TarifaTools/tarifa/issues/277)
+- add --nolivereload option on tarifa watch [#273](https://github.com/TarifaTools/tarifa/issues/273)
+- extend multiple configurations in `tarifa.json` [#270](https://github.com/TarifaTools/tarifa/issues/270)
+- replace alpha channel on iOS generated icons with a given color for `tarifa config icons file` [#269](https://github.com/TarifaTools/tarifa/issues/269)
+- add push notifications cordova plugin phonegap-plugin-push@1.4.2 [#258](https://github.com/TarifaTools/tarifa/issues/258)
+- if available copy extra defined icons and sounds used for the push notification plugin
+- add iOS build variables support (`build.xcconfig`) on `tarifa.json` [#281](https://github.com/TarifaTools/tarifa/issues/281)
+- upgrade cordova-lib to 5.4.0
+
 ## 0.12.2 (11/03/2015)
 
 ### changes
