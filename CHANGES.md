@@ -1,4 +1,4 @@
-## 0.13.0 (not released)
+## 0.13.0 (11/24/2015)
 
 ### supported cordova platforms:
 
