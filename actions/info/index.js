@@ -60,7 +60,7 @@ function check_tools() {
                         '%s %s %s',
                         chalk.green(result.value.name),
                         chalk.green('version:'),
-                        result.value.version
+                        result.value.version.replace(/\r/g, ' ')
                     );
                 } else {
                     ok = false;
