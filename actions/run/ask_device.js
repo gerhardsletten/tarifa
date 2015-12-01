@@ -21,6 +21,8 @@ module.exports = function (conf) {
             return conf;
         }
 
+        clearInterval(conf.spinner);
+
         return ask.question(
             'Which device do you want to use?',
             'list',
