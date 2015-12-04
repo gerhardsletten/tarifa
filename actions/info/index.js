@@ -47,10 +47,7 @@ function toolExist(name) {
             defer.reject(name + ' ' + err);
             return;
         }
-        defer.resolve({
-            name: name,
-            version: 'exists'
-        });
+        defer.resolve(name);
     });
 
     return defer.promise;
@@ -82,9 +79,9 @@ function check_tools() {
                     log.send(
                         'msg',
                         '%s %s %s',
-                        chalk.green(result.value.name),
-                        chalk.green('version:'),
-                        result.value.version.replace(/\r/g, ' ')
+                        chalk.green(result.value.name || result.value),
+                        chalk.green(result.value.name ? 'version:' : ''),
+                        result.value.name ? result.value.version.replace(/\r/g, ' ') : 'exists'
                     );
                 } else {
                     ok = false;
