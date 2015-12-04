@@ -36,6 +36,26 @@ function getToolVersion(name, tool) {
     return defer.promise;
 }
 
+function toolExist(name) {
+    var defer = Q.defer(),
+        options = {
+            timeout: 10000,
+            maxBuffer: 1024 * 400
+        };
+    exec(name, options, function (err, stdout) {
+        if(err) {
+            defer.reject(name + ' ' + err);
+            return;
+        }
+        defer.resolve({
+            name: name,
+            version: 'exists'
+        });
+    });
+
+    return defer.promise;
+}
+
 function check_tools() {
     return function (platforms) {
         var rslts = [],
@@ -43,12 +63,16 @@ function check_tools() {
             bins = settings.external;
 
         for(var bin in bins) {
-            if(bins[bin].print_version
-                && bins[bin].os_platforms.indexOf(os.platform()) > -1) {
-                rslts.push(getToolVersion(
-                            bins[bin].name,
-                            bins[bin].print_version)
-                        );
+            if(bins[bin].os_platforms.indexOf(os.platform()) > -1) {
+                if(bins[bin].print_version) {
+                    rslts.push(getToolVersion(
+                        bins[bin].name,
+                        bins[bin].print_version)
+                    );
+                }
+                else {
+                    rslts.push(toolExist(bins[bin].name));
+                }
             }
         }
 
@@ -86,22 +110,22 @@ function listAvailablePlatforms() {
 
 function check_cordova(platforms) {
     var cordovaLibPaths = platforms.reduce(function (promise, platform) {
-            return promise.then(function (rslt) {
-                var pkg = path.resolve(__dirname, '..', '..', 'lib', 'platforms', platform, 'package.json'),
-                    version = require(pkg).version;
-                return cordova_lazy_load.cordova_npm({
-                    name:platform,
-                    packageName: 'cordova-' + platform,
-                    version: version
-                }).then(function (libPath) {
-                    rslt.push({
-                        name: platform,
-                        path: libPath
-                    });
-                    return rslt;
+        return promise.then(function (rslt) {
+            var pkg = path.resolve(__dirname, '..', '..', 'lib', 'platforms', platform, 'package.json'),
+                version = require(pkg).version;
+            return cordova_lazy_load.cordova_npm({
+                name:platform,
+                packageName: 'cordova-' + platform,
+                version: version
+            }).then(function (libPath) {
+                rslt.push({
+                    name: platform,
+                    path: libPath
                 });
+                return rslt;
             });
-        }, Q([]));
+        });
+    }, Q([]));
 
     return cordovaLibPaths.then(function (libs) {
         libs.forEach(function (lib) {
