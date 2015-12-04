@@ -28,8 +28,13 @@ function printPlugins(items) {
 
 function logging(f) {
     return function (val) {
-        if(val) log.send('info', '%s plugin: %s', f[0], val[0]);
-        else log.send('info', 'no plugin added!');
+        if(val) {
+            var ps = val.map(function(v) { return v.val;}).join(', ');
+            log.send('info', '%s plugins: %s', f, ps);
+        }
+        else {
+            log.send('info', 'no plugin added!');
+        }
         return val;
     };
 }
