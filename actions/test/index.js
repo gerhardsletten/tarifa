@@ -23,8 +23,9 @@ var launchAppiumServer = function (conf) {
         cmd = pathHelper.isFile(appiumNpm2) ? appiumNpm2 : appiumNpm3,
         args = '--command-timeout 7200 --automation-name Appium --log-level debug';
     if (os.platform() === 'win32') {
+        args = cmd + ' ' + args;
         cmd = 'node';
-        args = appiumPath + ' ' + args;
+        console.log(cmd + ' ' + args);
     }
 
     conf.appiumChild = spawn(cmd, args.split(' '));

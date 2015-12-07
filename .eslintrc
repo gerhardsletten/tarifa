@@ -6,7 +6,7 @@
         "no-mixed-requires": 0,
         "indent": [2, 4],
         "quotes": [2, "single"],
-        "linebreak-style": [2, "unix"],
+        "linebreak-style": [2, "windows"],
         "semi": [2, "always"],
         "camelcase": 0,
         "new-cap": 0,
@@ -17,8 +17,5 @@
         "browser": false,
         "node": true
     },
-    "globals": {
-        "describe": true,
-        "it": true
-    }
+    "globals": {}
 }
