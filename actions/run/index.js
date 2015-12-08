@@ -20,7 +20,7 @@ var binaryExists = function (conf) {
         configurations = conf.localSettings.configurations[conf.platform],
         c = configurations[conf.configuration],
         productFileName, productFolder;
-    if(conf.platform !== 'ios') {
+    if(conf.platform !== 'ios' || conf.platform !== 'windows') {
         productFileName = pathHelper.productFile(conf.platform, c.product_file_name, conf.arch);
         if (productFileName && existsSync(productFileName)) {
             exists = true;
@@ -99,12 +99,12 @@ var runMultiplePlatforms = function (platforms, config, options) {
 
 var action = function (argv) {
     var options = {
-            nobuild: argsHelper.matchOption(argv, null, 'nobuild'),
-            log: argsHelper.matchOption(argv, 'l', 'log'),
-            all: argsHelper.matchOption(argv, null, 'all'),
-            arch: argsHelper.matchOptionWithValue(argv, null, 'arch') && argv.arch,
-            timeout: argsHelper.matchOptionWithValue(argv, null, 'timeout') && argv.timeout
-        };
+        nobuild: argsHelper.matchOption(argv, null, 'nobuild'),
+        log: argsHelper.matchOption(argv, 'l', 'log'),
+        all: argsHelper.matchOption(argv, null, 'all'),
+        arch: argsHelper.matchOptionWithValue(argv, null, 'arch') && argv.arch,
+        timeout: argsHelper.matchOptionWithValue(argv, null, 'timeout') && argv.timeout
+    };
     if (options.log) {
         if(argsHelper.matchCmd(argv._, ['__multi__', '*']) || argsHelper.matchCmd(argv._, ['*', '__multi__'])) {
             log.send('error', 'Oops, not `--log` option on multiple configurations or multiple platforms!');
