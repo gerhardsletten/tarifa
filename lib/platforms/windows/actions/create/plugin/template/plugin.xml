@@ -1,3 +1,6 @@
+<!-- windows -->
 <platform name="windows">
-  
+  <js-module src="windows/src/%NAMEProxy.js" name="%NAMEProxy">
+    <merges target="" />
+  </js-module>
 </platform>
