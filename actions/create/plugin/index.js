@@ -29,7 +29,7 @@ var Q = require('q'),
         version: '1.0.0',
         description: '',
         author_name: '',
-        keywords: 'tarifa, plugin',
+        keywords: 'ecosystem:cordova',
         license: 'Apache 2.0'
     };
 
