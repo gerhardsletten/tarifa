@@ -1,3 +1,9 @@
+## 0.13.1 (12/10/2015)
+
+### changes
+
+- republish on npm with fixed `.npmignore`
+
 ## 0.13.0 (11/24/2015)
 
 ### supported cordova platforms:
