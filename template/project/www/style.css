@@ -43,6 +43,7 @@ body {
     margin:0;
     padding:0;
     background: #487EC2;
+    -ms-touch-action: none;
     background-image: -o-linear-gradient(-134deg, #514A9D 0%, #24C6DC 100%);
     background-image: -moz-linear-gradient(-134deg, #514A9D 0%, #24C6DC 100%);
     background-image: -ms-linear-gradient(-134deg, #514A9D 0%, #24C6DC 100%);
