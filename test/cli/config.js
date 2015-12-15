@@ -5,17 +5,6 @@ var test = require('tape'),
     format = require('util').format,
     h = require('../helpers');
 
-test('cli: tarifa config -h', function (t) {
-    var st = spawn(t, h.cmd('config -h')),
-        usageFilePath = path.join(__dirname, '../../actions/config/usage.txt'),
-        iosFilePath = path.join(__dirname, '../../lib/platforms/ios/actions/config/usage.txt'),
-        helpText = fs.readFileSync(usageFilePath).toString() + fs.readFileSync(iosFilePath).toString() + '\n';
-
-    st.stdout.match(helpText, 'help text matched');
-    st.succeeds();
-    st.end();
-});
-
 test('cli: tarifa config icons file test.png stage', function (t) {
     var fixture = path.resolve(__dirname, '..', 'fixtures', 'momo.png'),
         st = spawn(t, h.cmd(format('config icons file "%s" stage --verbose', fixture)), {
