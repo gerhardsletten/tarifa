@@ -32,7 +32,8 @@ function usage() {
 }
 
 var action = function (argv) {
-    if(argsHelper.checkValidOptions(argv, ['bgColor'])) {
+    var helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help');
+    if(!helpOpt &&  argsHelper.checkValidOptions(argv, ['bgColor'])) {
         var bgColor = argsHelper.matchOptionWithValue(argv, null, 'bgColor') && argv.bgColor;
         if(match(argv._, ['icons', 'generate', '+', '*']))
             return action.generateIcons(argv._[2], argv._[3]);

@@ -98,24 +98,25 @@ var runMultiplePlatforms = function (platforms, config, options) {
 };
 
 var action = function (argv) {
-    var options = {
-        nobuild: argsHelper.matchOption(argv, null, 'nobuild'),
-        log: argsHelper.matchOption(argv, 'l', 'log'),
-        all: argsHelper.matchOption(argv, null, 'all'),
-        arch: argsHelper.matchOptionWithValue(argv, null, 'arch') && argv.arch,
-        timeout: argsHelper.matchOptionWithValue(argv, null, 'timeout') && argv.timeout
-    };
-    if (options.log) {
+    var helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help'),
+        options = {
+            nobuild: argsHelper.matchOption(argv, null, 'nobuild'),
+            log: argsHelper.matchOption(argv, 'l', 'log'),
+            all: argsHelper.matchOption(argv, null, 'all'),
+            arch: argsHelper.matchOptionWithValue(argv, null, 'arch') && argv.arch,
+            timeout: argsHelper.matchOptionWithValue(argv, null, 'timeout') && argv.timeout
+        };
+    if (!helpOpt && options.log) {
         if(argsHelper.matchCmd(argv._, ['__multi__', '*']) || argsHelper.matchCmd(argv._, ['*', '__multi__'])) {
             log.send('error', 'Oops, not `--log` option on multiple configurations or multiple platforms!');
             return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);
         }
     }
 
-    if(argsHelper.matchCmd(argv._, ['__all__', '*']))
+    if(!helpOpt && argsHelper.matchCmd(argv._, ['__all__', '*']))
         return runMultiplePlatforms(null, argv._[1] || 'default', options);
 
-    if (argsHelper.matchCmd(argv._, ['__some__', '*'])) {
+    if (!helpOpt && argsHelper.matchCmd(argv._, ['__some__', '*'])) {
         return runMultiplePlatforms(
             argsHelper.getFromWildcard(argv._[0]),
             argv._[1] || 'default',

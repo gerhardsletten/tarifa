@@ -134,12 +134,13 @@ var buildMultiplePlatforms = function (platforms, config, keepFileChanges) {
 };
 
 var action = function (argv) {
-    var keepFileChanges = argsHelper.matchOption(argv, null, 'keep-file-changes');
+    var keepFileChanges = argsHelper.matchOption(argv, null, 'keep-file-changes'),
+        helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help');
 
-    if (argsHelper.matchCmd(argv._, ['__all__', '*']))
+    if (!helpOpt && argsHelper.matchCmd(argv._, ['__all__', '*']))
         return buildMultiplePlatforms(null, argv._[1] || 'default', keepFileChanges);
 
-    if (argsHelper.matchCmd(argv._, ['__some__', '*'])) {
+    if (!helpOpt && argsHelper.matchCmd(argv._, ['__some__', '*'])) {
         return buildMultiplePlatforms(
             argsHelper.getFromWildcard(argv._[0]),
             argv._[1] || 'default',

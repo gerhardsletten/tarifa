@@ -142,7 +142,8 @@ var test = function (platform, config) {
 };
 
 var action = function (argv) {
-    if(argsHelper.matchArgumentsCount(argv, [1, 2]))
+    var helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help');
+    if(argsHelper.matchArgumentsCount(argv, [1, 2]) && !helpOpt)
         return test(argv._[0], argv._[1] || 'default');
 
     return fs.read(path.join(__dirname, 'usage.txt')).then(console.log);

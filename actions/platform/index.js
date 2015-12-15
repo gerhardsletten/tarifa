@@ -131,18 +131,16 @@ function info() {
 function action (argv) {
     var prune = argsHelper.matchOption(argv, null, 'prune'),
         actions = ['add', 'remove'],
-        helpPath = path.join(__dirname, 'usage.txt');
+        helpPath = path.join(__dirname, 'usage.txt'),
+        helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help');
 
-    if(argsHelper.checkValidOptions(argv, ['prune'])) {
-        if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1])){
+    if(!helpOpt && argsHelper.checkValidOptions(argv, ['prune'])) {
+        if(argv._[0] === 'list' && argsHelper.matchArgumentsCount(argv, [1]))
             return list();
-        }
-        if(argv._[0] === 'info' && argsHelper.matchArgumentsCount(argv, [1])){
+        if(argv._[0] === 'info' && argsHelper.matchArgumentsCount(argv, [1]))
             return info();
-        }
-        if(actions.indexOf(argv._[0]) > -1 && argsHelper.matchArgumentsCount(argv, [2])) {
+        if(actions.indexOf(argv._[0]) > -1 && argsHelper.matchArgumentsCount(argv, [2]))
             return platformAction(argv._[0], argv._[1], prune);
-        }
     }
 
     return qfs.read(helpPath).then(console.log);

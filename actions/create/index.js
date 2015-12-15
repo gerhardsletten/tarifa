@@ -4,12 +4,13 @@ var fs = require('q-io/fs'),
 
 module.exports = function (argv) {
     var options = {
-        path: argsHelper.matchOptionWithValue(argv, null, 'path') && argv.path,
-        id: argsHelper.matchOptionWithValue(argv, null, 'id') && argv.id,
-        name: argsHelper.matchOptionWithValue(argv, null, 'name') && argv.name
-    };
+            path: argsHelper.matchOptionWithValue(argv, null, 'path') && argv.path,
+            id: argsHelper.matchOptionWithValue(argv, null, 'id') && argv.id,
+            name: argsHelper.matchOptionWithValue(argv, null, 'name') && argv.name
+        },
+        helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help');
 
-    if (argsHelper.checkValidOptions(argv, ['path', 'id', 'name'])) {
+    if (!helpOpt && argsHelper.checkValidOptions(argv, ['path', 'id', 'name'])) {
         if (argsHelper.matchArgumentsCount(argv, [0]) || argsHelper.matchCmd(argv._, ['project'])) {
             return require('./project')(options);
         }

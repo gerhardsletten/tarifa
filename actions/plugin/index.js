@@ -137,11 +137,12 @@ function getVariableFromCli(v, rst) {
 }
 
 function action (argv) {
-    var link = false,
+    var helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help'),
+        link = false,
         act = argv._[0],
         variables = null;
 
-    if(argsHelper.checkValidOptions(argv, ['variable', 'link'])) {
+    if(!helpOpt && argsHelper.checkValidOptions(argv, ['variable', 'link'])) {
         if(argsHelper.matchOptionWithValue(argv, null, 'variable')) {
             variables = argv.variable;
             if(variables instanceof Array)

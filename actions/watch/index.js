@@ -192,11 +192,12 @@ function watch(platform, config, opts) {
 }
 
 var action = function (argv) {
-    var norun = argsHelper.matchOptionWithValue(argv, 'norun'),
+    var helpOpt = argsHelper.matchSingleOption(argv, 'h', 'help'),
+        norun = argsHelper.matchOptionWithValue(argv, 'norun'),
         nolivereload = argsHelper.matchOptionWithValue(argv, 'nolivereload'),
         httpPort = settings.default_http_port;
 
-    if (argsHelper.matchArgumentsCount(argv, [1, 2]) &&
+    if (!helpOpt && argsHelper.matchArgumentsCount(argv, [1, 2]) &&
             argsHelper.checkValidOptions(argv, ['p', 'port', 'norun', 'nolivereload'])) {
 
         if (argsHelper.matchOptionWithValue(argv, 'p', 'port')) {
