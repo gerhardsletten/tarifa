@@ -1,25 +1,31 @@
 var Q = require('q'),
     fs = require('q-io/fs'),
     path = require('path'),
+    osPlatform = require('os').platform(),
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
     match = require('../../lib/helper/args').matchCmd,
     settings = require('../../lib/settings'),
-    platformCommands = [ ];
+    platformCommands = [ ],
+    supportedPlatforms = settings.platforms.filter(function (platform) {
+        return settings.os_platforms[platform].indexOf(osPlatform) > -1;
+    }),
+    platformActionPath = function (p) {
+        return path.resolve(__dirname, '../../lib/platforms', p, 'actions/config');
+    };
 
-settings.platforms.forEach(function (p) {
-    var mod = path.resolve(__dirname, '../../lib/platforms', p, 'actions/config');
-    platformCommands = platformCommands.concat(require(mod).commands);
+supportedPlatforms.forEach(function (p) {
+    platformCommands = platformCommands.concat(require(platformActionPath(p)).commands);
 });
 
 function usage() {
-    return fs.read(path.join(__dirname, 'usage.txt')).then(function (msg) {
-        return settings.platforms.reduce(function (text, platform) {
-            var usagePath = path.resolve(__dirname, '../../lib/platforms', platform, 'actions/config/usage.txt');
+    var add = function (s1) { return function (s2) { return s1 + s2; } },
+        mainText = fs.read(path.join(__dirname, 'usage.txt'));
+    return mainText.then(function (msg) {
+        return supportedPlatforms.reduce(function (text, platform) {
+            var usagePath = path.resolve(platformActionPath(platform), 'usage.txt');
             return Q.when(text, function (t) {
-                return fs.read(usagePath).then(function (u) {
-                    return t + u;
-                });
+                return fs.read(usagePath).then(add(t));
             });
         }, msg);
     }).then(console.log);
