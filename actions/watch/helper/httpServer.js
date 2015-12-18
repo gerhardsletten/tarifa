@@ -2,6 +2,7 @@ var Q = require('q'),
     connect = require('connect'),
     format = require('util').format,
     lr = require('connect-livereload'),
+    path = require('path'),
     serveStatic = require('serve-static'),
     pathHelper = require('../../../lib/helper/path'),
     log = require('../../../lib/helper/log');
@@ -10,7 +11,8 @@ module.exports = function startHttpServer(lrPort, httpPort, platform) {
     var d = Q.defer(),
         app = connect(),
         index = pathHelper.wwwFinalLocation(pathHelper.root(), platform),
-        serve = serveStatic(index, {index: false});
+        serve = serveStatic(path.resolve(index, '..'), {index: false});
+
     if (lrPort) app.use(lr({port: lrPort}));
     app.use(serve);
     var server = app.listen(httpPort, function () {

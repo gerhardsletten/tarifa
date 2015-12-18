@@ -68,7 +68,7 @@ function start (platform, localSettings, config, opts) {
                 localSettings: localSettings,
                 platform: platform,
                 configuration: config,
-                watch: format('http://%s:%s/index.html', ip, httpPorts[0])
+                watch: format('http://%s:%s/www/index.html', ip, httpPorts[0])
             };
 
             if(platform === 'browser' && !opts.norun) return buildAction.buildƒ(msg);
