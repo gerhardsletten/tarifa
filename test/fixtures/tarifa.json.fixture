@@ -6,8 +6,7 @@
   "platforms": [
     "ios@3.9.0",
     "android@4.1.1",
-    "browser@4.0.0",
-    "firefoxos@3.6.3"
+    "browser@4.0.0"
   ],
   "configurations": {
     "ios": {
@@ -59,30 +58,6 @@
       }
     },
     "browser": {
-      "default": {
-        "id": "oops.ooops.oops.init",
-        "product_name": "super-app_init",
-        "product_file_name": "super-app_init"
-      },
-      "dev": {
-        "id": "oops.ooops.oops.dev",
-        "product_name": "super-app_dev",
-        "product_file_name": "super-app_dev"
-      },
-      "stage": {
-        "id": "oops.ooops.oops.stage",
-        "product_name": "super-app_stage",
-        "product_file_name": "super-app_stage",
-        "release": true
-      },
-      "prod": {
-        "id": "oops.ooops.oops.prod",
-        "product_name": "super-app_prod",
-        "product_file_name": "super-app_prod",
-        "release": true
-      }
-    },
-    "firefoxos": {
       "default": {
         "id": "oops.ooops.oops.init",
         "product_name": "super-app_init",
@@ -172,7 +147,6 @@
   "check": {
     "ios": "./project/bin/check_ios.js",
     "android": "./project/bin/check_android.js",
-    "browser": "./project/bin/check_browser.js",
-    "firefoxos": "./project/bin/check_firefoxos.js"
+    "browser": "./project/bin/check_browser.js"
   }
 }

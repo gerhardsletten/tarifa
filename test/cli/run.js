@@ -16,9 +16,7 @@ test('cli: tarifa create, project folders created', function (t) {
     t.ok(h.isDirectory(p), 'project created');
 });
 
-h.platforms().filter(function (p) {
-    return p !== 'firefoxos';
-}).forEach(function (platform) {
+h.platforms().forEach(function (platform) {
     test(format('cli: tarifa platform add %s', platform), function (t) {
         var st = spawn(t, h.cmd(format('platform add %s', platform)), {
             stdio: 'inherit'

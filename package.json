@@ -16,7 +16,6 @@
     "android",
     "browser",
     "windows",
-    "firefoxos",
     "cli",
     "worflow"
   ],
@@ -56,7 +55,6 @@
     "minimist": "1.2.0",
     "mkdirp": "0.5.1",
     "ncp": "2.0.0",
-    "node-firefoxos-cli-fork": "0.1.7",
     "npm": "2.14.7",
     "plist": "1.2.0",
     "q": "1.4.1",

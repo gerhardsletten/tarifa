@@ -29,7 +29,7 @@ function cmd(args) {
 }
 
 var platformNames = {
-    'darwin': ['ios', 'android', 'browser', 'firefoxos'],
+    'darwin': ['ios', 'android', 'browser'],
     'win32': ['android', 'browser', 'windows'],
     'linux': ['android', 'browser']
 };

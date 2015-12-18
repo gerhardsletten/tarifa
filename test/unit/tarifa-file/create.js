@@ -29,8 +29,7 @@ var responseFixture = {
       platforms: [
         'ios',
         'android',
-        'browser',
-        'firefoxos'
+        'browser'
       ],
       plugins: [],
       www: 'template/project',
