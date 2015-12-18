@@ -4,8 +4,6 @@ var helpers = require('./helpers');
 require('./unit/xml/config.xml');
 require('./unit/xml/android/string.xml');
 require('./unit/xml/android/AndroidManifest.xml');
-require('./unit/xml/wp8/csproj');
-require('./unit/xml/wp8/WMAppManifest.xml');
 require('./unit/tarifa-file/extend_tests');
 // cli tests by actions
 require('./cli/noargs');

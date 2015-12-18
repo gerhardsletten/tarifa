@@ -1,9 +1,0 @@
-    <platform name="wp8">
-        <config-file target="config.xml" parent="/*">
-            <feature name="%NAME">
-                <param name="wp-package" value="%NAME" />
-            </feature>
-        </config-file>
-        <source-file src="wp8/src/%NAME.cs" />
-%PLUGIN_USE_VARIABLES
-    </platform>
