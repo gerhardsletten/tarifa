@@ -5,14 +5,20 @@
 - android: 4.1.1
 - ios: 3.9.0, 3.9.2 (default)
 - browser: 4.0.0
-- firefoxos: 3.6.3
 - windows: 4.2.0
 
 # changes
 
-- removing wp8 platform
+- remove wp8 platform
+- remove firefoxos platform
 - adding windows platform starting with 4.2.0
 - upgrade cordova-lib to 5.4.1
+
+## 0.13.1 (12/10/2015)
+
+### changes
+
+- republish on npm with fixed `.npmignore`
 
 ## 0.13.0 (11/24/2015)
 
