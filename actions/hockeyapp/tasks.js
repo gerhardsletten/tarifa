@@ -19,7 +19,7 @@ var mergeParams = function (localSettings, argv) {
                 'versions_commit_sha',
                 'versions_build_server_url',
                 'versions_repository_url'
-                ].indexOf(e) > -1;
+            ].indexOf(e) > -1;
         }), function (e) {
             return e.replace(/^versions_/, '');
         }),
@@ -44,14 +44,15 @@ var upload = function (msg) {
 
     if (!localSettings.hockeyapp || !localSettings.hockeyapp.api_url || !localSettings.hockeyapp.token)
         return Q.reject('No hockeyapp informations are available in the current tarifa.json file.');
-
     // check for hockeyapp options in conf
     var conf = mergeParams(localSettings, msg.argv),
+        type = msg.platform === 'windows' ? localSettings.configurations.windows[config].type : null,
         productFileName = pathHelper.productFile(
             platform,
             envSettings.product_file_name,
             localSettings.plugins['cordova-plugin-crosswalk-webview'] ?
-              envSettings.arch || 'armv7' : null
+                envSettings.arch || 'armv7' : null,
+            type
         );
 
     return hockeyapp.uploadVersion(productFileName, conf, hockeyapp_id).then(function (data) {
