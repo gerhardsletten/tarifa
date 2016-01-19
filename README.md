@@ -22,7 +22,7 @@ with adequate questions and save the answers in the project files.
 | -------------------------------------------|:------:|:-----:|:-----:|
 | [ios](http://developer.apple.com/)         | ✔      | ✗     | ✗     |
 | [android](http://developer.android.com/)   | ✔      | ✔     | ✔     |
-| [windows phone](http://msdn.microsoft.com/en-us/library/windows/apps/ff630878) | ✗      | ✗     | ✔     |
+| [windows](https://www.visualstudio.com/products/visual-studio-community-vs) | ✗      | ✗     | ✔     |
 
 * [ImageMagick](http://www.imagemagick.org/)
 * [nomad cli: cupertino](https://github.com/nomad/cupertino) (only ios)
@@ -41,7 +41,7 @@ npm install tarifa -g
 ```
 
 Some optional dependencies could fail depending on your os
-(such as cordova-deploy-windows-phone fails to install on linux or macosx).
+(such as ios-deploy fails to install on linux or windows).
 
 ### Usage
 

@@ -1,4 +1,10 @@
-## 0.14.0 (not released)
+## 0.14.1 (01/19/2016)
+
+# changes
+
+- fix README
+
+## 0.14.0 (01/19/2016)
 
 ### supported cordova platforms:
 
@@ -13,6 +19,7 @@
 - remove firefoxos platform
 - adding windows platform starting with 4.2.0
 - upgrade cordova-lib to 5.4.1
+- upgrade dependencies
 
 ## 0.13.1 (12/10/2015)
 
