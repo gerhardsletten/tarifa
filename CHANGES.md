@@ -1,3 +1,9 @@
+## 0.14.2 (02/05/2016)
+
+# changes
+
+- use module valid-identifier instead of valid-java-identifier
+
 ## 0.14.1 (01/19/2016)
 
 # changes
