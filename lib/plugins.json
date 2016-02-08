@@ -97,8 +97,8 @@
 },{
     "name":"whitelist",
     "value":"cordova-plugin-whitelist",
-    "uri":"cordova-plugin-whitelist@1.1.0",
-    "version":"1.1.0",
+    "uri":"cordova-plugin-whitelist@1.2.1",
+    "version":"1.2.1",
     "default": true
 },{
     "name":"crosswalk-webview",
