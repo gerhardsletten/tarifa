@@ -53,6 +53,7 @@
     "interset": "0.0.2",
     "is-online": "5.0.1",
     "jsonlint": "1.6.2",
+    "lodash": "^3.10.0",
     "minimist": "1.2.0",
     "mkdirp": "0.5.1",
     "ncp": "2.0.0",
