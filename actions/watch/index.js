@@ -54,7 +54,7 @@ function start (platform, localSettings, config, opts) {
         var content = _get(configuration, 'cordova.content') ||
           _get(localSettings, 'cordova.content') || 'index.html';
 
-        var watcher = content.match(/^http/) ? content : format('http://%s:%s/%s', ip, opts.httpPort, content);
+        var watcher = content.match(/^http/) ? content : format('http://%s:%s', ip, opts.httpPort);
 
         return Q().then(function () {
             var msg = {
