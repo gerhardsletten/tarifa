@@ -1,41 +1,24 @@
 var Q = require('q'),
-    rimraf = require('rimraf'),
-    spinner = require('char-spinner'),
     path = require('path'),
     fs = require('q-io/fs'),
+    validator = require('../../lib/helper/validator'),
     argsHelper = require('../../lib/helper/args'),
     pathHelper = require('../../lib/helper/path'),
     log = require('../../lib/helper/log'),
     tarifaFile = require('../../lib/tarifa-file');
 
 var set = function (version) {
-    var cwd = process.cwd(),
-        conf = [tarifaFile.parse(pathHelper.root())];
-
-    return Q.all(conf).spread(function (config) {
+    if(!validator.isVersion(version)) return Q.reject('wrong version format');
+    return tarifaFile.parse(pathHelper.root()).then(function (config) {
         config.version = version;
-        return Q.when(config, function (c) {
-            return tarifaFile.write(cwd, c);
-        });
-    }).then(function (msg) {
-        process.chdir(cwd);
-        return msg;
-    }, function (err) {
-        process.chdir(cwd);
-        throw err;
+        return tarifaFile.write(pathHelper.root(), config);
     });
 };
 
 var get = function () {
-    var conf = [tarifaFile.parse(pathHelper.root())];
-
-    return Q.all(conf).spread(function (config) {
-        return Q.resolve(config.version);
-    }).then(function (msg) {
-        if(msg) log.send('msg', msg);
-        return msg;
-    }, function (err) {
-        throw err;
+    return tarifaFile.parse(pathHelper.root()).then(function (config) {
+        if(config.version) log.send('msg', config.version);
+        else log.send('msg', 'version not available in tarifa.json');
     });
 };
 
