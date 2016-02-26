@@ -69,7 +69,8 @@ var check = function (force) {
         process.chdir(root);
         var projectPlatforms = localSettings.platforms.map(platformHelper.getName);
         return launchTasks({
-                settings: localSettings
+                settings: localSettings,
+                root: root
             },
             intersection(platforms, projectPlatforms),
             platformTasks,
