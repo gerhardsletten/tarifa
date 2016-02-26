@@ -65,6 +65,7 @@ Commands:
     update         Update current project cordova platforms and core plugins
     watch          Watch current project
     test           Test current project on your device with appium
+    version        Will either return the version number or set the current version number
 
 Options:
 
