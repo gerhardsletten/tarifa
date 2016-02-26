@@ -1,7 +1,8 @@
 {
   "name": "android",
-  "version": "4.1.1",
+  "version": "5.1.0",
   "versions": [
+    "5.1.0",
     "4.1.1"
   ]
 }
