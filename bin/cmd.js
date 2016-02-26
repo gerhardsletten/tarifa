@@ -41,6 +41,7 @@ var availableActions = [
         { name: 'update', action: '../actions/update' },
         { name: 'watch', action: '../actions/watch' },
         { name: 'test', action: '../actions/test'},
+        { name: 'version', action: '../actions/version'},
         { name: 'device', action: '../actions/device'},
         { name: 'devices', action: '../actions/device'} // alias
     ],
