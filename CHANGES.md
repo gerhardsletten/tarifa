@@ -1,12 +1,36 @@
+## 0.15.0 (03/01/2016)
+
+### supported cordova platforms:
+
+- android: 4.1.1, 5.1.0 (default)
+- ios: 3.9.2, 4.0.1 (default)
+- browser: 4.0.0
+- windows: 4.2.0
+
+### changes
+
+- add `tarifa version` [#280](https://github.com/TarifaTools/tarifa/pull/280)
+- add missing images on ios [#282](https://github.com/TarifaTools/tarifa/issues/282)
+- add cordova-android 5.1.0 [#291](https://github.com/TarifaTools/tarifa/issues/291)
+- add cordova-ios 4.0.1 [#285](https://github.com/TarifaTools/tarifa/issues/285)
+- upgrade cordova-lib to  6.0.0 [#294](https://github.com/TarifaTools/tarifa/issues/294)
+- be able to use tarifa with only cordova-browser [#295](https://github.com/TarifaTools/tarifa/issues/295)
+- fix notifications sounds added as images don't fallback on 'default' configuration [#298](https://github.com/TarifaTools/tarifa/issues/298)
+- write relative path in `tarifa.json` when adding local cordova plugin [#299](https://github.com/TarifaTools/tarifa/issues/299)
+- upgrade dependencies
+- skip provisioning file check if no file available
+- upgrade default cordova plugins to latest release
+- add project root path to check function argument msg object
+
 ## 0.14.2 (02/05/2016)
 
-# changes
+### changes
 
 - use module valid-identifier instead of valid-java-identifier
 
 ## 0.14.1 (01/19/2016)
 
-# changes
+### changes
 
 - fix README
 
