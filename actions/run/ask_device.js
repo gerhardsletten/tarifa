@@ -26,7 +26,7 @@ module.exports = function (conf) {
         return ask.question(
             'Which device do you want to use?',
             'list',
-            conf.log ? ids : ['all'].concat(ids)
+            (conf.log || (conf.platform === 'ios')) ? ids : ['all'].concat(ids)
         ).then(function (resp) {
             if (resp !== 'all')
                 conf.device = {

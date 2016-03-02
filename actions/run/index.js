@@ -34,13 +34,13 @@ var binaryExists = function (conf) {
 };
 
 var runƒ = function (conf) {
-    var tasks = platformTasks[conf.platform].map(require),
-        buildPromise = (function (nobuild) {
+    var tasks = platformTasks[conf.platform].map(require);
+    return askDevice(conf).then(function () {
+        return (function (nobuild) {
             if (nobuild) return Q(conf);
             else return buildAction.buildƒ(conf);
         })(conf.nobuild && binaryExists(conf));
-
-    return buildPromise.then(askDevice).then(tasksHelper.execSequence(tasks));
+    }).then(tasksHelper.execSequence(tasks));
 };
 
 var run = function (platform, config, localSettings, options) {
