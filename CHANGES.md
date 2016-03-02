@@ -1,4 +1,4 @@
-## 0.15.0 (03/01/2016)
+## 0.15.0 (03/02/2016)
 
 ### supported cordova platforms:
 
@@ -21,6 +21,7 @@
 - skip provisioning file check if no file available
 - upgrade default cordova plugins to latest release
 - add project root path to check function argument msg object
+- be able to use ios emulators [#300](https://github.com/TarifaTools/tarifa/issues/300)
 
 ## 0.14.2 (02/05/2016)
 
