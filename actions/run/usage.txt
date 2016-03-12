@@ -18,6 +18,8 @@ Options:
     --timeout <sec>         Browser only: stop serving platform after <s> seconds
                             default is 30 seconds
     --debug, -d             Print helpful stack trace on error
+    --device <DEVICE>       Choose what device to use.
+                            Can be any device name like "Simulator: iPhone-6, 9.2"
 
 Examples:
 

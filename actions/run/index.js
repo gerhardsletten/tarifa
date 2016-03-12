@@ -53,6 +53,7 @@ var run = function (platform, config, localSettings, options) {
         log: options.log,
         all: options.all,
         arch: options.arch,
+        device: options.device,
         spinner: spinner(),
         timeout: options.timeout
     });
@@ -104,6 +105,7 @@ var action = function (argv) {
             log: argsHelper.matchOption(argv, 'l', 'log'),
             all: argsHelper.matchOption(argv, null, 'all'),
             arch: argsHelper.matchOptionWithValue(argv, null, 'arch') && argv.arch,
+            device: argsHelper.matchOptionWithValue(argv, null, 'device') && argv.device,
             timeout: argsHelper.matchOptionWithValue(argv, null, 'timeout') && argv.timeout
         };
     if (!helpOpt && options.log) {

@@ -21,6 +21,18 @@ module.exports = function (conf) {
             return conf;
         }
 
+        var findDeviceIndex = function(device) {
+          return ids.findIndex(function(x) { return x.value == device });
+        }
+
+        if (conf.device && findDeviceIndex(conf.device) > -1) {
+          conf.device = {
+              value: conf.device,
+              index: findDeviceIndex(conf.device)
+          };
+          return conf;
+        }
+
         clearInterval(conf.spinner);
 
         return ask.question(
@@ -31,7 +43,7 @@ module.exports = function (conf) {
             if (resp !== 'all')
                 conf.device = {
                     value: resp,
-                    index: ids.indexOf(resp)
+                    index: findDeviceIndex(resp)
                 };
             else
                 conf.devices = ids;
