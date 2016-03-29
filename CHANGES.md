@@ -9,10 +9,11 @@
 
 ### changes
 
-- add cordova-ios@4.1.0 and cordova-android@5.1.1 by @gerhardsletten [#306](https://github.com/TarifaTools/tarifa/pull/306)
-- add `--device` long option on `tarifa run` by @BlackFoks [#305](https://github.com/TarifaTools/tarifa/pull/305)
-- add `content` attribute on configuration by @BlackFoks [#304](https://github.com/TarifaTools/tarifa/pull/304)
+- add cordova-ios@4.1.0 and cordova-android@5.1.1 by [@gerhardsletten](https://github.com/gerhardsletten) [#306](https://github.com/TarifaTools/tarifa/pull/306)
+- add `--device` long option on `tarifa run` by [@BlackFoks](https://github.com/BlackFoks) [#305](https://github.com/TarifaTools/tarifa/pull/305)
+- add `content` attribute on configuration by [@BlackFoks](https://github.com/BlackFoks) [#304](https://github.com/TarifaTools/tarifa/pull/304)
 - add cordova-browser@4.1.0 [#303](https://github.com/TarifaTools/tarifa/issues/303)
+
 
 ## 0.15.0 (03/03/2016)
 
