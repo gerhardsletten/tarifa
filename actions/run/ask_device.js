@@ -3,7 +3,7 @@ var Q = require('q'),
     ask = require('../../lib/questions/ask');
 
 module.exports = function (conf) {
-    if(!devices.isSupported(conf.platform)) return conf;
+    if(!devices.isSupported(conf.platform)) return Q(conf);
 
     return devices.list(conf.platform).then(function (items) {
         if (items.length === 0) return Q.reject('No device available!');
@@ -13,24 +13,24 @@ module.exports = function (conf) {
         });
         if (ids.length === 1) {
             conf.device = ids[0];
-            return conf;
+            return Q(conf);
         }
 
         if (conf.all) {
             conf.devices = ids;
-            return conf;
+            return Q(conf);
         }
 
         var findDeviceIndex = function(device) {
-          return ids.findIndex(function(x) { return x.value == device });
-        }
+            return ids.findIndex(function(x) { return x.value == device; });
+        };
 
         if (conf.device && findDeviceIndex(conf.device) > -1) {
-          conf.device = {
-              value: conf.device,
-              index: findDeviceIndex(conf.device)
-          };
-          return conf;
+            conf.device = {
+                value: conf.device,
+                index: findDeviceIndex(conf.device)
+            };
+            return Q(conf);
         }
 
         clearInterval(conf.spinner);
