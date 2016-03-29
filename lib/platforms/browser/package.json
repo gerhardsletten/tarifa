@@ -1,7 +1,8 @@
 {
   "name": "browser",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "versions": [
+    "4.1.0",
     "4.0.0"
   ]
 }
