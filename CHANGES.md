@@ -1,3 +1,19 @@
+## 0.16.0 (03/29/2016)
+
+### supported cordova platforms:
+
+- android: 4.1.1, 5.1.0, 5.1.1 (default)
+- ios: 3.9.0, 3.9.2, 4.0.1, 4.1.0 (default)
+- browser: 4.0.0, 4.1.0 (default)
+- windows: 4.2.0
+
+### changes
+
+- add cordova-ios@4.1.0 and cordova-android@5.1.1 by @gerhardsletten [#306](https://github.com/TarifaTools/tarifa/pull/306)
+- add `--device` long option on `tarifa run` by @BlackFoks [#305](https://github.com/TarifaTools/tarifa/pull/305)
+- add `content` attribute on configuration by @BlackFoks [#304](https://github.com/TarifaTools/tarifa/pull/304)
+- add cordova-browser@4.1.0 [#303](https://github.com/TarifaTools/tarifa/issues/303)
+
 ## 0.15.0 (03/03/2016)
 
 ### supported cordova platforms:
