@@ -34,19 +34,15 @@ module.exports = function (conf) {
         }
 
         clearInterval(conf.spinner);
-
         return ask.question(
             'Which device do you want to use?',
             'list',
             (conf.log || (conf.platform === 'ios')) ? ids : ['all'].concat(ids)
         ).then(function (resp) {
-            if (resp !== 'all')
-                conf.device = {
-                    value: resp,
-                    index: findDeviceIndex(resp)
-                };
-            else
-                conf.devices = ids;
+            conf.device = {
+                value: resp,
+                index: findDeviceIndex(resp)
+            };
             return conf;
         });
     });
