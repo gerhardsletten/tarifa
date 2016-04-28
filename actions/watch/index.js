@@ -46,11 +46,13 @@ function sigint(ƒ) {
 
 function setup(localSettings, httpPort) {
     return builder.checkWatcher(pathHelper.root()).then(function () {
-        return Q.all([
-            askHostIp(),
-            findPorts(settings.livereload_port, settings.livereload_range, 1),
-            findPorts(httpPort, 1, 1)
-        ]);
+        return askHostIp().then(function (ip) {
+            return Q.all([
+                Q(ip),
+                findPorts(ip, settings.livereload_port, settings.livereload_range, 1),
+                findPorts(ip, httpPort, 1, 1)
+            ]);
+        });
     });
 }
 

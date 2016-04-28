@@ -2,10 +2,10 @@ var Q = require('q'),
     findPort = require('find-port'),
     format = require('util').format;
 
-module.exports = function (from, searchRange, returnCount) {
+module.exports = function (ip, from, searchRange, returnCount) {
     var d = Q.defer(),
         to = from + searchRange - 1;
-    findPort(from, to, function (ports) {
+    findPort(ip, from, to, function (ports) {
         if (ports.length >= returnCount) {
             d.resolve(ports.slice(0, returnCount));
         } else {
