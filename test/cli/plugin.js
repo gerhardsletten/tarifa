@@ -48,9 +48,10 @@ test(format('cli: tarifa plugin remove %s', tmp.id), function (t) {
 
 plugins.forEach(function (plugin) {
     test(format('cli: tarifa plugin add %s', plugin.uri), function (t) {
-        var st = spawn(t, h.cmd(format('plugin add %s', plugin.uri)), {
-            stdio: 'inherit'
-        });
+        var options = plugin.name === 'phonegap-plugin-push' ? '--variable SENDER_ID=tarifa' : '',
+            st = spawn(t, h.cmd(format('plugin add %s %s', plugin.uri, options)), {
+                stdio: 'inherit'
+            });
         st.succeeds();
         st.end();
     });
